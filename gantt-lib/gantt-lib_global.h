@@ -1,0 +1,12 @@
+#ifndef GANTTLIB_GLOBAL_H
+#define GANTTLIB_GLOBAL_H
+
+#include <QtCore/qglobal.h>
+
+#if defined(GANTTLIB_LIBRARY)
+#  define GANTTLIBSHARED_EXPORT Q_DECL_EXPORT
+#else
+#  define GANTTLIBSHARED_EXPORT Q_DECL_IMPORT
+#endif
+
+#endif // GANTTLIB_GLOBAL_H

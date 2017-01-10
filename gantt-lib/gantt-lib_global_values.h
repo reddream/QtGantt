@@ -1,0 +1,26 @@
+#ifndef GANTTLIB_GLOBAL_VALUES_H
+#define GANTTLIB_GLOBAL_VALUES_H
+
+#define SLIDER_COLOR (QColor(125,179,250))
+#define HEADER_COLOR (QColor(32,97,196))
+
+
+//the three values below are dependent
+#define MIN_WIDTH_FOR_MONTH_VISUALIZING (qreal(50))
+#define MIN_WIDTH_FOR_TIME_VISUALIZING (qreal(30)) // in pixels
+#define LITTLE_HATCH_COUNT (5)
+#define MIN_DISTANCE_BETWEEN_HATCHES (qreal(5))
+
+#define HOURS_IN_DAY (24)
+#define MINUTS_IN_HOUR (60)
+#define SECONDS_IN_MINUTE (60)
+#define _MILISECONDS_IN_SECOND (1000)
+#define _MICROSECONDS_IN_MILISECOND (1000)
+
+#define _MICROSECONDS_IN_SECOND (1000000)
+
+
+#define SECONDS_IN_HOUR (3600)
+#define SECONDS_IN_DAY (86400)
+
+#endif // GANTTLIB_GLOBAL_VALUES_H
