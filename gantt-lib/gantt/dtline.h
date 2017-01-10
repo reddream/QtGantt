@@ -41,6 +41,7 @@ class GANTTLIBSHARED_EXPORT DtLine : public QWidget
 
         Precision_count
     };
+    static QString modeToString(Precision mode);
 
 public:
     explicit DtLine(QWidget *parent = 0);
@@ -84,6 +85,10 @@ protected:
 
 private:
     void init();
+
+    void drawBackground(QPainter *painter);
+    void drawBottom(QPainter *painter);
+    void drawTop(QPainter *painter);
 
 private:
     Precision m_mode;

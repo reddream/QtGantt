@@ -8,6 +8,43 @@ enum defaults {
     heightConstraint = 2 * itemHeight,
 };
 
+QString DtLine::modeToString(DtLine::Precision mode)
+{
+    switch(mode)
+    {
+    case seconds1:
+        return "seconds1";
+    case seconds5:
+        return "seconds5";
+    case seconds15:
+        return "seconds15";
+    case seconds30:
+        return "seconds30";
+    case minutes1:
+        return "minutes1";
+    case minutes5:
+        return "minutes5";
+    case minutes15:
+        return "minutes15";
+    case minutes30:
+        return "minutes30";
+    case hours1:
+        return "hours1";
+    case hours6:
+        return "hours6";
+    case hours12:
+        return "hours12";
+    case days1:
+        return "days1";
+    case months1:
+        return "months1";
+    case years1:
+        return "years1";
+    default:
+        return "";
+    }
+}
+
 DtLine::DtLine(QWidget *parent) : QWidget(parent)
 {
     init();
@@ -15,45 +52,11 @@ DtLine::DtLine(QWidget *parent) : QWidget(parent)
 void DtLine::paintEvent(QPaintEvent *)
 {
     QPainter painter(this);
-    // Header background
-    QLinearGradient linearGradient(
-                QPointF(rect().left(),rect().top()),
-                QPointF(rect().left(),rect().top() + heightConstraint));
-    linearGradient.setColorAt(0, SLIDER_COLOR);
-    linearGradient.setColorAt(0.4, Qt::white);
-    linearGradient.setColorAt(0.6, Qt::white);
-    linearGradient.setColorAt(1, SLIDER_COLOR);
-    painter.fillRect(rect(), linearGradient);
-    // Center horizontal line
-    painter.drawLine(QPointF(0,heightConstraint/2),
-                     QPointF(rect().right(),heightConstraint/2) );
-    // Little and big hatches(with text)
 
-    qDebug() << "min "<< min() << " max " << max();
+    drawBackground(&painter);
+    drawBottom(&painter);
+    drawTop(&painter);
 
-    if(timeSpanIsValid(m_timeSpan))
-    {
-        UtcDateTime dt = displayedDtFewer(m_min,m_mode);
-        while(dt <= max())
-        {
-            int curOffset=dtToPos(dt);
-            qDebug() << "dt "<< dt;
-            qDebug() << "curoffset "<< curOffset;
-            if(isDrawn(dt,m_mode))
-            {
-                painter.drawLine(QPointF(curOffset,itemHeight),QPointF(curOffset,itemHeight*(3.0/2))); // big hatch
-                QFont dtFont("Goudy Old Style", 8);
-                painter.setFont(dtFont);
-                painter.drawText(QRectF(-MIN_WIDTH_FOR_TIME_VISUALIZING/2 + curOffset, itemHeight*(3.0/2),
-                                         MIN_WIDTH_FOR_TIME_VISUALIZING,itemHeight/2)
-                                  ,dt.toString(formatForMode(m_mode)),QTextOption(Qt::AlignCenter));
-            }
-            else
-                painter.drawLine(QPointF(curOffset,itemHeight),QPointF(curOffset,itemHeight*(5.0/4))); // little hatch
-
-            dt=dt.addMicroseconds(mcsecsForMode(m_mode,dt.date()) / segmentCountForMode(m_mode,dt.date()));
-        }
-    }
 }
 
 void DtLine::resizeEvent(QResizeEvent *event)
@@ -71,6 +74,53 @@ void DtLine::init()
     connect(this,SIGNAL(minChanged()),this,SIGNAL(changed()));
     connect(this,SIGNAL(timeSpanChanged()),this,SIGNAL(changed()));
     connect(this,SIGNAL(changed()),this,SLOT(recalc()));
+}
+
+void DtLine::drawBackground(QPainter *painter)
+{
+    // Header background
+    QLinearGradient linearGradient(
+                QPointF(rect().left(),rect().top()),
+                QPointF(rect().left(),rect().top() + heightConstraint));
+    linearGradient.setColorAt(0, SLIDER_COLOR);
+    linearGradient.setColorAt(0.4, Qt::white);
+    linearGradient.setColorAt(0.6, Qt::white);
+    linearGradient.setColorAt(1, SLIDER_COLOR);
+    painter->fillRect(rect(), linearGradient);
+    // Center horizontal line
+    painter->drawLine(QPointF(0,heightConstraint/2),
+                     QPointF(rect().right(),heightConstraint/2) );
+    // Little and big hatches(with text)
+}
+
+void DtLine::drawBottom(QPainter *painter)
+{
+    if(timeSpanIsValid(m_timeSpan))
+    {
+        UtcDateTime dt = displayedDtFewer(m_min,m_mode);
+        while(dt <= max())
+        {
+            int curOffset=dtToPos(dt);
+            if(isDrawn(dt,m_mode))
+            {
+                painter->drawLine(QPointF(curOffset,itemHeight),QPointF(curOffset,itemHeight*(3.0/2))); // big hatch
+                QFont dtFont("Goudy Old Style", 8);
+                painter->setFont(dtFont);
+                painter->drawText(QRectF(-MIN_WIDTH_FOR_TIME_VISUALIZING/2 + curOffset, itemHeight*(3.0/2),
+                                         MIN_WIDTH_FOR_TIME_VISUALIZING,itemHeight/2)
+                                  ,dt.toString(formatForMode(m_mode)),QTextOption(Qt::AlignCenter));
+            }
+            else
+                painter->drawLine(QPointF(curOffset,itemHeight),QPointF(curOffset,itemHeight*(5.0/4))); // little hatch
+
+            dt=dt.addMicroseconds(mcsecsForMode(m_mode,dt.date()) / segmentCountForMode(m_mode,dt.date()));
+        }
+    }
+}
+
+void DtLine::drawTop(QPainter *painter)
+{
+
 }
 
 TimeSpan DtLine::timeSpan() const
@@ -548,7 +598,7 @@ DtLine::Precision DtLine::calculateTimeMode() const
     if(!timeSpanIsValid(m_timeSpan) || width() < MIN_WIDTH_FOR_TIME_VISUALIZING)
         return (Precision)0;
 
-    qreal   coef = (m_timeSpan.totalMicroseconds() * 1. / calcVisItemCount(MIN_WIDTH_FOR_TIME_VISUALIZING)),
+    qreal   coef = (m_timeSpan.totalMicroseconds() * 1. / calcVisItemCount(MIN_WIDTH_FOR_TIME_VISUALIZING-5)),
             monthCoef = (m_timeSpan.totalMicroseconds() * 1. / calcVisItemCount(MIN_WIDTH_FOR_MONTH_VISUALIZING));
 
     Precision mode = Precision_count;
@@ -578,6 +628,7 @@ DtLine::Precision DtLine::calculateTimeMode() const
 void DtLine::recalc()
 {
     m_mode = calculateTimeMode();
+    qDebug() << "mode " << modeToString(m_mode);
     update();
 }
 
