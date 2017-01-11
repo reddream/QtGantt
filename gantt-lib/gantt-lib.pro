@@ -42,7 +42,11 @@ SOURCES += ganttlib.cpp \
     appeventfilter.cpp \
     intervalslider.cpp \
     gantt/dtline.cpp \
-    timespan_extension.cpp
+    timespan_extension.cpp \
+    gantt/ganttinfoitem.cpp \
+    gantt/ganttinfoleaf.cpp \
+    gantt/ganttinfonode.cpp \
+    gantt/gantttreemodel.cpp
 
 HEADERS += ganttlib.h\
         gantt-lib_global.h \
@@ -50,7 +54,11 @@ HEADERS += ganttlib.h\
     intervalslider.h \
     gantt/dtline.h \
     timespan_extension.h \
-    gantt-lib_global_values.h
+    gantt-lib_global_values.h \
+    gantt/ganttinfoitem.h \
+    gantt/ganttinfoleaf.h \
+    gantt/ganttinfonode.h \
+    gantt/gantttreemodel.h
 
 unix {
     target.path = /usr/lib

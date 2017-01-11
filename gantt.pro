@@ -4,4 +4,4 @@ CONFIG +=  ordered
 
 SUBDIRS += \
     gantt-lib \
-    gantt-demo
+    gantt-dtline-demo

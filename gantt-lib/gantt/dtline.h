@@ -6,6 +6,7 @@
 #include "timespan_extension.h"
 
 #include <QWidget>
+#include <QPair>
 
 class GANTTLIBSHARED_EXPORT DtLine : public QWidget
 {
@@ -41,7 +42,20 @@ class GANTTLIBSHARED_EXPORT DtLine : public QWidget
 
         Precision_count
     };
+
+    enum TopPrecision{
+        topEmpty,
+        topYear     = 1,
+        topMonth    = 0x2,
+        topDay      = 0x4,
+        topHour     = 0x8,
+        topMinute   = 0x10,
+
+        TopPrecision_count
+    };
+
     static QString modeToString(Precision mode);
+    static QString modeToString(TopPrecision mode);
 
 public:
     explicit DtLine(QWidget *parent = 0);
@@ -60,12 +74,20 @@ public:
     static long long secsForMode(Precision mode, const QDate& date = QDate());
     static int segmentCountForMode(Precision mode, const QDate& date = QDate());
     static QString formatForMode(Precision mode);
+    static QString formatForMode(TopPrecision mode);
+    static int widthForMode(TopPrecision mode);
+    static int widthForMode(Precision mode);
     static bool isDrawn(const UtcDateTime& dt, Precision mode);
     static UtcDateTime displayedDtFewer(const UtcDateTime &dt, Precision mode);
     static UtcDateTime displayedDtGreater(const UtcDateTime &dt, Precision mode);
     static UtcDateTime displayedDtNext(const UtcDateTime &dt, Precision mode);
-    static UtcDateTime displayedDtPrevious(const UtcDateTime &dt, Precision mode);
-    int calcVisItemCount(int itemWidth) const;
+    static UtcDateTime displayedDtNextHatch(const UtcDateTime &dt, Precision mode);
+//    static UtcDateTime displayedDtPrevious(const UtcDateTime &dt, Precision mode); // impl isn't obvious
+    static TopPrecision mapToTop(Precision bottomMode);
+    static Precision mapToBottom(TopPrecision topMode);
+    static bool extMode(Precision mode);
+    int precisiousWidth() const;
+    int calcVisItemCount(int width,int itemWidth) const;
     Precision calculateTimeMode() const;
 
 
@@ -85,10 +107,21 @@ protected:
 
 private:
     void init();
+    bool inRange(int pos) const;
+    bool inView(const QRect &rect) const;
 
     void drawBackground(QPainter *painter);
     void drawBottom(QPainter *painter);
+    void drawBottomItemText(QPainter *painter, const UtcDateTime &dt, Precision mode);
+    void drawBottomItemTextExt(QPainter *painter, const QString &text,
+                               int curPos, int nextPos,Precision mode);
     void drawTop(QPainter *painter);
+    void drawTopItem(QPainter *painter, const UtcDateTime &dt, TopPrecision mode, int l, int r);
+    void drawTopItemText(QPainter *painter, const QString &text, const QRect &rect, Qt::Alignment f);
+    template<class TPrecision>
+    QPair<QRect,Qt::Alignment> getTextArea(const QRect &rect, int l, int r, TPrecision mode
+                                           , int topOffset, int height) const;
+
 
 private:
     Precision m_mode;

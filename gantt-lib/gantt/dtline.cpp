@@ -41,7 +41,27 @@ QString DtLine::modeToString(DtLine::Precision mode)
     case years1:
         return "years1";
     default:
-        return "";
+        return "default";
+    }
+}
+
+QString DtLine::modeToString(DtLine::TopPrecision mode)
+{
+    switch(mode)
+    {
+    case topYear:
+        return "topYear";
+    case topMonth:
+        return "topMonth";
+    case topDay:
+        return "topDay";
+    case topHour:
+        return "topHour";
+    case topMinute:
+        return "topMinute";
+    default:
+        qWarning("modeToString <TopPrecision> out of range");
+        return "default";
     }
 }
 
@@ -70,7 +90,6 @@ void DtLine::init()
     setMaximumHeight(heightConstraint);
     setMinimumHeight(heightConstraint);
 
-
     connect(this,SIGNAL(minChanged()),this,SIGNAL(changed()));
     connect(this,SIGNAL(timeSpanChanged()),this,SIGNAL(changed()));
     connect(this,SIGNAL(changed()),this,SLOT(recalc()));
@@ -97,30 +116,194 @@ void DtLine::drawBottom(QPainter *painter)
 {
     if(timeSpanIsValid(m_timeSpan))
     {
-        UtcDateTime dt = displayedDtFewer(m_min,m_mode);
-        while(dt <= max())
-        {
-            int curOffset=dtToPos(dt);
-            if(isDrawn(dt,m_mode))
-            {
-                painter->drawLine(QPointF(curOffset,itemHeight),QPointF(curOffset,itemHeight*(3.0/2))); // big hatch
-                QFont dtFont("Goudy Old Style", 8);
-                painter->setFont(dtFont);
-                painter->drawText(QRectF(-MIN_WIDTH_FOR_TIME_VISUALIZING/2 + curOffset, itemHeight*(3.0/2),
-                                         MIN_WIDTH_FOR_TIME_VISUALIZING,itemHeight/2)
-                                  ,dt.toString(formatForMode(m_mode)),QTextOption(Qt::AlignCenter));
-            }
-            else
-                painter->drawLine(QPointF(curOffset,itemHeight),QPointF(curOffset,itemHeight*(5.0/4))); // little hatch
+        UtcDateTime dt;
+        UtcDateTime nextDt = displayedDtFewer(m_min, m_mode);
+        int l,r;
 
-            dt=dt.addMicroseconds(mcsecsForMode(m_mode,dt.date()) / segmentCountForMode(m_mode,dt.date()));
-        }
+        do{
+            dt = nextDt;
+            nextDt = displayedDtNextHatch(dt, m_mode);
+            l = dtToPos(dt);
+            r = dtToPos(nextDt);
+            qDebug()<< "dt " << dt
+                    << endl
+                    << "mode " << modeToString(m_mode)
+                    << "nextDt " << nextDt
+                    << endl
+                    << "l " << l
+                    << " r " << r
+                    << " rect "<< rect()
+                    << endl
+                    << "min " << min() << " max "<< max();
+            if(isDrawn(dt,m_mode)){
+                static int kk = 0;
+                qDebug() << "isdrawn " << kk++;
+                if(extMode(m_mode)){
+                    painter->drawLine(QPointF(l,itemHeight),
+                                      QPointF(l,itemHeight*2)); // very big hatch
+                }
+                else
+                    painter->drawLine(QPointF(l,itemHeight),
+                                      QPointF(l,itemHeight*(3.0/2))); // big hatch
+
+                drawBottomItemText(painter, dt, m_mode);
+            }
+            else{
+                painter->drawLine(QPointF(l,itemHeight),
+                                  QPointF(l,itemHeight*(5.0/4))); // little hatch
+                qDebug() << "else";
+            }
+        } while(r <= rect().right());
     }
+
+
+//        qDebug() << "+";
+//        UtcDateTime dt = displayedDtFewer(m_min,m_mode),nextDt;
+//        qDebug() << "dspl";
+//        while(dt <= max())
+//        {
+//            nextDt=displayedDtNextHatch(dt,m_mode);
+//            int curOffset=dtToPos(dt);
+//            if(isDrawn(dt,m_mode))
+//            {
+//                static int kk = 0;
+//                qDebug() << "isdrawn " << kk++;
+//                painter->drawLine(QPointF(curOffset,itemHeight),QPointF(curOffset,itemHeight*(3.0/2))); // big hatch
+//                QFont dtFont("Goudy Old Style", 8);
+//                painter->setFont(dtFont);
+//                drawBottomItemText(painter, dt.toString(formatForMode(m_mode), curOffset, dtToPos(nextDt), mode);
+
+//            }
+//            else{
+//                painter->drawLine(QPointF(curOffset,itemHeight),QPointF(curOffset,itemHeight*(5.0/4))); // little hatch
+//                qDebug() << "else";
+//            }
+
+//            qDebug() << "dt " << dt ;
+//            dt = nextDt;
+//            qDebug() << "dt after " << dt ;
+//        }
+//    }
+//    qDebug() << "-";
+}
+
+void DtLine::drawBottomItemText(QPainter *painter, const UtcDateTime &dt, DtLine::Precision mode)
+{
+    static QFont dtFont("Goudy Old Style", 8);
+    int curPos = dtToPos(dt);
+    int nextPos = dtToPos(displayedDtNext(dt,mode));
+    const QString text(dt.toString(formatForMode(mode)));
+    painter->save();
+    painter->setFont(dtFont);
+    if(extMode(mode)){
+        drawBottomItemTextExt(painter,text,curPos,nextPos,mode);
+    }
+    else {
+        painter->drawText(QRectF(-MIN_WIDTH_FOR_TIME_VISUALIZING/2 + curPos, itemHeight*(3.0/2),
+                                 MIN_WIDTH_FOR_TIME_VISUALIZING,itemHeight/2)
+                          , text, QTextOption(Qt::AlignCenter));
+    }
+    painter->restore();
+}
+
+void DtLine::drawBottomItemTextExt(QPainter *painter, const QString &text, int curPos, int nextPos, DtLine::Precision mode)
+{
+    QPair<QRect,Qt::Alignment> textArea = getTextArea(rect(),curPos,nextPos,mode
+                                                      , itemHeight * 5. / 4, itemHeight * 3. / 4);
+
+    painter->drawText(textArea.first
+                      , text
+                      , QTextOption(textArea.second));
 }
 
 void DtLine::drawTop(QPainter *painter)
 {
+    TopPrecision mode = mapToTop(m_mode);
+    if(mode == topEmpty)
+        return; // no paint
 
+    Precision bMode = mapToBottom(mode);
+
+    UtcDateTime dt;
+    UtcDateTime nextDt = displayedDtFewer(min(), bMode);
+    int l,r;
+
+
+    do{
+        dt = nextDt;
+        nextDt = displayedDtNext(dt, bMode);
+        l = dtToPos(dt);
+        r = dtToPos(nextDt);
+        qDebug()<< "dt " << dt
+                << endl
+                << "mode " << modeToString(m_mode)
+                << "nextDt " << nextDt
+                << endl
+                << "l " << l
+                << " r " << r
+                << " rect "<< rect()
+                << endl
+                << "min " << min() << " max "<< max();
+
+
+        drawTopItem(painter, dt, mode, l, r);
+    } while(r <= rect().right());
+
+}
+
+void DtLine::drawTopItem(QPainter *painter, const UtcDateTime &dt, TopPrecision mode, int l, int r)
+{
+    painter->drawLine(QPointF(l,0),QPointF(l,itemHeight));
+
+    QPair<QRect,Qt::Alignment> textArea = getTextArea(rect(),l,r,mode, 0, itemHeight);
+
+    drawTopItemText(painter, dt.toString(formatForMode(mode))
+                    , textArea.first, textArea.second);
+}
+
+void DtLine::drawTopItemText(QPainter *painter, const QString &text, const QRect &rect,  Qt::Alignment f)
+{
+    qDebug() << text;
+    painter->drawText(rect, text  , QTextOption(f));
+}
+template<class TPrecision>
+QPair<QRect, Qt::Alignment> DtLine::getTextArea(const QRect &rect, int l, int r, TPrecision mode
+                                                , int topOffset, int height) const
+{
+    QRect textRect(l, rect.top() + topOffset , r - l, height);
+    Qt::Alignment alignment(Qt::AlignCenter);
+
+    qDebug() << "rect "<< rect;
+    qDebug() << "l " << l << " r " << r;
+    if(l < rect.left()){
+        if( r > rect.right()){
+            textRect.setLeft(rect.left());
+            textRect.setWidth(width());
+        }
+        else{
+            qDebug() << "width for mode ["
+                     << modeToString(mode) << "] = "
+                     << widthForMode(mode);
+            if(r - rect.left() > widthForMode(mode)){
+                textRect.setLeft(rect.left());
+            }
+            else
+                alignment = Qt::AlignRight | Qt::AlignVCenter;
+        }
+    } else if ( r > rect.right()){
+
+        if(rect.right() - l > widthForMode(mode))
+            textRect.setWidth(rect.right() - l);
+        else
+            alignment = Qt::AlignLeft | Qt::AlignVCenter;
+
+    }
+
+    if(alignment != Qt::AlignCenter)
+        textRect.adjust(5,0,-5,0);
+
+    qDebug() << "textRect "<< textRect  ;
+    return qMakePair(textRect,alignment);
 }
 
 TimeSpan DtLine::timeSpan() const
@@ -131,6 +314,16 @@ TimeSpan DtLine::timeSpan() const
 bool DtLine::inRange(const UtcDateTime &dt) const
 {
     return dt > min() && dt < max();
+}
+
+bool DtLine::inRange(int pos) const
+{
+    return pos >= rect().left() && pos <= rect().right();
+}
+
+bool DtLine::inView(const QRect &rect) const
+{
+    return inRange(rect.left()) || inRange(rect.right());
 }
 
 UtcDateTime DtLine::posToDt(int pos) const
@@ -201,7 +394,7 @@ long long DtLine::mcsecsForMode(DtLine::Precision mode, const QDate &date)
             return 345*((long long)SECONDS_IN_DAY)*_MICROSECONDS_IN_SECOND;
         return date.daysInYear()*((long long)SECONDS_IN_DAY)*_MICROSECONDS_IN_SECOND;
     default:
-        qWarning("long long GanttHeader::modeToMicrosecond(GanttHeader::GanttHeaderMode mode) out of range");
+        qWarning("mcsecsForMode out of range");
         return 0;
     }
 }
@@ -243,7 +436,7 @@ long long DtLine::secsForMode(DtLine::Precision mode, const QDate &date)
             return 345*((long long)SECONDS_IN_DAY);
         return date.daysInYear()*((long long)SECONDS_IN_DAY);
     default:
-        qWarning("GanttHeader::modeToSecond out of range");
+        qWarning("secsForMode out of range");
         return 0;
     }
 }
@@ -283,7 +476,7 @@ int DtLine::segmentCountForMode(DtLine::Precision mode, const QDate &date)
     case years1:
         return 12;
     default:
-        qWarning("GanttHeader::modeToSecond out of range");
+        qWarning("segmentCountForMode out of range");
         return 1;
     }
 }
@@ -314,16 +507,62 @@ QString DtLine::formatForMode(DtLine::Precision mode)
     case years1:
         return "yyyy";
     default:
-        qWarning("GanttHeader::formatForMode out of range");
+        qWarning("formatForMode out of range");
         return QString();
     }
+}
+
+QString DtLine::formatForMode(DtLine::TopPrecision mode)
+{
+    switch(mode)
+    {
+    case topYear:
+        return "yyyy";
+    case topMonth:
+        return "MMM yyyy";
+    case topDay:
+        return "dd MMM yyyy";
+    case topHour:
+        return "hh:00 dd MMM yyyy";
+    case topMinute:
+        return "hh:mm dd MMM yyyy";
+    default:
+        qWarning("formatForMode out of range");
+        return QString();
+    }
+}
+
+int DtLine::widthForMode(DtLine::TopPrecision mode)
+{
+    switch(mode)
+    {
+    case topYear:
+        return 35;
+    case topMonth:
+        return 65;
+    case topDay:
+        return 100;
+    case topHour:
+    case topMinute:
+        return 130;
+    default:
+        qWarning("formatForMode out of range");
+        return 1;
+    }
+}
+
+int DtLine::widthForMode(DtLine::Precision mode)
+{
+    return (mode==months1
+                ?MIN_WIDTH_FOR_MONTH_VISUALIZING
+                :MIN_WIDTH_FOR_TIME_VISUALIZING);
 }
 
 bool DtLine::isDrawn(const UtcDateTime &dt, DtLine::Precision mode)
 {
     if(!dt.isValid())
     {
-        qWarning("GanttHeader::isDrawn dt is not valid");
+        qWarning("isDrawn dt is not valid");
         return false;
     }
 
@@ -358,7 +597,7 @@ bool DtLine::isDrawn(const UtcDateTime &dt, DtLine::Precision mode)
     case years1:
         return !(-dt.daysTo(UtcDateTime(QDate(dt.year(),1,1))));
     default:
-        qWarning("GanttHeader::isDrawn out of range");
+        qWarning("isDrawn out of range");
         return false;
     }
 }
@@ -420,7 +659,7 @@ UtcDateTime DtLine::displayedDtFewer(const UtcDateTime &dt, DtLine::Precision mo
     case years1:
         return UtcDateTime(QDate(dt.year(),1,1));
     default:
-        qWarning("GanttHeader::startByDt() out of range");
+        qWarning("displayedDtFewer out of range");
         return UtcDateTime();
     }
 }
@@ -571,26 +810,134 @@ UtcDateTime DtLine::displayedDtGreater(const UtcDateTime &dt, DtLine::Precision 
         return res;
     }
     default:
-        qWarning("GanttHeader::finishByDt() out of range");
+        qWarning("displayedDtGreater out of range");
         return UtcDateTime();
     }
 }
 
 UtcDateTime DtLine::displayedDtNext(const UtcDateTime &dt, DtLine::Precision mode)
 {
-    return dt.addMicroseconds(mcsecsForMode(mode));
+    return dt.addMicroseconds(mcsecsForMode(mode,dt.date()));
 }
 
-UtcDateTime DtLine::displayedDtPrevious(const UtcDateTime &dt, DtLine::Precision mode)
+UtcDateTime DtLine::displayedDtNextHatch(const UtcDateTime &dt, DtLine::Precision mode)
 {
-    return dt.addMicroseconds(-mcsecsForMode(mode));
+    return dt.addMicroseconds(mcsecsForMode(mode,dt.date()) / segmentCountForMode(mode,dt.date()));
 }
 
-int DtLine::calcVisItemCount(int itemWidth) const
+//UtcDateTime DtLine::displayedDtPrevious(const UtcDateTime &dt, DtLine::Precision mode)
+//{
+//    return dt.addMicroseconds(-mcsecsForMode(mode));
+//}
+
+DtLine::TopPrecision DtLine::mapToTop(Precision bottomMode)
+{
+    switch(bottomMode)
+    {
+    case seconds1:
+    case seconds5:
+    case seconds15:
+    case seconds30:
+        return topMinute;
+    case minutes1:
+    case minutes5:
+    case minutes15:
+    case minutes30:
+    case hours1:
+    case hours6:
+    case hours12:
+        return topDay;
+    case days1:
+        return topMonth;
+    case months1:
+        return topYear;
+    case years1:
+        return topEmpty;
+    default:
+        qCritical("mapToTop out of range");
+        return TopPrecision_count;
+    }
+}
+
+DtLine::Precision DtLine::mapToBottom(DtLine::TopPrecision topMode)
+{
+    switch(topMode){
+    case topYear:
+        return years1;
+    case topMonth:
+        return months1;
+    case topDay:
+        return days1;
+    case topHour:
+        return hours1;
+    case topMinute:
+        return minutes1;
+    default:
+        qWarning("mapToBottom default");
+        return Precision_count;
+    }
+}
+
+bool DtLine::extMode(DtLine::Precision mode)
+{
+    switch(mode)
+    {
+    case seconds1:
+    case seconds5:
+    case seconds15:
+    case seconds30:
+    case minutes1:
+    case minutes5:
+    case minutes15:
+    case minutes30:
+    case hours1:
+    case hours6:
+    case hours12:
+        return false;
+    case days1:
+    case months1:
+    case years1:
+        return true;
+    default:
+        qCritical("extMode out of range");
+        return false;
+    }
+}
+
+int DtLine::precisiousWidth() const
+{
+    UtcDateTime dt1 = displayedDtFewer(min() , m_mode),dt2 = displayedDtGreater(min() , m_mode);
+    int appWidth = 0;
+    int tmp;
+    const int visualItemWidth = (m_mode==months1
+                              ?MIN_WIDTH_FOR_MONTH_VISUALIZING
+                              :MIN_WIDTH_FOR_TIME_VISUALIZING);
+    if(inRange((tmp = dtToPos(dt1) + visualItemWidth/2))
+       && !inRange(tmp - visualItemWidth) ){
+        appWidth += rect().left() - (tmp - visualItemWidth) ;
+    } else if (dt1!=dt2
+               && !inRange((tmp = dtToPos(dt2) - visualItemWidth/2))
+               && inRange(tmp + visualItemWidth)){
+        appWidth += rect().left() - tmp;
+    }
+    dt1 = displayedDtFewer(max() , m_mode); dt2 = displayedDtGreater(max() , m_mode);
+    if(inRange((tmp = dtToPos(dt2) - visualItemWidth/2))
+       && inRange(tmp + visualItemWidth) ){
+        appWidth += (tmp + visualItemWidth) - rect().right();
+    } else if (dt1!=dt2
+               && !inRange((tmp = dtToPos(dt1) + visualItemWidth/2))
+               && inRange(tmp - visualItemWidth) ){
+        appWidth += tmp - rect().right();
+    }
+
+    return width() + appWidth;
+}
+
+int DtLine::calcVisItemCount(int width,int itemWidth) const
 {
     if(!itemWidth)
         return 1;
-    return (width()-itemWidth)/itemWidth;
+    return (width-itemWidth)/itemWidth;
 }
 
 DtLine::Precision DtLine::calculateTimeMode() const
@@ -598,8 +945,13 @@ DtLine::Precision DtLine::calculateTimeMode() const
     if(!timeSpanIsValid(m_timeSpan) || width() < MIN_WIDTH_FOR_TIME_VISUALIZING)
         return (Precision)0;
 
-    qreal   coef = (m_timeSpan.totalMicroseconds() * 1. / calcVisItemCount(MIN_WIDTH_FOR_TIME_VISUALIZING-5)),
-            monthCoef = (m_timeSpan.totalMicroseconds() * 1. / calcVisItemCount(MIN_WIDTH_FOR_MONTH_VISUALIZING));
+    if(m_min.year() == 1998){
+        formatForMode(m_mode);
+    }
+    qreal   coef = (m_timeSpan.totalMicroseconds() * 1. /
+                    calcVisItemCount(precisiousWidth(), MIN_WIDTH_FOR_TIME_VISUALIZING)),
+            monthCoef = (m_timeSpan.totalMicroseconds() * 1. /
+                         calcVisItemCount(precisiousWidth(), MIN_WIDTH_FOR_MONTH_VISUALIZING));
 
     Precision mode = Precision_count;
 
@@ -617,7 +969,7 @@ DtLine::Precision DtLine::calculateTimeMode() const
 
     if(mode == Precision_count)
     {
-        qWarning("GanttHeader::calculateTimeMode() out of range");
+        qWarning("calculateTimeMode() out of range");
 
         return (Precision)0;
     }
@@ -628,14 +980,20 @@ DtLine::Precision DtLine::calculateTimeMode() const
 void DtLine::recalc()
 {
     m_mode = calculateTimeMode();
-    qDebug() << "mode " << modeToString(m_mode);
+    qDebug() << "min "<< min() << " max "<< max();
+    qDebug() << "mode " << modeToString( m_mode) << " " << QDateTime::currentDateTime();
     update();
 }
 
 
 void DtLine::setTimeSpan(const TimeSpan &timeSpan)
 {
-    m_timeSpan = timeSpan;
+    if(timeSpan.totalMicroseconds() < 0)
+    {
+        qWarning("DtLine::setTimeSpan:: TimeSpan's msc's < 0 setting inner TimeSpan to 0");
+        m_timeSpan = TimeSpan();
+    } else
+        m_timeSpan = timeSpan;
     emit timeSpanChanged();
 }
 
