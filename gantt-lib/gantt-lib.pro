@@ -43,10 +43,12 @@ SOURCES += ganttlib.cpp \
     intervalslider.cpp \
     gantt/dtline.cpp \
     timespan_extension.cpp \
-    gantt/ganttinfoitem.cpp \
-    gantt/ganttinfoleaf.cpp \
-    gantt/ganttinfonode.cpp \
-    gantt/gantttreemodel.cpp
+    gantt/default_model/ganttinfoitem.cpp \
+    gantt/default_model/ganttinfoleaf.cpp \
+    gantt/default_model/ganttinfonode.cpp \
+    gantt/default_model/gantttreemodel.cpp \
+    gantt/default_model/iganttmodel.cpp \
+    gantt/default_model/gantttreeview.cpp
 
 HEADERS += ganttlib.h\
         gantt-lib_global.h \
@@ -55,12 +57,17 @@ HEADERS += ganttlib.h\
     gantt/dtline.h \
     timespan_extension.h \
     gantt-lib_global_values.h \
-    gantt/ganttinfoitem.h \
-    gantt/ganttinfoleaf.h \
-    gantt/ganttinfonode.h \
-    gantt/gantttreemodel.h
+    gantt/default_model/ganttinfonode.h \
+    gantt/default_model/ganttinfoitem.h \
+    gantt/default_model/ganttinfoleaf.h \
+    gantt/default_model/gantttreemodel.h \
+    gantt/default_model/iganttmodel.h \
+    gantt/default_model/gantttreeview.h
 
 unix {
     target.path = /usr/lib
     INSTALLS += target
 }
+
+RESOURCES += \
+    icons.qrc

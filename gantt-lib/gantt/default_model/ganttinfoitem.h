@@ -1,7 +1,7 @@
 #ifndef GANTTINFOITEM_H
 #define GANTTINFOITEM_H
 
-#include "ganttproject_global.h"
+#include "gantt-lib_global.h"
 
 #include <QString>
 #include <QModelIndex>
@@ -10,7 +10,7 @@
 class GanttInfoNode;
 class UtcDateTime;
 
-class GANTTMODELSHARED_EXPORT GanttInfoItem : public QObject
+class GANTTLIBSHARED_EXPORT GanttInfoItem : public QObject
 {
     Q_OBJECT
 

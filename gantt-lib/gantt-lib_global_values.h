@@ -4,8 +4,13 @@
 #define SLIDER_COLOR (QColor(125,179,250))
 #define HEADER_COLOR (QColor(32,97,196))
 
+#define DEFAULT_ITEM_WIDTH      (qreal(20))
+#define DEFAULT_MONTH_WIDTH     (qreal(35))
 
-//the three values below are dependent
+#define DEFAULT_ITEM_HEIGHT     (20)
+#define DEFAULT_HEADER_HEIGHT    (2*DEFAULT_ITEM_HEIGHT)
+
+//the three values below are linked
 #define MIN_WIDTH_FOR_MONTH_VISUALIZING (qreal(50))
 #define MIN_WIDTH_FOR_TIME_VISUALIZING (qreal(30)) // in pixels
 #define LITTLE_HATCH_COUNT (5)

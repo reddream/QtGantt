@@ -1,0 +1,30 @@
+<RCC>
+    <qresource prefix="/">
+        <file>icons/back_off_64.png</file>
+        <file>icons/back_on_64.png</file>
+        <file>icons/back_step_off_64.png</file>
+        <file>icons/back_step_on_64.png</file>
+        <file>icons/begin_off_64.png</file>
+        <file>icons/begin_on_64.png</file>
+        <file>icons/end_off_64.png</file>
+        <file>icons/end_on_64.png</file>
+        <file>icons/forward_off_64.png</file>
+        <file>icons/forward_on_64.png</file>
+        <file>icons/forward_step_off_64.png</file>
+        <file>icons/forward_step_on_64.png</file>
+        <file>icons/less_click_32.png</file>
+        <file>icons/more_click_32.png</file>
+        <file>icons/next_off_64.png</file>
+        <file>icons/next_on_64.png</file>
+        <file>icons/pause_off_64.png</file>
+        <file>icons/pause_on_64.png</file>
+        <file>icons/prev_off_64.png</file>
+        <file>icons/prev_on_64.png</file>
+        <file>icons/rec_off_64.png</file>
+        <file>icons/rec_on_64.png</file>
+        <file>icons/reg_speed_on_64.png</file>
+        <file>icons/reg_step_on_64.png</file>
+        <file>icons/stop_off_64.png</file>
+        <file>icons/stop_on_64.png</file>
+    </qresource>
+</RCC>

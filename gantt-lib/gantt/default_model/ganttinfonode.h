@@ -9,7 +9,7 @@
 class GanttHeader;
 class GanttScene;
 
-class GANTTMODELSHARED_EXPORT GanttInfoNode : public GanttInfoItem
+class GANTTLIBSHARED_EXPORT GanttInfoNode : public GanttInfoItem
 {
     Q_OBJECT
 

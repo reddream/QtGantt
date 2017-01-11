@@ -3,12 +3,13 @@
 
 #include "ganttinfoleaf.h"
 #include "ganttinfonode.h"
+#include "iganttmodel.h"
 
 #include <QAbstractItemModel>
 
 class GanttWidget;
 
-class GanttTreeModel : public QAbstractItemModel
+class GanttTreeModel : public QAbstractItemModel, public IGanttModel
 {
     Q_OBJECT
 
@@ -49,6 +50,40 @@ public:
 
 
     GanttInfoNode *root() const;
+
+    // --- Interface implementation
+
+    QString     title(const QModelIndex &index){
+        GanttInfoItem *item =itemForIndex(index);
+        if(item)
+            return item->title();
+        return QString();
+    }
+
+    UtcDateTime start(const QModelIndex &index){
+        GanttInfoLeaf *leaf =leafForIndex(index);
+        if(leaf)
+            return leaf->start();
+        return UtcDateTime();
+    }
+    UtcDateTime finish(const QModelIndex &index){
+        GanttInfoLeaf *leaf =leafForIndex(index);
+        if(leaf)
+            return leaf->finish();
+        return UtcDateTime();
+    }
+
+    QModelIndex index(const QString &title){
+        QModelIndexList matches = match(index(0,0),Qt::DisplayRole,QVariant::fromValue(title));
+        if(matches.isEmpty()){
+            qDebug() << "not found";
+            return QModelIndex();
+        }
+        return matches.at(0);
+    }
+
+
+    // ---
 
 
 signals:

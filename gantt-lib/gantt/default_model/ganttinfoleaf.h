@@ -7,7 +7,7 @@
 
 #include <QColor>
 
-class GANTTMODELSHARED_EXPORT GanttInfoLeaf : public GanttInfoItem
+class GANTTLIBSHARED_EXPORT GanttInfoLeaf : public GanttInfoItem
 {
     Q_OBJECT
 

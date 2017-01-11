@@ -1,6 +1,6 @@
 #-------------------------------------------------
 #
-# Project created by QtCreator 2017-01-10T14:53:54
+# Project created by QtCreator 2017-01-11T17:00:45
 #
 #-------------------------------------------------
 
@@ -8,7 +8,7 @@ QT       += core gui
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-TARGET = gantt-demo
+TARGET = gantt-full-demo
 TEMPLATE = app
 
 include(../demo-lib-include.pri)
@@ -22,3 +22,5 @@ FORMS    += mainwindow.ui
 
 DISTFILES += \
     ../demo-lib-include.pri
+
+RESOURCES +=

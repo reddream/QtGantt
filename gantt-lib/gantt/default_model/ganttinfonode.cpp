@@ -1,7 +1,7 @@
 #include "ganttinfonode.h"
 #include "gantttreemodel.h"
 
-#include "ganttglobalvalues.h"
+#include "gantt-lib_global_values.h"
 
 GanttInfoNode::GanttInfoNode(QObject *parent)
     :GanttInfoItem(parent)

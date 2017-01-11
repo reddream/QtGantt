@@ -1,7 +1,7 @@
 #include "ganttinfoleaf.h"
 #include "gantttreemodel.h"
 
-#include "ganttglobalvalues.h"
+#include "gantt-lib_global_values.h"
 
 GanttInfoLeaf::GanttInfoLeaf(QObject *parent)
     :GanttInfoItem(parent)
@@ -25,9 +25,8 @@ void GanttInfoLeaf::setStart(const UtcDateTime &start)
 {
     if(start == m_start)
         return;
-//    UtcDateTime lastStart = m_start;
     m_start = start;
-    emit startChanged(/*lastStart*/);
+    emit startChanged();
 }
 UtcDateTime GanttInfoLeaf::finish() const
 {
