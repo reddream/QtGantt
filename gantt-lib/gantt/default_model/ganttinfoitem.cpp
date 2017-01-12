@@ -4,15 +4,26 @@
 #include "gantt-lib_global_values.h"
 
 GanttInfoItem::GanttInfoItem(QObject *parent)
-    :QObject(parent)
+    : QObject(parent)
 {
-    m_linkCnt = 0;
-    m_deleted = false;
-    m_parent = NULL;
+    init();
+}
 
-    connect(this,SIGNAL(indexChanged()),this,SIGNAL(changed()));
-    connect(this,SIGNAL(titleChanged()),this,SIGNAL(changed()));
-    connect(this,SIGNAL(parentChanged()),this,SIGNAL(changed()));
+GanttInfoItem::GanttInfoItem(const QString &title, const UtcDateTime &start, const UtcDateTime &finish
+                             , const QModelIndex &index
+                             , const QColor &color
+                             , GanttInfoNode *parentNode
+                             , QObject *parent)
+    : QObject(parent)
+{
+    init();
+
+    setTitle(title);
+    setStart(start);
+    setFinish(finish);
+    setIndex(index);
+    setParent(parentNode);
+    setColor(color);
 }
 
 GanttInfoItem::~GanttInfoItem()
@@ -21,21 +32,21 @@ GanttInfoItem::~GanttInfoItem()
 
 QString GanttInfoItem::title() const
 {
-    return m_title;
+    return _title;
 }
 
 void GanttInfoItem::setTitle(const QString &title)
 {
-    if(title == m_title)
+    if(title == _title)
         return;
-    m_title = title;
+    _title = title;
     emit titleChanged();
 }
 
 int GanttInfoItem::row() const
 {
-    if(m_parent)
-        return m_parent->indexOf(this);
+    if(_parent)
+        return _parent->indexOf(this);
 
     return 0;
 }
@@ -46,21 +57,92 @@ int GanttInfoItem::indexOf(const GanttInfoItem* p_item) const
     return -1;
 }
 
+void GanttInfoItem::init()
+{
+    _linkCnt = 0;
+    _deleted = false;
+    _parent = NULL;
+    _color = Qt::green;
+    _start = _finish = UtcDateTime();
+    _index = QModelIndex();
+
+    connect(this,SIGNAL(indexChanged()),this,SIGNAL(changed()));
+    connect(this,SIGNAL(titleChanged()),this,SIGNAL(changed()));
+    connect(this,SIGNAL(parentChanged()),this,SIGNAL(changed()));
+    connect(this,SIGNAL(startChanged()),this,SIGNAL(changed()));
+    connect(this,SIGNAL(finishChanged()),this,SIGNAL(changed()));
+    connect(this,SIGNAL(colorChanged()),this,SIGNAL(changed()));
+}
+
+QColor GanttInfoItem::color() const
+{
+    return _color;
+}
+
+bool GanttInfoItem::hasStart() const
+{
+    return _start.isValid();
+}
+
+bool GanttInfoItem::hasFinish() const
+{
+    return _finish.isValid();
+}
+
+long long GanttInfoItem::duration() const
+{
+    return _start.microsecondsTo(_finish);
+}
+
+void GanttInfoItem::setColor(const QColor &color)
+{
+    if(color == _color)
+        return;
+    _color = color;
+    emit colorChanged();
+}
+
+UtcDateTime GanttInfoItem::finish() const
+{
+    return _finish;
+}
+
+void GanttInfoItem::setFinish(const UtcDateTime &finish)
+{
+    if(finish == _finish)
+        return;
+    _finish = finish;
+    emit startChanged();
+}
+
+UtcDateTime GanttInfoItem::start() const
+{
+    return _start;
+}
+
+void GanttInfoItem::setStart(const UtcDateTime &start)
+{
+    if(start == _start)
+        return;
+    _start = start;
+    emit startChanged();
+}
+
 
 QModelIndex GanttInfoItem::index() const
 {
-    return m_index;
+    return _index;
 }
 
 void GanttInfoItem::increaseLinkCnt()
 {
-    ++m_linkCnt;
+    ++_linkCnt;
 }
 
 void GanttInfoItem::reduceLinkCnt()
 {
-    --m_linkCnt;
-    tryDeleteHimself();
+    --_linkCnt;
+    tryDelete();
 }
 
 QPair<UtcDateTime,UtcDateTime> myMax(const QPair<UtcDateTime,UtcDateTime>&f,const QPair<UtcDateTime,UtcDateTime>&s)
@@ -89,57 +171,62 @@ QPair<UtcDateTime,UtcDateTime> GanttInfoItem::getLimits(const GanttInfoItem *roo
     QPair<UtcDateTime,UtcDateTime> res;
     if(!root)
         return res;
+    res = qMakePair(root->start(),root->finish());
+
     const GanttInfoLeaf*leaf = qobject_cast<const GanttInfoLeaf*>(root);
     if(leaf)
     {
-        return qMakePair(leaf->start(),leaf->finish());
+        return res;
     }
-
     const GanttInfoNode *rNode = qobject_cast<const GanttInfoNode*>(root);
-    res = qMakePair(rNode->calcDt(),rNode->calcDt());
     for(int i = 0; i<rNode->size(); ++i)
     {
-        res = myMax(res,getLimits(rNode->child(i)));
+        res = myMax(res,getLimits(rNode->at(i)));
     }
     return res;
 }
 
+bool GanttInfoItem::operator==(const GanttInfoItem &another)
+{
+    return _title == another._title;
+}
+
 void GanttInfoItem::setIndex(const QModelIndex &index)
 {
-    if(index == m_index)
+    if(index == _index)
         return;
 
-    m_index = index;
+    _index = index;
     emit indexChanged();
 }
 
 void GanttInfoItem::setParent(GanttInfoNode *parent)
 {
-    if(parent == m_parent)
+    if(parent == _parent)
         return;
 
-    m_parent = parent;
+    _parent = parent;
     emit parentChanged();
 }
 
 void GanttInfoItem::deleteInfoItem()
 {
     emit aboutToBeDeleted();
-    tryDeleteHimself();
+    tryDelete();
 }
 
-void GanttInfoItem::tryDeleteHimself()
+void GanttInfoItem::tryDelete()
 {
-    if(m_linkCnt>0)
+    if(_linkCnt>0)
         return;
 
-    m_mutex.lock();
-    if(!m_deleted)
+    _mutex.lock();
+    if(!_deleted)
     {
         this->deleteLater();
-        m_deleted = true;
+        _deleted = true;
     }
-    m_mutex.unlock();
+    _mutex.unlock();
 }
 
 qreal GanttInfoItem::pos() const
@@ -152,12 +239,12 @@ qreal GanttInfoItem::pos() const
     qreal base = p_parent->pos();
 
 
-    if(!p_parent->isExpanded())
+    if(!p_parent->expanded())
         return base;
 
-    qreal offset = (p_parent->parent())?(DEFAULT_ITEM_HEIGHT):(0); // if m_root don't need extra offset
-    const QList<GanttInfoItem*>& items = p_parent->m_items;
-    // looking for this item, stops when found
+    qreal offset = (p_parent->parent())?(DEFAULT_ITEM_HEIGHT):(0); // if root needn't extra offset
+    const QList<GanttInfoItem*>& items = p_parent->_items;
+    // looking for this item, stops on found
     for(int i = 0; i < items.size(); ++i)
     {
         if( items[i] == this)
@@ -172,6 +259,6 @@ qreal GanttInfoItem::pos() const
 
 GanttInfoNode *GanttInfoItem::parent() const
 {
-    return m_parent;
+    return _parent;
 }
 

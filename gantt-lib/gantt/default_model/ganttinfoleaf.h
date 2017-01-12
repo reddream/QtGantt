@@ -13,31 +13,20 @@ class GANTTLIBSHARED_EXPORT GanttInfoLeaf : public GanttInfoItem
 
 public:
     GanttInfoLeaf(QObject *parent = NULL);
-
-    UtcDateTime start() const;
-    UtcDateTime finish() const;
-    QColor getColor() const;
-
-    long long duration() const; // in microsec
+    GanttInfoLeaf(const QString &title
+                  , const UtcDateTime   &start
+                  , const UtcDateTime   &finish
+                  , const QModelIndex   &index
+                  , const QColor   &color = Qt::green
+                  , GanttInfoNode       *parentNode = NULL
+                  , QObject             *parent = NULL);
 
     int columnCount() const;
     qreal height() const;
     void callForEachItemRecursively(void (*func)(GanttInfoItem*));
 
-signals:
-    void startChanged(/*UtcDateTime prevStart*/);
-    void finishChanged(/*UtcDateTime prevFinish*/);
-    void colorChanged();
-
-public slots:
-    void setStart(const UtcDateTime &start);
-    void setFinish(const UtcDateTime &finish);
-    void setColor(const QColor &value);
-
 private:
-    UtcDateTime m_start,
-            m_finish;
-    QColor m_color;
+
 
 };
 

@@ -15,7 +15,7 @@ GanttTreeModel::GanttTreeModel(GanttInfoNode *root,QObject * parent)
     if(!m_root)
         m_root = new GanttInfoNode;
 
-    m_root->setIsExpanded(true);
+    m_root->setExpanded(true);
     initIndexes(m_root);
 }
 
@@ -70,8 +70,8 @@ QVariant GanttTreeModel::data(const QModelIndex &index, int role) const
         case 0:
             return node->title();
         case 1:
-            if(node->hasCalcDt())
-                return node->calcDt().dateTime();
+            if(node->hasStart())
+                return node->start().dateTime();
             return QVariant();
         case finishField:
         case durationField:
@@ -140,7 +140,7 @@ QModelIndex GanttTreeModel::index(int row, int column, const QModelIndex &parent
     else
         parentNode = nodeForIndex(parent);
 
-    GanttInfoItem *childItem = parentNode->child(row);
+    GanttInfoItem *childItem = parentNode->at(row);
 
     if (childItem)
         return createIndex(row, column, childItem);
@@ -190,7 +190,7 @@ void GanttTreeModel::initIndexes(GanttInfoItem *item)
         {
             beginInsertRows(p_node->index(),0, p_node->size() - 1);
             for(int i = 0; i < p_node->size(); ++i)
-                initIndexes(p_node->child(i));
+                initIndexes(p_node->at(i));
             endInsertRows();
         }
     }
@@ -203,7 +203,7 @@ GanttInfoItem *GanttTreeModel::itemForNameHelper(const QString &title,GanttInfoN
 
     for(int i = 0; i < node->size(); ++i)
     {
-        GanttInfoItem *p_item = node->child(i) , *tmp;
+        GanttInfoItem *p_item = node->at(i) , *tmp;
         if(p_item->title() == title)
             return p_item;
 
@@ -346,7 +346,7 @@ void GanttTreeModel::addItems(const QList<GanttInfoItem *> &items)
     for(int i = 0; i<m_root->size() ; ++i)
     {
         GanttInfoNode *node = m_root->nodeAt(i);
-        if(node && node->isExpanded())
+        if(node && node->expanded())
         {
             emit needCollapse(node);
         }
@@ -365,7 +365,7 @@ void GanttTreeModel::addItems(GanttInfoItem *item)
         {
             beginInsertRows(insertToNode->index(),insertToNode->size(),insertToNode->size()+node->size());
             for(int i=0;i<node->size();++i)
-                insertToNode->append(node->child(i));
+                insertToNode->append(node->at(i));
             endInsertRows();
         }
         initIndexes(insertToNode);
@@ -382,7 +382,7 @@ void GanttTreeModel::addItems(GanttInfoItem *item)
     for(int i = 0; i<m_root->size() ; ++i)
     {
         GanttInfoNode *node = m_root->nodeAt(i);
-        if(node && node->isExpanded())
+        if(node && node->expanded())
         {
             emit needCollapse(node);
         }

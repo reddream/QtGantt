@@ -6,10 +6,17 @@
 GanttInfoNode::GanttInfoNode(QObject *parent)
     :GanttInfoItem(parent)
 {
-    m_isExpanded = false;
+    init();
+}
 
-    connect(this,SIGNAL(itemsChanged()),this,SIGNAL(changed()));
-    connect(this,SIGNAL(calcDtChanged()),this,SIGNAL(changed()));
+GanttInfoNode::GanttInfoNode(const QString &title, const UtcDateTime &start, const UtcDateTime &finish
+                             , const QModelIndex &index
+                             , const QColor &color
+                             , GanttInfoNode *parentNode
+                             , QObject *parent)
+    : GanttInfoItem(title,start,finish,index,color,parentNode,parent)
+{
+    init();
 }
 
 GanttInfoLeaf *GanttInfoNode::leafAt(int index) const
@@ -17,7 +24,7 @@ GanttInfoLeaf *GanttInfoNode::leafAt(int index) const
     if(index>=size())
         return NULL;
 
-    return dynamic_cast<GanttInfoLeaf*>(m_items[index]);
+    return dynamic_cast<GanttInfoLeaf*>(_items[index]);
 }
 
 GanttInfoNode *GanttInfoNode::nodeAt(int index) const
@@ -25,29 +32,34 @@ GanttInfoNode *GanttInfoNode::nodeAt(int index) const
     if(index>=size())
         return NULL;
 
-    return dynamic_cast<GanttInfoNode*>(m_items[index]);
+    return dynamic_cast<GanttInfoNode*>(_items[index]);
 }
 
-GanttInfoItem *GanttInfoNode::child(int index) const
+GanttInfoItem *GanttInfoNode::at(int index) const
 {
     if(index>=size())
         return NULL;
-    return m_items[index];
+    return _items[index];
+}
+
+GanttInfoItem *GanttInfoNode::operator[](int index) const
+{
+    return at(index);
 }
 
 int GanttInfoNode::size() const
 {
-    return m_items.size();
+    return _items.size();
 }
 
 bool GanttInfoNode::isEmpty() const
 {
-    return m_items.isEmpty();
+    return _items.isEmpty();
 }
 
 void GanttInfoNode::clear()
 {
-    m_items.clear();
+    _items.clear();
 }
 
 
@@ -57,7 +69,7 @@ void GanttInfoNode::append(GanttInfoItem *item)
         return;
 
     item->setParent(this);
-    m_items.append(item);
+    _items.append(item);
     emit itemsChanged();
 }
 
@@ -68,13 +80,13 @@ void GanttInfoNode::append(const QList<GanttInfoItem *> &items)
 
     foreach(GanttInfoItem* item, items)
         item->setParent(this);
-    m_items.append(items);
+    _items.append(items);
     emit itemsChanged();
 }
 
 bool GanttInfoNode::removeOne(GanttInfoItem *item)
 {
-    if(m_items.removeOne(item))
+    if(_items.removeOne(item))
     {
         emit itemsChanged();
         return true;
@@ -89,11 +101,11 @@ int GanttInfoNode::columnCount() const
 
 qreal GanttInfoNode::height() const
 {
-    qreal nodeHeight = /*(m_items.isEmpty())? 0 :*/ DEFAULT_ITEM_WIDTH;
-    if(m_isExpanded)
+    qreal nodeHeight = DEFAULT_ITEM_WIDTH;
+    if(_expanded)
     {
         qreal childsHeight = 0;
-        foreach(GanttInfoItem* item, m_items)
+        foreach(GanttInfoItem* item, _items)
         {
             childsHeight+=item->height();
         }
@@ -108,26 +120,14 @@ qreal GanttInfoNode::height() const
 int GanttInfoNode::indexOf(const GanttInfoItem * p_item) const
 {
     GanttInfoItem *p = const_cast<GanttInfoItem*>(p_item);
-    return m_items.indexOf(p);
+    return _items.indexOf(p);
 }
 
-UtcDateTime GanttInfoNode::calcDt() const
+void GanttInfoNode::init()
 {
-    return m_calcDt;
-}
+    _expanded = false;
 
-bool GanttInfoNode::hasCalcDt() const
-{
-    return m_calcDt.isValid();
-}
-
-void GanttInfoNode::setCalcDt(const UtcDateTime &calcDt)
-{
-    if(m_calcDt == calcDt)
-        return;
-    
-    m_calcDt = calcDt;
-    emit calcDtChanged();
+    connect(this,SIGNAL(itemsChanged()),this,SIGNAL(changed()));
 }
 
 void GanttInfoNode::callForEachItemRecursively(void (*func)(GanttInfoItem *))
@@ -135,19 +135,24 @@ void GanttInfoNode::callForEachItemRecursively(void (*func)(GanttInfoItem *))
     if(!func)
         return;
 
-    foreach(GanttInfoItem* item, m_items)
+    foreach(GanttInfoItem* item, _items)
         item->callForEachItemRecursively(func);
 
     (*func)(this);
 }
-void GanttInfoNode::setIsExpanded(bool isExpanded)
+void GanttInfoNode::setExpanded(bool newExpanded)
 {
-    m_isExpanded = isExpanded;
+    if(!_expanded && newExpanded)
+        emit expanded();
+    if(_expanded && !newExpanded)
+        emit collapsed();
+
+    _expanded = newExpanded;
 }
 
-bool GanttInfoNode::isExpanded() const
+bool GanttInfoNode::expanded() const
 {
-    return m_isExpanded;
+    return _expanded;
 }
 
 

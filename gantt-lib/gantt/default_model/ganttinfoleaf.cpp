@@ -6,61 +6,18 @@
 GanttInfoLeaf::GanttInfoLeaf(QObject *parent)
     :GanttInfoItem(parent)
 {
-    m_color = Qt::green;
-    m_start = m_finish = UtcDateTime();
 
-
-    connect(this,SIGNAL(startChanged()),this,SIGNAL(changed()));
-    connect(this,SIGNAL(finishChanged()),this,SIGNAL(changed()));
-    connect(this,SIGNAL(colorChanged()),this,SIGNAL(changed()));
 }
 
-
-UtcDateTime GanttInfoLeaf::start() const
+GanttInfoLeaf::GanttInfoLeaf(const QString &title, const UtcDateTime &start, const UtcDateTime &finish, const QModelIndex &index
+                             , const QColor &color, GanttInfoNode *parentNode, QObject *parent)
+    : GanttInfoItem(title,start,finish,index,color,parentNode,parent)
 {
-    return m_start;
-}
-
-void GanttInfoLeaf::setStart(const UtcDateTime &start)
-{
-    if(start == m_start)
-        return;
-    m_start = start;
-    emit startChanged();
-}
-UtcDateTime GanttInfoLeaf::finish() const
-{
-    return m_finish;
-}
-
-void GanttInfoLeaf::setFinish(const UtcDateTime &finish)
-{
-    if(finish == m_finish)
-        return;
-
-//    UtcDateTime lastFinish = m_finish;
-    m_finish = finish;
-    emit finishChanged(/*lastFinish*/);
 
 }
-QColor GanttInfoLeaf::getColor() const
-{
-    return m_color;
-}
 
-void GanttInfoLeaf::setColor(const QColor &value)
-{
-    if(value == m_color)
-        return;
 
-    m_color = value;
-    emit colorChanged();
-}
 
-long long GanttInfoLeaf::duration() const
-{
-    return m_start.microsecondsTo(m_finish);
-}
 
 int GanttInfoLeaf::columnCount() const
 {

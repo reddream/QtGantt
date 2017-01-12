@@ -61,16 +61,22 @@ public:
     }
 
     UtcDateTime start(const QModelIndex &index){
-        GanttInfoLeaf *leaf =leafForIndex(index);
-        if(leaf)
-            return leaf->start();
+        GanttInfoItem *item =itemForIndex(index);
+        if(item)
+            return item->start();
         return UtcDateTime();
     }
     UtcDateTime finish(const QModelIndex &index){
-        GanttInfoLeaf *leaf =leafForIndex(index);
-        if(leaf)
-            return leaf->finish();
+        GanttInfoItem *item =itemForIndex(index);
+        if(item)
+            return item->finish();
         return UtcDateTime();
+    }
+    QColor      color(const QModelIndex &index){
+        GanttInfoItem *item =itemForIndex(index);
+        if(item)
+            return item->color();
+        return Qt::green;
     }
 
     QModelIndex index(const QString &title){
