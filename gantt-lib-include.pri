@@ -31,6 +31,7 @@ CONFIG(release, debug|release) {
 message(Library directory: $$LIB_DIR)
 
 INCLUDEPATH += $$LIB_DIR
+INCLUDEPATH += $$LIB_DIR/extensions
 INCLUDEPATH += $$LIB_DIR/gantt
 INCLUDEPATH += $$LIB_DIR/gantt/default_model
 INCLUDEPATH += $$LIB_DIR/gantt/player

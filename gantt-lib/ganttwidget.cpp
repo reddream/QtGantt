@@ -1,6 +1,8 @@
 #include "ganttwidget.h"
 #include "ui_ganttwidget.h"
 
+#include "ganttscene.h"
+
 #include <QScrollBar>
 #include <QAbstractItemModel>
 
@@ -65,7 +67,7 @@ void GanttWidget::setModel(IGanttModel *model)
 
 void GanttWidget::setView(QTreeView *view, bool inner)
 {
-
+    /// TODO
 }
 
 void GanttWidget::onGanttViewCustomContextMenuRequested(const QPoint &point)
@@ -78,5 +80,16 @@ void GanttWidget::onGanttViewCustomContextMenuRequested(const QPoint &point)
 void GanttWidget::init()
 {
     _treeInfo = new GanttInfoTree(this);
+    _scene = new GanttScene(ui->ganttView,ui->widgetDtLine,this);
+    connectSceneToInfo();
+}
+
+void GanttWidget::connectSceneToInfo()
+{
+    connect(_treeInfo,SIGNAL(itemAdded(GanttInfoItem*)),_scene,SLOT(onItemAdded(GanttInfoItem*)));
+    connect(_treeInfo,SIGNAL(itemRemoved(GanttInfoItem*)),_scene,SLOT(onItemRemoved(GanttInfoItem*)));
+
+    connect(_treeInfo,SIGNAL(endInsertItems()),_scene,SLOT(onEndInsertItems()));
+
 }
 

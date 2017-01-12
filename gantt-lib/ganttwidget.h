@@ -37,8 +37,6 @@ public:
 
 
 
-
-
 signals:
 
 private slots:
@@ -51,10 +49,12 @@ public slots:
 
 private:
     void init();
+    void connectSceneToInfo();
 
 private:
     Ui::GanttWidget *ui;
     GanttInfoTree *_treeInfo;
+    GanttScene *_scene;
 
 
     bool m_playerShown;

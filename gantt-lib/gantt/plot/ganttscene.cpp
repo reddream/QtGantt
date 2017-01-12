@@ -21,34 +21,6 @@
 #include <QtCore/qmath.h>
 #include <QDebug>
 
-//GanttScene::GanttScene(QObject * parent) :
-//    QGraphicsScene(parent)
-//{
-
-
-////    QBrush backgroundBrush(Qt::HorPattern);
-////    backgroundBrush.setMatrix(QMatrix().scale(1,DEFAULT_ITEM_HEIGHT*1.0/15));
-
-////    setBackgroundBrush(backgroundBrush);
-
-
-//}
-
-void GanttScene::updateWidth(int w)
-{
-    if(w < GANTTSCENE_MIN_WIDTH)
-        w = GANTTSCENE_MIN_WIDTH;
-
-    setSceneRect(0,0,w,sceneRect().height());
-
-    if(views().isEmpty())
-        return;
-}
-
-void GanttScene::updateHeight(int h)
-{
-    setSceneRect(0,0,sceneRect().width(),h);
-}
 
 void GanttScene::drawBackground(QPainter *painter, const QRectF &rect)
 {
@@ -77,15 +49,6 @@ QGraphicsObject *GanttScene::itemByInfo(const GanttInfoItem *key) const
     return m_itemByInfo.value(key);
 }
 
-
-void GanttScene::onViewResize(const QSize &newSize)
-{
-    updateWidth(newSize.width());
-    updateItems();
-    updateSliderRect();
-
-    emit viewResized();
-}
 
 void GanttScene::updateSceneRect()
 {
@@ -154,14 +117,6 @@ void GanttScene::moveSliderToStart()
         m_slider->moveToBegin();
 }
 
-void GanttScene::onViewAdded(QGraphicsView* view)
-{
-    if(!view)
-        return;
-    m_view = view;
-    onViewResize(view->size());
-}
-
 UtcDateTime GanttScene::slidersDt() const
 {
     return m_slider->dt();
@@ -191,7 +146,7 @@ void GanttScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
         {
             QRectF viewRect = m_view->mapToScene(m_view->viewport()->geometry()).boundingRect()
                     .adjusted(0,DEFAULT_HEADER_HEIGHT,0,0);
-            if(viewRect.contains(event->scenePos()) && !m_crossObject.isNull())
+            if(viewRect.contains(event->scenePos()) && m_crossObject)
             {
                 m_crossObject->setVisible(true);
                 m_crossObject->setPos(event->scenePos());
@@ -211,7 +166,7 @@ void GanttScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
     if(event->button() == Qt::RightButton)
     {
-        if(!m_crossObject.isNull())
+        if(m_crossObject)
         {
             m_crossObject->setVisible(false);
         }
@@ -284,6 +239,13 @@ void GanttScene::clear()
 bool GanttScene::sceneHaveItems() const
 {
     return !(m_items.isEmpty() && m_calcItems.isEmpty());
+}
+
+void GanttScene::onViewResized(const QSize &newSize)
+{
+    HFitScene::onViewResized(newSize);
+    updateItems();
+    updateSliderRect();
 }
 
 void GanttScene::setCurrentItem(QGraphicsObject *currentItem)
@@ -448,8 +410,8 @@ void GanttScene::onGraphicsItemHoverLeave()
 
 void GanttScene::onInfoDelete()
 {
-    const GanttInfoItem* item = static_cast<const GanttInfoItem*>(sender());
-    removeByInfo(item);
+    GanttInfoItem* item = static_cast<GanttInfoItem*>(sender());
+    onItemRemoved(item);
 }
 
 
@@ -493,7 +455,7 @@ const GanttInfoLeaf *GanttScene::prevEvent(const UtcDateTime &curDt) const
     return NULL;
 }
 
-void GanttScene::removeByInfo(const GanttInfoItem *item)
+void GanttScene::onItemRemoved(GanttInfoItem *item)
 {
     if(!item)
         return;
@@ -521,6 +483,13 @@ void GanttScene::removeByInfo(const GanttInfoItem *item)
         if(graphicsItem)
             graphicsItem->deleteLater();
     }
+}
+
+void GanttScene::onEndInsertItems()
+{
+//    m_slider->updateRange();   /// TODO
+    m_slider->setToBegin();
+    updateSceneRect();
 }
 
 void GanttScene::removeByInfoLeaf(const GanttInfoLeaf *leaf)
@@ -572,8 +541,8 @@ void GanttScene::init()
     updateSliderRect();
 }
 
-GanttScene::GanttScene(DtLine *dtline, QObject *parent)
-    : QGraphicsScene(parent)
+GanttScene::GanttScene(GanttGraphicsView *view, DtLine *dtline, QObject *parent)
+    : HFitScene(view, parent)
 {
     init();
     _dtline = dtline;
@@ -587,4 +556,55 @@ int GanttScene::dtToPos(const UtcDateTime &dt) const
 UtcDateTime GanttScene::posToDt(int pos) const
 {
     return _dtline->posToDt(pos);
+}
+
+void GanttScene::onItemAdded(GanttInfoItem *item)
+{
+    if(!item)
+        return;
+
+    connect(item,SIGNAL(destroyed(QObject*)),this,SLOT(onVisItemDestroyed(QObject*)));
+
+    GanttInfoLeaf *leaf = dynamic_cast<GanttInfoLeaf*>(item);
+    if(leaf)
+    {
+        GanttIntervalGraphicsObject *p_item = new GanttIntervalGraphicsObject(leaf);
+
+        connect(p_item,SIGNAL(graphicsItemHoverEnter()),this,SLOT(onGraphicsItemHoverEnter()));
+        connect(p_item,SIGNAL(graphicsItemHoverLeave()),this,SLOT(onGraphicsItemHoverLeave()));
+        connect(p_item,SIGNAL(graphicsItemPressed()),this,SLOT(onGraphicsItemPress()));
+
+
+        p_item->setScene(this);
+
+        m_items.append(p_item);
+        m_itemByInfo.insert(leaf,p_item);
+        m_infoByStart.insert(leaf->start(),leaf);
+        m_infoByFinish.insert(leaf->finish(),leaf);
+
+        p_item->updateItemGeometry();
+    }
+    else
+    {
+        GanttInfoNode *node = dynamic_cast<GanttInfoNode*>(item);
+        if(node)
+        {
+            if(node->hasStart())
+            {
+                GanttCalcGraphicsObject *p_item = new GanttCalcGraphicsObject(node);
+
+                connect(p_item,SIGNAL(graphicsItemHoverEnter()),this,SLOT(onGraphicsItemHoverEnter()));
+                connect(p_item,SIGNAL(graphicsItemHoverLeave()),this,SLOT(onGraphicsItemHoverLeave()));
+                connect(p_item,SIGNAL(graphicsItemPressed()),this,SLOT(onGraphicsItemPress()));
+
+
+                p_item->setScene(this);
+
+                m_calcItems.append(p_item);
+                m_itemByInfo.insert(node,p_item);
+
+                p_item->updateItemGeometry();
+            }
+        }
+    }
 }

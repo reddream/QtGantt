@@ -8,7 +8,7 @@
 GanttHoverGraphicsObject::GanttHoverGraphicsObject(QGraphicsItem* parent)
     : QGraphicsObject(parent)
 {
-
+    m_scene = NULL;
 }
 
 QRectF GanttHoverGraphicsObject::boundingRect() const
@@ -25,7 +25,7 @@ void GanttHoverGraphicsObject::setScene(GanttScene *scene)
     m_scene = scene;
     prepareGeometryChange();
     scene->addItem(this);
-    connect(scene,SIGNAL(viewResized()),this,SLOT(onViewResized()));
+    connect(scene->view(),SIGNAL(viewResized(QSize)),this,SLOT(onViewResized()));
 }
 
 void GanttHoverGraphicsObject::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)

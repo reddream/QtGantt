@@ -1,6 +1,7 @@
 #ifndef GANTTDTCROSSOBJECT_H
 #define GANTTDTCROSSOBJECT_H
 
+#include <QGraphicsScene>
 #include <QGraphicsObject>
 #include <QPainterPath>
 #include <QPointer>
@@ -13,7 +14,6 @@ public:
     GanttDtCrossObject(QGraphicsItem *parent = NULL);
 
     QRectF boundingRect() const;
-//    QPainterPath shape() const;
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
 
     void setScene(GanttScene *scene);

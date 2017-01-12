@@ -7,7 +7,7 @@
 //#include "gantttreemodel.h"
 #include "dtline.h"
 
-#include <QGraphicsScene>
+#include "hfitscene.h"
 #include <QMap>
 #include <QPointer>
 
@@ -21,7 +21,7 @@ class GanttHoverGraphicsObject;
 
 #include "ganttinfotree.h"
 
-class GanttScene : public QGraphicsScene
+class GanttScene : public HFitScene
 {
     Q_OBJECT
 
@@ -32,7 +32,7 @@ private:
     DtLine *_dtline;
 
 public:
-    GanttScene(DtLine *dtline, QObject * parent = 0);
+    GanttScene(GanttGraphicsView *view, DtLine *dtline, QObject * parent = 0);
 
     int dtToPos(const UtcDateTime &dt) const;
     UtcDateTime posToDt(int pos) const;
@@ -40,24 +40,20 @@ public:
 signals:
 
 public slots:
-
+    void onItemAdded(GanttInfoItem *item);
+    void onItemRemoved(GanttInfoItem* item);
+    void onEndInsertItems();
 
     void drawBackground(QPainter *painter, const QRectF &rect); ///< Задний план содержит сетку
-
-    void updateWidth(int w);
-    void updateHeight(int h);
 
     QGraphicsObject* itemByInfo(const GanttInfoItem *key) const;
 
     void updateSliderRect();
 
-    void onViewAdded(QGraphicsView* view);
-
     UtcDateTime slidersDt() const;
 
     const GanttInfoLeaf *nextEvent(const UtcDateTime &curDt) const;
     const GanttInfoLeaf *prevEvent(const UtcDateTime &curDt) const;
-    void removeByInfo(const GanttInfoItem* item);
     void removeByInfoLeaf(const GanttInfoLeaf* leaf);
 
     const QList<GanttIntervalGraphicsObject *>& dtItems() const;
@@ -75,7 +71,6 @@ public slots:
 
 
 signals:
-    void viewResized(); //?
     void currentDtChanged(const UtcDateTime& dt);
 
     void graphicsItemHoverEnter(const GanttInfoItem*);
@@ -85,7 +80,7 @@ signals:
 
 
 public slots:
-    void onViewResize(const QSize& newSize);
+    void onViewResized(const QSize& newSize);
     void updateSceneRect();
 
     void makeStep(int step);
@@ -128,11 +123,11 @@ private:
     QMap<UtcDateTime,const GanttInfoLeaf*> m_infoByStart,
                                             m_infoByFinish;
 
-    QPointer<GanttCurrentDtSlider> m_slider;
-    QPointer<QGraphicsObject> m_currentItem;
+    GanttCurrentDtSlider *m_slider;
     QPointer<QGraphicsView> m_view;
-    QPointer<GanttDtCrossObject> m_crossObject;
-    QPointer<GanttHoverGraphicsObject> m_hoverObject;
+    GanttDtCrossObject *m_crossObject;
+    GanttHoverGraphicsObject *m_hoverObject;
+    QPointer<QGraphicsObject> m_currentItem;
 };
 
 

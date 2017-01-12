@@ -17,7 +17,7 @@
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
-      <widget class="QWidget" name="intervalSlider" native="true">
+      <widget class="GanttIntervalSlider" name="intervalSlider" native="true">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
          <horstretch>0</horstretch>
@@ -82,10 +82,10 @@
         <number>0</number>
        </property>
        <item>
-        <widget class="DtLine" name="widget" native="true"/>
+        <widget class="DtLine" name="widgetDtLine" native="true"/>
        </item>
        <item>
-        <widget class="QGraphicsView" name="ganttView">
+        <widget class="GanttGraphicsView" name="ganttView">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
            <horstretch>0</horstretch>
@@ -118,6 +118,17 @@
    <class>GanttPlayerSettings</class>
    <extends>QWidget</extends>
    <header>ganttplayersettings.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>GanttGraphicsView</class>
+   <extends>QGraphicsView</extends>
+   <header>ganttgraphicsview.h</header>
+  </customwidget>
+  <customwidget>
+   <class>GanttIntervalSlider</class>
+   <extends>QWidget</extends>
+   <header>ganttintervalslider.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

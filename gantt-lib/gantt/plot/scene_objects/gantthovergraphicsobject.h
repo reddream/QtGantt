@@ -24,7 +24,7 @@ public slots:
     void onViewResized();
 
 private:
-    QPointer<GanttScene> m_scene;
+    GanttScene *m_scene;
 
 };
 
