@@ -133,9 +133,9 @@ void GanttInfoTree::fillRecursive(GanttInfoItem *item, const QModelIndex &index)
     if(_model->hasChildren(index)){
         for(int i = 0; i < _model->rowCount(index); ++i){
             QModelIndex childIndex = _model->index(i,0,index);
-            GanttInfoItem *item = makeInfoItem(childIndex);
-            fillRecursive(item,childIndex);
-            ((GanttInfoNode*)item)->append(item);
+            GanttInfoItem *childItem = makeInfoItem(childIndex);
+            fillRecursive(childItem,childIndex);
+            ((GanttInfoNode*)item)->append(childItem);
         }
     }
 }
@@ -161,6 +161,7 @@ GanttInfoItem *GanttInfoTree::makeInfoItem(const QModelIndex &index)
                                  , index
                                  , _iGanttModel->color(index) );
     }
+    qDebug() << "item Added " << item->title();
     emit itemAdded(item);
     return item;
 }

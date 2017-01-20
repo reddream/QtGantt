@@ -1,6 +1,7 @@
 #ifndef GANTTTREEMODEL_H
 #define GANTTTREEMODEL_H
 
+#include "gantt-lib_global.h"
 #include "ganttinfoleaf.h"
 #include "ganttinfonode.h"
 #include "iganttmodel.h"
@@ -9,7 +10,7 @@
 
 class GanttWidget;
 
-class GanttTreeModel : public QAbstractItemModel, public IGanttModel
+class GANTTLIBSHARED_EXPORT GanttTreeModel : public QAbstractItemModel, public IGanttModel
 {
     Q_OBJECT
 
@@ -27,7 +28,7 @@ public:
 
 
 public:
-    GanttTreeModel(GanttInfoNode *root,QObject * parent = 0);
+    GanttTreeModel(GanttInfoNode *root = NULL,QObject * parent = 0);
     ~GanttTreeModel();
 
     QVariant data(const QModelIndex &index, int role) const;

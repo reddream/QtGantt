@@ -232,8 +232,10 @@ void deleteFunc(GanttInfoItem* item)
 void GanttTreeModel::clear()
 {
     beginRemoveRows(QModelIndex(),0,m_root->size());
+
     m_root->callForEachItemRecursively(&deleteFunc);
     m_root->clear();
+
     endRemoveRows();
 
 }

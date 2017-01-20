@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include "utcdatetime.h"
+#include "gantttreemodel.h"
 
 namespace Ui {
 class MainWindow;
@@ -12,6 +13,7 @@ class MainWindow : public QMainWindow
 {
     Q_OBJECT
 
+    void init();
 public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
@@ -20,6 +22,7 @@ public:
 
 private:
     Ui::MainWindow *ui;
+    GanttTreeModel *_model;
 
 private slots:
     void on_pushButton_ganttAddItems_clicked();

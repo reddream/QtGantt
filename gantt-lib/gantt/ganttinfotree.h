@@ -11,6 +11,7 @@
 class GanttInfoTree : public QObject
 {
     Q_OBJECT
+    void init();
 public:
     explicit GanttInfoTree(QObject *parent = 0);
 
@@ -42,7 +43,6 @@ public slots:
 private:
     void fillRecursive(GanttInfoItem *item,const QModelIndex &index);
     GanttInfoItem *makeInfoItem(const QModelIndex &index);
-    void init();
     void disconnectLastModel();
     void connectNewModel();
 
