@@ -68,11 +68,11 @@ QList<GanttInfoItem*> generateTest()
                                          + minute * SECONDS_IN_MINUTE * _MICROSECONDS_IN_SECOND
                                          + sec * _MICROSECONDS_IN_SECOND
                                          + microsec)
-                        .addDays(day - 1)
-                        .addMonths(month - 1);
+                        .addDays(day )
+                        .addMonths(month );
 
             leaf->setStart(start);
-            leaf->setFinish(finish);
+            leaf->setTimeSpan(finish - start);
             leaf->setColor(color);
             leaf->setTitle("leaf"+QString::number(1 + i) + ':' + QString::number(1 + j));
 

@@ -80,4 +80,5 @@ FORMS += \
     ganttwidget.ui
 
 DISTFILES += \
-    ../gantt-lib-include.pri
+    ../gantt-lib-include.pri \
+    gantt_uml.qmodel

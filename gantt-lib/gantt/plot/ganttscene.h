@@ -2,9 +2,7 @@
 #define GANTTSCENE_H
 
 
-//#include "ganttheader.h"
 #include "ganttcurrentdtslider.h"
-//#include "gantttreemodel.h"
 #include "dtline.h"
 
 #include "hfitscene.h"
@@ -78,6 +76,7 @@ signals:
 public slots:
     void onViewResized(const QSize& newSize);
     void updateSceneRect();
+    void updateSceneItems();
 
     void makeStep(int step);
     void moveSliderToNextEventStart();
@@ -95,7 +94,7 @@ protected:
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
 
 private:
-
+    void connectDtLine();
 
     void updateSlider();
     void updateItems();

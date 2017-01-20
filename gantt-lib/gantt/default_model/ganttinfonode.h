@@ -12,15 +12,16 @@ class GANTTLIBSHARED_EXPORT GanttInfoNode : public GanttInfoItem
 {
     Q_OBJECT
 
+    void init();
 public:
     GanttInfoNode(QObject *parent = NULL);
     GanttInfoNode(const QString &title
-                  , const UtcDateTime &start
-                  , const UtcDateTime &finish
-                  , const QModelIndex &index
-                  , const QColor &color = Qt::green
-                  , GanttInfoNode *parentNode = NULL
-                  , QObject *parent = NULL);
+                  , const UtcDateTime   &start
+                  , const TimeSpan      &ts
+                  , const QModelIndex   &index
+                  , const QColor        &color = Qt::green
+                  , GanttInfoNode       *parentNode = NULL
+                  , QObject             *parent = NULL);
 
     GanttInfoLeaf *leafAt(int index) const;
     GanttInfoNode *nodeAt(int index) const;
@@ -49,9 +50,10 @@ signals:
     
 protected:
     int indexOf(const GanttInfoItem * p_item) const;
+private slots:
+    void onSelfExpandingChange();
 
 private:
-    void init();
 
     QList<GanttInfoItem*> _items;
     

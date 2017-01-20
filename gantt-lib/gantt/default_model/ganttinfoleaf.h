@@ -15,9 +15,9 @@ public:
     GanttInfoLeaf(QObject *parent = NULL);
     GanttInfoLeaf(const QString &title
                   , const UtcDateTime   &start
-                  , const UtcDateTime   &finish
+                  , const TimeSpan      &ts
                   , const QModelIndex   &index
-                  , const QColor   &color = Qt::green
+                  , const QColor        &color = Qt::green
                   , GanttInfoNode       *parentNode = NULL
                   , QObject             *parent = NULL);
 

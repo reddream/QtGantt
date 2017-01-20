@@ -54,33 +54,33 @@ public:
 
     // --- Interface implementation
 
-    QString     title(const QModelIndex &index){
+    QString     title(const QModelIndex &index) const {
         GanttInfoItem *item =itemForIndex(index);
         if(item)
             return item->title();
         return QString();
     }
 
-    UtcDateTime start(const QModelIndex &index){
+    UtcDateTime start(const QModelIndex &index) const {
         GanttInfoItem *item =itemForIndex(index);
         if(item)
             return item->start();
         return UtcDateTime();
     }
-    UtcDateTime finish(const QModelIndex &index){
+    TimeSpan timeSpan(const QModelIndex &index) const {
         GanttInfoItem *item =itemForIndex(index);
         if(item)
-            return item->finish();
-        return UtcDateTime();
+            return item->timeSpan();
+        return TimeSpan();
     }
-    QColor      color(const QModelIndex &index){
+    QColor      color(const QModelIndex &index) const {
         GanttInfoItem *item =itemForIndex(index);
         if(item)
             return item->color();
         return Qt::green;
     }
 
-    QModelIndex index(const QString &title){
+    QModelIndex index(const QString &title) const {
         QModelIndexList matches = match(index(0,0),Qt::DisplayRole,QVariant::fromValue(title));
         if(matches.isEmpty()){
             qDebug() << "not found";

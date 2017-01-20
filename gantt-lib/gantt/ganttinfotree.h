@@ -15,17 +15,20 @@ class GanttInfoTree : public QObject
 public:
     explicit GanttInfoTree(QObject *parent = 0);
 
+    QAbstractItemModel *model() const;
     void setModel(IGanttModel *model);
     void connectTreeView(QTreeView *view);
     void disconnectTreeView(QTreeView *view);
     GanttInfoItem *itemForIndex(const QModelIndex &index, GanttInfoItem *item = NULL) const;
     GanttInfoItem *root() const;
 
+
 signals:
     void limitsChanged(const UtcDateTime &min, const TimeSpan &ts);
     void endInsertItems();
     void endRemoveItems();
     void itemAdded(GanttInfoItem *item);
+    void itemAboutToBeDeleted(GanttInfoItem *item);
     void itemRemoved(GanttInfoItem *item);
     void currentChanged(const QModelIndex &index);
     void needExpand(const QModelIndex &index);
@@ -44,6 +47,7 @@ private slots:
     void onColumnsInserted(const QModelIndex &parent, int start, int end);
     void onRowsRemoved(const QModelIndex &parent, int start, int end);
     void onColumnsRemoved(const QModelIndex &parent, int start, int end);
+    void onItemAboutToBeDeleted();
 
     void updateLimits();
 

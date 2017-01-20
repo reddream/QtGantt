@@ -9,7 +9,9 @@ GanttInfoItem::GanttInfoItem(QObject *parent)
     init();
 }
 
-GanttInfoItem::GanttInfoItem(const QString &title, const UtcDateTime &start, const UtcDateTime &finish
+GanttInfoItem::GanttInfoItem(const QString &title
+                             , const UtcDateTime &start
+                             , const TimeSpan &ts
                              , const QModelIndex &index
                              , const QColor &color
                              , GanttInfoNode *parentNode
@@ -20,7 +22,7 @@ GanttInfoItem::GanttInfoItem(const QString &title, const UtcDateTime &start, con
 
     setTitle(title);
     setStart(start);
-    setFinish(finish);
+    setTimeSpan(ts);
     setIndex(index);
     setParent(parentNode);
     setColor(color);
@@ -57,21 +59,27 @@ int GanttInfoItem::indexOf(const GanttInfoItem* p_item) const
     return -1;
 }
 
+void GanttInfoItem::updatePos()
+{
+    /// TODO _pos member
+    emit posChanged();
+}
+
 void GanttInfoItem::init()
 {
     _linkCnt = 0;
     _deleted = false;
     _parent = NULL;
     _color = Qt::green;
-    _start = _finish = UtcDateTime();
     _index = QModelIndex();
 
     connect(this,SIGNAL(indexChanged()),this,SIGNAL(changed()));
     connect(this,SIGNAL(titleChanged()),this,SIGNAL(changed()));
     connect(this,SIGNAL(parentChanged()),this,SIGNAL(changed()));
     connect(this,SIGNAL(startChanged()),this,SIGNAL(changed()));
-    connect(this,SIGNAL(finishChanged()),this,SIGNAL(changed()));
+    connect(this,SIGNAL(timeSpanChanged()),this,SIGNAL(changed()));
     connect(this,SIGNAL(colorChanged()),this,SIGNAL(changed()));
+    connect(this,SIGNAL(posChanged()),this, SIGNAL(changed()));
 }
 
 QColor GanttInfoItem::color() const
@@ -84,14 +92,9 @@ bool GanttInfoItem::hasStart() const
     return _start.isValid();
 }
 
-bool GanttInfoItem::hasFinish() const
+bool GanttInfoItem::isDot() const
 {
-    return _finish.isValid();
-}
-
-long long GanttInfoItem::duration() const
-{
-    return _start.microsecondsTo(_finish);
+    return _timeSpan.microseconds() == 0;
 }
 
 void GanttInfoItem::setColor(const QColor &color)
@@ -104,20 +107,17 @@ void GanttInfoItem::setColor(const QColor &color)
 
 UtcDateTime GanttInfoItem::finish() const
 {
-    return _finish;
-}
-
-void GanttInfoItem::setFinish(const UtcDateTime &finish)
-{
-    if(finish == _finish)
-        return;
-    _finish = finish;
-    emit startChanged();
+    return _start + _timeSpan;
 }
 
 UtcDateTime GanttInfoItem::start() const
 {
     return _start;
+}
+
+TimeSpan GanttInfoItem::timeSpan() const
+{
+    return _timeSpan;
 }
 
 void GanttInfoItem::setStart(const UtcDateTime &start)
@@ -126,6 +126,14 @@ void GanttInfoItem::setStart(const UtcDateTime &start)
         return;
     _start = start;
     emit startChanged();
+}
+
+void GanttInfoItem::setTimeSpan(const TimeSpan &ts)
+{
+    if(_timeSpan == ts)
+        return;
+    _timeSpan = ts;
+    emit timeSpanChanged();
 }
 
 

@@ -15,18 +15,18 @@ public:
 
     // --- Interface
 
-    virtual QString     title(const QModelIndex &index) = 0;
-    virtual UtcDateTime start(const QModelIndex &index) = 0;
-    virtual UtcDateTime finish(const QModelIndex &index) = 0;
-    virtual QColor      color(const QModelIndex &index) = 0;
+    virtual QString     title(const QModelIndex &index) const = 0;
+    virtual UtcDateTime start(const QModelIndex &index) const = 0;
+    virtual TimeSpan    timeSpan(const QModelIndex &index) const = 0;
+    virtual QColor      color(const QModelIndex &index) const = 0;
 
-    virtual QModelIndex index(const QString &title) = 0;     ///< QModelIndex через Title
+    virtual QModelIndex index(const QString &title) const = 0;     ///< QModelIndex через Title
 
     // ---
 
 public:
-    bool hasFinish(QModelIndex &index){
-        return finish(index).isValid();
+    bool isDot(QModelIndex &index){
+        return timeSpan(index).microseconds() == 0;
     }
 
 };

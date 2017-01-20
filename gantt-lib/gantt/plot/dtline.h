@@ -96,6 +96,7 @@ public slots:
     void setMin(const UtcDateTime &min);
     void setTimeSpan(const TimeSpan &timeSpan);
     void setLimits(const UtcDateTime &min, const TimeSpan &ts); ///< setMin + setTimeSpan
+    void setLimitsWithOffset(const UtcDateTime &min, const TimeSpan &ts);
 
 signals:
     void minChanged();

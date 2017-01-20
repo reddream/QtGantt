@@ -52,17 +52,24 @@ QGraphicsObject *GanttScene::itemByInfo(const GanttInfoItem *key) const
 
 void GanttScene::updateSceneRect()
 {
-
     if(!sceneHaveItems())
     {
-        setSceneRect(0,0,0,0);
+        setSceneRect(0,0,sceneRect().width(),0);
     }
     else
     {
-        setSceneRect(elementsBoundingRect());
+        QRectF elemsRect = elementsBoundingRect();
+        setSceneRect(0,0,sceneRect().width(),elemsRect.height());
     }
 
     updateSliderRect();
+}
+
+void GanttScene::updateSceneItems()
+{
+    updateItems();
+    updateSliderRect();
+    update();
 }
 
 void GanttScene::makeStep(int step)
@@ -175,6 +182,14 @@ void GanttScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
     QGraphicsScene::mouseReleaseEvent(event);
 }
 
+void GanttScene::connectDtLine()
+{
+    connect(_dtline,SIGNAL(changed()),this,SLOT(updateSceneItems()));
+    connect(_dtline,SIGNAL(minChanged()),this,SLOT(updateSceneItems()));
+    connect(_dtline,SIGNAL(timeSpanChanged()),this,SLOT(updateSceneItems()));
+
+}
+
 void GanttScene::onVisItemDestroyed()
 {
     updateSceneRect();
@@ -244,8 +259,7 @@ bool GanttScene::sceneHaveItems() const
 void GanttScene::onViewResized(const QSize &newSize)
 {
     HFitScene::onViewResized(newSize);
-    updateItems();
-    updateSliderRect();
+    updateSceneItems();
 }
 
 void GanttScene::setCurrentItem(QGraphicsObject *currentItem)
@@ -358,9 +372,6 @@ void GanttScene::updateItems()
             m_calcItems[i]->setPos(calcPos, top);
         }
     }
-
-
-    update();
 }
 
 void GanttScene::onGraphicsItemPress()
@@ -459,6 +470,7 @@ void GanttScene::onItemRemoved(GanttInfoItem *item)
 {
     if(!item)
         return;
+    qDebug() << "onItemRemoved "<< item;
 
     const GanttInfoLeaf *leaf = qobject_cast<const GanttInfoLeaf*>(item);
     if(leaf)
@@ -530,6 +542,7 @@ void GanttScene::updateSliderRect()
 
 void GanttScene::init()
 {
+    connectDtLine();
     m_currentItem = NULL;
 
     setSceneRect(0,0,GANTTSCENE_MIN_WIDTH,0);
@@ -565,6 +578,8 @@ void GanttScene::onItemAdded(GanttInfoItem *item)
         return;
 
     connect(item,SIGNAL(destroyed(QObject*)),this,SLOT(onVisItemDestroyed()));
+    connect(item,SIGNAL(expanded()),this,SLOT(updateSceneRect()));
+    connect(item,SIGNAL(collapsed()),this,SLOT(updateSceneRect()));
 
     GanttInfoLeaf *leaf = dynamic_cast<GanttInfoLeaf*>(item);
     GanttGraphicsObject *p_item = NULL;
@@ -603,4 +618,6 @@ void GanttScene::onItemAdded(GanttInfoItem *item)
 
         p_item->updateItemGeometry();
     }
+    qDebug() << "m_items sz " << m_items.size();
+    qDebug() << "m_calc sz " << m_calcItems.size();
 }

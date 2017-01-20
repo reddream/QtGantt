@@ -997,10 +997,20 @@ void DtLine::setTimeSpan(const TimeSpan &timeSpan)
     emit timeSpanChanged();
 }
 
+#define DTLINE_LIMITS_COEF 0.1
 void DtLine::setLimits(const UtcDateTime &min, const TimeSpan &ts)
 {
+    blockSignals(true);
     setMin(min);
     setTimeSpan(ts);
+    blockSignals(false);
+    emit changed();
+}
+
+void DtLine::setLimitsWithOffset(const UtcDateTime &min, const TimeSpan &ts)
+{
+    TimeSpan deltaTs = ts * DTLINE_LIMITS_COEF;
+    setLimits(min - deltaTs, ts + 2 * deltaTs);
 }
 
 UtcDateTime DtLine::min() const

@@ -64,8 +64,8 @@ public slots:
     void makeStep(int deltaVal);
     bool setDt(UtcDateTime dt);
     void updateScenePos();
-    void updateRange(const UtcDateTime& minDt, const UtcDateTime& maxDt);
-    void updateRange(const GanttInfoNode *node);
+    void updateRange(const UtcDateTime& minDt, const TimeSpan& ts);
+//    void updateRange(const GanttInfoNode *node);
 
     void moveToBegin();
     void moveToEnd();

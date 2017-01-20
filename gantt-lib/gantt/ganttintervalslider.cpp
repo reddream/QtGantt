@@ -64,11 +64,6 @@ void GanttIntervalSlider::drawSliderLine(QPainter *painter, const QRect &sliderR
     foregroundGradient.setColorAt(0.5,sliderColor.lighter(180));
     foregroundGradient.setColorAt(1,sliderColor);
 
-//    QLinearGradient backgroundGradient(QPoint(0,top),QPoint(0,top + m_sliderV));
-//    backgroundGradient.setColorAt(0,sliderColor);
-//    backgroundGradient.setColorAt(0.5,Qt::white);
-//    backgroundGradient.setColorAt(1,sliderColor);
-
     painter->setPen(Qt::gray);
 
     painter->fillRect(QRect(innerRectLeft,

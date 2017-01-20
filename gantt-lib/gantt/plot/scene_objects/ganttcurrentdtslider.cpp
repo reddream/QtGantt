@@ -209,18 +209,18 @@ void GanttCurrentDtSlider::updateScenePos()
     }
 }
 
-void GanttCurrentDtSlider::updateRange(const UtcDateTime &minDt, const UtcDateTime &maxDt)
+void GanttCurrentDtSlider::updateRange(const UtcDateTime &minDt, const TimeSpan &ts)
 {
     m_minDt = minDt;
-    m_maxDt = maxDt;
+    m_maxDt = minDt + ts;
 }
 
-void GanttCurrentDtSlider::updateRange(const GanttInfoNode *node)
-{
-    QPair<UtcDateTime,UtcDateTime> limits = GanttInfoItem::getLimits(node);
-    updateRange(limits.first,limits.second);
-    setDt(limits.first);
-}
+//void GanttCurrentDtSlider::updateRange(const GanttInfoNode *node)
+//{
+//    QPair<UtcDateTime,UtcDateTime> limits = GanttInfoItem::getLimits(node);
+//    updateRange(limits.first,limits.second - limits.first);
+//    setDt(limits.first);
+//}
 
 bool GanttCurrentDtSlider::outOfRange() const
 {

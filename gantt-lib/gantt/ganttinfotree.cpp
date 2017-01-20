@@ -143,17 +143,25 @@ void GanttInfoTree::onRowsRemoved(const QModelIndex &/*parent*/, int /*start*/, 
     reset();
 }
 
-void GanttInfoTree::onColumnsRemoved(const QModelIndex &parent, int start, int end)
+void GanttInfoTree::onColumnsRemoved(const QModelIndex &/*parent*/, int /*start*/, int /*end*/)
 {
     /// TODO optimization
     reset();
 }
 
+void GanttInfoTree::onItemAboutToBeDeleted()
+{
+    GanttInfoItem *item = qobject_cast<GanttInfoItem*>(QObject::sender());
+    if(item)
+        emit itemAboutToBeDeleted(item);
+}
+
 void GanttInfoTree::updateLimits()
 {
     QPair<UtcDateTime,UtcDateTime> limits = GanttInfoItem::getLimits(_root);
-    if(limits.first.isValid() || !limits.second.isValid())
-        qWarning("limits not valid in updateLimits");
+    if(!limits.first.isValid() || !limits.second.isValid())
+        qWarning("warning::limits not valid in updateLimits");
+    qDebug()  << "updated Limits " << limits/*.first << '[' << limits.second.toString() << ']'*/;
     emit limitsChanged(limits.first,limits.second - limits.first);
 }
 
@@ -183,18 +191,19 @@ GanttInfoItem *GanttInfoTree::makeInfoItem(const QModelIndex &index)
     if(_model->hasChildren(index)){
         item = new GanttInfoNode(_iGanttModel->title(index)
                                  , _iGanttModel->start(index)
-                                 , _iGanttModel->finish(index)
+                                 , _iGanttModel->timeSpan(index)
                                  , index
                                  , _iGanttModel->color(index) );
     }
     else{
         item = new GanttInfoLeaf(_iGanttModel->title(index)
                                  , _iGanttModel->start(index)
-                                 , _iGanttModel->finish(index)
+                                 , _iGanttModel->timeSpan(index)
                                  , index
                                  , _iGanttModel->color(index) );
     }
     qDebug() << "item Added " << item->title();
+    connect(item,SIGNAL(aboutToBeDeleted()),this,SLOT(onItemAboutToBeDeleted()));
     emit itemAdded(item);
     return item;
 }
@@ -205,6 +214,7 @@ void GanttInfoTree::init()
     _iGanttModel = NULL;
 
     _root = new GanttInfoNode(this);
+    _root->setExpanded(true);
     connect(this,SIGNAL(endInsertItems()),this,SLOT(updateLimits()));
 }
 
@@ -225,4 +235,9 @@ void GanttInfoTree::connectNewModel()
     connect(_model,SIGNAL(rowsRemoved(QModelIndex,int,int)),this,SLOT(onRowsRemoved(QModelIndex,int,int)));
     connect(_model,SIGNAL(columnsRemoved(QModelIndex,int,int)),this,SLOT(onColumnsRemoved(QModelIndex,int,int)));
 
+}
+
+QAbstractItemModel *GanttInfoTree::model() const
+{
+    return _model;
 }

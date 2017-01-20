@@ -63,11 +63,19 @@ bool GanttWidget::player() const
 void GanttWidget::setModel(IGanttModel *model)
 {
     _treeInfo->setModel(model);
+
+    /// TODO rmeove
+    setView(ui->treeView);
 }
 
 void GanttWidget::setView(QTreeView *view, bool inner)
 {
     /// TODO
+    if(!_treeInfo || !_treeInfo->model())
+        return;
+
+    view->setModel(_treeInfo->model());
+    _treeInfo->connectTreeView(view);
 }
 
 void GanttWidget::onGanttViewCustomContextMenuRequested(const QPoint &point)
@@ -87,12 +95,11 @@ void GanttWidget::init()
 void GanttWidget::connectSceneWithInfo()
 {
     connect(_treeInfo,SIGNAL(itemAdded(GanttInfoItem*)),_scene,SLOT(onItemAdded(GanttInfoItem*)));
-    connect(_treeInfo,SIGNAL(itemRemoved(GanttInfoItem*)),_scene,SLOT(onItemRemoved(GanttInfoItem*)));
+    connect(_treeInfo,SIGNAL(itemAboutToBeDeleted(GanttInfoItem*)),_scene,SLOT(onItemRemoved(GanttInfoItem*)));
 
     connect(_treeInfo,SIGNAL(endInsertItems()),_scene,SLOT(onEndInsertItems()));
     connect(_treeInfo,SIGNAL(endRemoveItems()),_scene,SLOT(onEndRemoveItems()));
 
-
-    connect(_treeInfo,SIGNAL(limitsChanged(UtcDateTime,TimeSpan)),ui->widgetDtLine,SLOT(setLimits(UtcDateTime,TimeSpan)));
+    connect(_treeInfo,SIGNAL(limitsChanged(UtcDateTime,TimeSpan)),ui->widgetDtLine,SLOT(setLimitsWithOffset(UtcDateTime,TimeSpan)));
 }
 

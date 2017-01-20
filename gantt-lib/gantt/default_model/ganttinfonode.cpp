@@ -9,12 +9,14 @@ GanttInfoNode::GanttInfoNode(QObject *parent)
     init();
 }
 
-GanttInfoNode::GanttInfoNode(const QString &title, const UtcDateTime &start, const UtcDateTime &finish
+GanttInfoNode::GanttInfoNode(const QString &title
+                             , const UtcDateTime &start
+                             , const TimeSpan &ts
                              , const QModelIndex &index
                              , const QColor &color
                              , GanttInfoNode *parentNode
                              , QObject *parent)
-    : GanttInfoItem(title,start,finish,index,color,parentNode,parent)
+    : GanttInfoItem(title,start,ts,index,color,parentNode,parent)
 {
     init();
 }
@@ -123,11 +125,20 @@ int GanttInfoNode::indexOf(const GanttInfoItem * p_item) const
     return _items.indexOf(p);
 }
 
+void GanttInfoNode::onSelfExpandingChange()
+{
+    for(int i = 1; i < size(); ++i){
+        at(i)->updatePos();
+    }
+}
+
 void GanttInfoNode::init()
 {
     _expanded = false;
 
     connect(this,SIGNAL(itemsChanged()),this,SIGNAL(changed()));
+    connect(this,SIGNAL(expanded()),this,SLOT(onSelfExpandingChange()));
+    connect(this,SIGNAL(collapsed()),this,SLOT(onSelfExpandingChange()));
 }
 
 void GanttInfoNode::callForEachItemRecursively(void (*func)(GanttInfoItem *))

@@ -51,7 +51,7 @@ QVariant GanttTreeModel::data(const QModelIndex &index, int role) const
         case finishField:
             return leaf->finish().dateTime();
         case durationField:
-            return leaf->duration();
+            return leaf->timeSpan().toString();
         default:
             Q_ASSERT(false);
         }
@@ -328,7 +328,7 @@ bool GanttTreeModel::setData(const QModelIndex &index, const QVariant &value, in
                 if(leaf->start() >= time)
                     return false;
 
-                leaf->setFinish(time);
+                leaf->setTimeSpan(time - leaf->start());
             }
         }
 //        else if (role == Qt::CheckStateRole)

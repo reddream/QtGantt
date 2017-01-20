@@ -9,9 +9,9 @@ GanttInfoLeaf::GanttInfoLeaf(QObject *parent)
 
 }
 
-GanttInfoLeaf::GanttInfoLeaf(const QString &title, const UtcDateTime &start, const UtcDateTime &finish, const QModelIndex &index
+GanttInfoLeaf::GanttInfoLeaf(const QString &title, const UtcDateTime &start, const TimeSpan &ts, const QModelIndex &index
                              , const QColor &color, GanttInfoNode *parentNode, QObject *parent)
-    : GanttInfoItem(title,start,finish,index,color,parentNode,parent)
+    : GanttInfoItem(title,start,ts,index,color,parentNode,parent)
 {
 
 }

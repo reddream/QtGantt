@@ -20,9 +20,9 @@ public:
     GanttInfoItem(QObject *parent = NULL);
     GanttInfoItem(const QString &title
                   , const UtcDateTime   &start
-                  , const UtcDateTime   &finish
+                  , const TimeSpan      &ts
                   , const QModelIndex   &index
-                  , const QColor   &color = Qt::green
+                  , const QColor        &color = Qt::green
                   , GanttInfoNode       *parentNode = NULL
                   , QObject             *parent = NULL);
     virtual ~GanttInfoItem();
@@ -38,12 +38,12 @@ public:
 
     QString     title() const;
     UtcDateTime start() const;
+    TimeSpan timeSpan() const;
     UtcDateTime finish() const;
     QColor      color() const;
 
     bool hasStart() const;
-    bool hasFinish() const;
-    long long   duration() const;
+    bool isDot() const;
 
 
 
@@ -62,14 +62,16 @@ signals:
     void titleChanged();
     void aboutToBeDeleted();
     void startChanged();
-    void finishChanged();
+    void timeSpanChanged();
     void colorChanged();
+    void posChanged();
 
     void changed();
 
 public slots:
+    void updatePos();
     void setStart(const UtcDateTime &start);
-    void setFinish(const UtcDateTime &finish);
+    void setTimeSpan(const TimeSpan &ts);
     void setColor(const QColor &color);
     void setTitle(const QString &title);
     void setIndex(const QModelIndex &index);
@@ -86,7 +88,8 @@ private:
     QModelIndex _index;
 
     QString _title;
-    UtcDateTime _start, _finish;
+    UtcDateTime _start;
+    TimeSpan _timeSpan;
     QColor _color;
 
     unsigned int _linkCnt;
