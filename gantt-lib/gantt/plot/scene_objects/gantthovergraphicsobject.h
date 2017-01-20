@@ -12,6 +12,7 @@ class GanttHoverGraphicsObject : public QGraphicsObject
 
 public:
     GanttHoverGraphicsObject(QGraphicsItem* parent = NULL);
+    GanttHoverGraphicsObject(GanttScene *scene, QGraphicsItem *parent = NULL);
 
     QRectF boundingRect() const;
     void setScene(GanttScene* scene);

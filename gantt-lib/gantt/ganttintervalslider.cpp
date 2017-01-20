@@ -1,5 +1,6 @@
 #include "ganttintervalslider.h"
 #include "utcdatetime.h"
+#include "timespan.h"
 #include "gantt-lib_global_values.h"
 
 #include <QPainter>
@@ -152,6 +153,47 @@ void GanttIntervalSlider::setEndHandle(long long endHandle)
 void GanttIntervalSlider::reset()
 {
     setLimits(m_minValue,m_maxValue);
+}
+
+UtcDateTime GanttIntervalSlider::left() const
+{
+    return valToDt(m_beginValue);
+}
+
+UtcDateTime GanttIntervalSlider::right() const
+{
+    return valToDt(m_endValue);
+}
+
+UtcDateTime GanttIntervalSlider::min() const
+{
+    return valToDt(m_minValue);
+}
+
+UtcDateTime GanttIntervalSlider::max() const
+{
+    return valToDt(m_maxValue);
+}
+
+void GanttIntervalSlider::setLeft(const UtcDateTime &dt)
+{
+    setBeginHandle(dtToVal(dt));
+}
+
+void GanttIntervalSlider::setRight(const UtcDateTime &dt)
+{
+    setEndHandle(dtToVal(dt));
+
+}
+
+void GanttIntervalSlider::setMin(const UtcDateTime &dt)
+{
+    setLimits(dtToVal(dt),m_maxValue);
+}
+
+void GanttIntervalSlider::setTimeSpan(const TimeSpan &ts)
+{
+    setLimits(m_minValue,dtToVal(ts + valToDt(m_minValue)));
 }
 
 void GanttIntervalSlider::setMinTimeSize(long long minTimeSize)

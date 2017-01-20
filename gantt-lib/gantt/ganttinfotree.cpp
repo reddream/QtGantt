@@ -70,7 +70,7 @@ GanttInfoItem *GanttInfoTree::itemForIndex(const QModelIndex &index, GanttInfoIt
     return NULL;
 }
 
-void GanttInfoTree::onClicked(const QModelIndex &index)
+void GanttInfoTree::onClicked(const QModelIndex &/*index*/)
 {
     /// TODO
 }
@@ -115,13 +115,46 @@ void GanttInfoTree::reset()
 
     clear();
     fillRecursive(_root,QModelIndex());
+    qDebug() << "reset, root sz "<<_root->size();
     emit endInsertItems();
 }
 
-void GanttInfoTree::onDataChanged(const QModelIndex &from, const QModelIndex &to)
+void GanttInfoTree::onDataChanged(const QModelIndex &/*from*/, const QModelIndex &/*to*/)
 {
-    /// TODO: optimization
+    /// TODO optimization
     reset();
+}
+
+void GanttInfoTree::onRowsInserted(const QModelIndex &/*parent*/, int /*start*/, int /*end*/)
+{
+    /// TODO optimization
+    reset();
+}
+
+void GanttInfoTree::onColumnsInserted(const QModelIndex &/*parent*/, int /*start*/, int /*end*/)
+{
+    /// TODO optimization
+    reset();
+}
+
+void GanttInfoTree::onRowsRemoved(const QModelIndex &/*parent*/, int /*start*/, int /*end*/)
+{
+    /// TODO optimization
+    reset();
+}
+
+void GanttInfoTree::onColumnsRemoved(const QModelIndex &parent, int start, int end)
+{
+    /// TODO optimization
+    reset();
+}
+
+void GanttInfoTree::updateLimits()
+{
+    QPair<UtcDateTime,UtcDateTime> limits = GanttInfoItem::getLimits(_root);
+    if(limits.first.isValid() || !limits.second.isValid())
+        qWarning("limits not valid in updateLimits");
+    emit limitsChanged(limits.first,limits.second - limits.first);
 }
 
 void GanttInfoTree::fillRecursive(GanttInfoItem *item, const QModelIndex &index)
@@ -168,7 +201,11 @@ GanttInfoItem *GanttInfoTree::makeInfoItem(const QModelIndex &index)
 
 void GanttInfoTree::init()
 {
+    _model = NULL;
+    _iGanttModel = NULL;
+
     _root = new GanttInfoNode(this);
+    connect(this,SIGNAL(endInsertItems()),this,SLOT(updateLimits()));
 }
 
 void GanttInfoTree::disconnectLastModel()
@@ -180,5 +217,12 @@ void GanttInfoTree::disconnectLastModel()
 void GanttInfoTree::connectNewModel()
 {
     connect(_model,SIGNAL(modelReset()),this,SLOT(reset()));
+
     connect(_model,SIGNAL(dataChanged(QModelIndex,QModelIndex)),this,SLOT(onDataChanged(QModelIndex,QModelIndex)));
+    connect(_model,SIGNAL(columnsInserted(QModelIndex,int,int)),this,SLOT(onColumnsInserted(QModelIndex,int,int)));
+    connect(_model,SIGNAL(rowsInserted(QModelIndex,int,int)),this,SLOT(onRowsInserted(QModelIndex,int,int)));
+
+    connect(_model,SIGNAL(rowsRemoved(QModelIndex,int,int)),this,SLOT(onRowsRemoved(QModelIndex,int,int)));
+    connect(_model,SIGNAL(columnsRemoved(QModelIndex,int,int)),this,SLOT(onColumnsRemoved(QModelIndex,int,int)));
+
 }

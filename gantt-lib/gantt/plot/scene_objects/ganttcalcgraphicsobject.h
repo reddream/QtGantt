@@ -23,11 +23,6 @@ public:
 
     GanttInfoNode *innerInfo() const;
 
-signals:
-    void graphicsItemPressed();
-    void graphicsItemHoverEnter();
-    void graphicsItemHoverLeave();
-
 public slots:
     void updateItemGeometry();
 

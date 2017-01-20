@@ -15,8 +15,10 @@ class GanttCurrentDtSlider : public QGraphicsObject
 {
     Q_OBJECT
 
+    void init();
 public:
-    GanttCurrentDtSlider(QGraphicsItem * parent = 0);
+    GanttCurrentDtSlider(QGraphicsItem * parent = NULL);
+    GanttCurrentDtSlider(GanttScene *scene, DtLine *dtline, QGraphicsItem *parent = NULL);
 
     void setScene(GanttScene* scene);
     void setDtLine(DtLine *dtline);
@@ -89,7 +91,7 @@ private:
     UtcDateTime m_dt;
     UtcDateTime m_minDt,m_maxDt;
 
-    GanttScene* m_scene;
+    GanttScene* _scene;
     DtLine *_dtline;
 
     bool m_initialized;

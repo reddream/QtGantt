@@ -35,7 +35,8 @@ SOURCES += \
     extensions/intervalslider.cpp \
     extensions/timespan_extension.cpp \
     ganttwidget.cpp \
-    gantt/ganttintervalslider.cpp
+    gantt/ganttintervalslider.cpp \
+    extensions/idtinterval.cpp
 
 HEADERS +=\
         gantt-lib_global.h \
@@ -63,7 +64,8 @@ HEADERS +=\
     extensions/intervalslider.h \
     extensions/timespan_extension.h \
     ganttwidget.h \
-    gantt/ganttintervalslider.h
+    gantt/ganttintervalslider.h \
+    extensions/idtinterval.h
 
 unix {
     target.path = /usr/lib

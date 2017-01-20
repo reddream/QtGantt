@@ -34,11 +34,10 @@ GanttCalcGraphicsObject::GanttCalcGraphicsObject(GanttInfoNode* node, QGraphicsI
 
 GanttCalcGraphicsObject::~GanttCalcGraphicsObject()
 {
-    if(m_scene)
+    if(_scene)
     {
-        m_scene->removeItem(this);
+        _scene->removeItem(this);
         setParentItem(NULL);
-        m_scene->update(sceneBoundingRect());
     }
 
     if(innerInfo())
@@ -54,7 +53,7 @@ void GanttCalcGraphicsObject::paint(QPainter *painter, const QStyleOptionGraphic
 {
     Q_UNUSED(option);
     Q_UNUSED(widget);
-    QColor color = (m_scene->currentItem() == this)?(QColor(Qt::red).darker(130)):(QColor(Qt::red));
+    QColor color = (_scene->currentItem() == this)?(QColor(Qt::red).darker(130)):(QColor(Qt::red));
     painter->setRenderHint(QPainter::Antialiasing,true);
     painter->drawPath(m_shapePath);
     painter->fillPath(m_shapePath,QBrush(color.lighter(130)));
@@ -67,12 +66,12 @@ GanttInfoNode *GanttCalcGraphicsObject::innerInfo() const
 
 void GanttCalcGraphicsObject::updateItemGeometry()
 {
-    if(!m_scene || !innerInfo())
+    if(!_scene || !innerInfo())
         return;
 
-    qreal calcPos = m_scene->dtToPos(innerInfo()->start());
+    qreal calcPos = _scene->dtToPos(innerInfo()->start());
 
-    setPos(calcPos, 2*DEFAULT_ITEM_WIDTH + innerInfo()->pos());
+    setPos(calcPos, innerInfo()->pos());
 }
 
 void GanttCalcGraphicsObject::mousePressEvent(QGraphicsSceneMouseEvent *event)

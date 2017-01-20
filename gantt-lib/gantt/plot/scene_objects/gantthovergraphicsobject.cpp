@@ -11,11 +11,17 @@ GanttHoverGraphicsObject::GanttHoverGraphicsObject(QGraphicsItem* parent)
     m_scene = NULL;
 }
 
+GanttHoverGraphicsObject::GanttHoverGraphicsObject(GanttScene *scene, QGraphicsItem *parent)
+    : QGraphicsObject(parent)
+{
+    setScene(scene);
+}
+
 QRectF GanttHoverGraphicsObject::boundingRect() const
 {
     if(!m_scene)
         return QRectF();
-    return QRectF(0,0,scene()->sceneRect().width(),DEFAULT_ITEM_HEIGHT);
+    return QRectF(0,0,m_scene->sceneRect().width(),DEFAULT_ITEM_HEIGHT);
 }
 
 void GanttHoverGraphicsObject::setScene(GanttScene *scene)

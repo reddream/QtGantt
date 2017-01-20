@@ -492,6 +492,11 @@ void GanttScene::onEndInsertItems()
     updateSceneRect();
 }
 
+void GanttScene::onEndRemoveItems()
+{
+    updateSceneRect();
+}
+
 void GanttScene::removeByInfoLeaf(const GanttInfoLeaf *leaf)
 {
     if(!leaf)
@@ -518,6 +523,7 @@ void GanttScene::updateSliderRect()
                              ,p_view->verticalScrollBar()->value()
                              ,width()-MIN_WIDTH_FOR_TIME_VISUALIZING
                              ,p_view->height() ) );
+    update();
 }
 
 
@@ -528,13 +534,9 @@ void GanttScene::init()
 
     setSceneRect(0,0,GANTTSCENE_MIN_WIDTH,0);
 
-    m_slider = new GanttCurrentDtSlider;
-    m_slider->setScene(this);
-    m_slider->setDtLine(_dtline);
-    m_crossObject = new GanttDtCrossObject;
-    m_crossObject->setScene(this);
-    m_hoverObject = new GanttHoverGraphicsObject;
-    m_hoverObject->setScene(this);
+    m_slider = new GanttCurrentDtSlider(this,_dtline);
+    m_crossObject = new GanttDtCrossObject(this);
+    m_hoverObject = new GanttHoverGraphicsObject(this);
 
     connect(m_slider,SIGNAL(dtChanged(UtcDateTime)),this,SIGNAL(currentDtChanged(UtcDateTime)));
 
@@ -542,10 +544,9 @@ void GanttScene::init()
 }
 
 GanttScene::GanttScene(GanttGraphicsView *view, DtLine *dtline, QObject *parent)
-    : HFitScene(view, parent)
+    : HFitScene(view, parent),_dtline(dtline)
 {
     init();
-    _dtline = dtline;
 }
 
 int GanttScene::dtToPos(const UtcDateTime &dt) const
@@ -563,26 +564,19 @@ void GanttScene::onItemAdded(GanttInfoItem *item)
     if(!item)
         return;
 
-    connect(item,SIGNAL(destroyed(QObject*)),this,SLOT(onVisItemDestroyed(QObject*)));
+    connect(item,SIGNAL(destroyed(QObject*)),this,SLOT(onVisItemDestroyed()));
 
     GanttInfoLeaf *leaf = dynamic_cast<GanttInfoLeaf*>(item);
+    GanttGraphicsObject *p_item = NULL;
     if(leaf)
     {
-        GanttIntervalGraphicsObject *p_item = new GanttIntervalGraphicsObject(leaf);
+        GanttIntervalGraphicsObject *p;
+        p_item = p = new GanttIntervalGraphicsObject(leaf);
 
-        connect(p_item,SIGNAL(graphicsItemHoverEnter()),this,SLOT(onGraphicsItemHoverEnter()));
-        connect(p_item,SIGNAL(graphicsItemHoverLeave()),this,SLOT(onGraphicsItemHoverLeave()));
-        connect(p_item,SIGNAL(graphicsItemPressed()),this,SLOT(onGraphicsItemPress()));
-
-
-        p_item->setScene(this);
-
-        m_items.append(p_item);
-        m_itemByInfo.insert(leaf,p_item);
+        m_items.append(p);
+        m_itemByInfo.insert(leaf,p);
         m_infoByStart.insert(leaf->start(),leaf);
         m_infoByFinish.insert(leaf->finish(),leaf);
-
-        p_item->updateItemGeometry();
     }
     else
     {
@@ -591,20 +585,22 @@ void GanttScene::onItemAdded(GanttInfoItem *item)
         {
             if(node->hasStart())
             {
-                GanttCalcGraphicsObject *p_item = new GanttCalcGraphicsObject(node);
+                GanttCalcGraphicsObject *p;
+                p_item = p = new GanttCalcGraphicsObject(node);
 
-                connect(p_item,SIGNAL(graphicsItemHoverEnter()),this,SLOT(onGraphicsItemHoverEnter()));
-                connect(p_item,SIGNAL(graphicsItemHoverLeave()),this,SLOT(onGraphicsItemHoverLeave()));
-                connect(p_item,SIGNAL(graphicsItemPressed()),this,SLOT(onGraphicsItemPress()));
-
-
-                p_item->setScene(this);
-
-                m_calcItems.append(p_item);
-                m_itemByInfo.insert(node,p_item);
-
-                p_item->updateItemGeometry();
+                m_calcItems.append(p);
+                m_itemByInfo.insert(node,p);
             }
         }
+    }
+    if(p_item){
+        p_item->setDtLine(_dtline);
+        p_item->setScene(this);
+
+        connect(p_item,SIGNAL(graphicsItemHoverEnter()),this,SLOT(onGraphicsItemHoverEnter()));
+        connect(p_item,SIGNAL(graphicsItemHoverLeave()),this,SLOT(onGraphicsItemHoverLeave()));
+        connect(p_item,SIGNAL(graphicsItemPressed()),this,SLOT(onGraphicsItemPress()));
+
+        p_item->updateItemGeometry();
     }
 }

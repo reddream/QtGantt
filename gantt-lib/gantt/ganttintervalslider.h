@@ -1,12 +1,13 @@
 #ifndef GANTTINTERVALSLIDER_H
 #define GANTTINTERVALSLIDER_H
 
+#include "idtinterval.h"
 #include "intervalslider.h"
 #include "utcdatetime.h"
 
 class GanttWidget;
 
-class GanttIntervalSlider : public IntervalSlider
+class GanttIntervalSlider : public IntervalSlider, public IDtInterval
 {
     Q_OBJECT
 
@@ -28,6 +29,21 @@ public:
     void setBeginHandle(long long beginHandle);
     void setEndHandle(long long endHandle);
     void reset();
+
+    //--- IDtInterval impl
+
+    virtual UtcDateTime left() const;
+    virtual UtcDateTime right() const;
+    virtual UtcDateTime min() const;
+    virtual UtcDateTime max() const;
+
+    virtual void setLeft(const UtcDateTime &dt);
+    virtual void setRight(const UtcDateTime &dt);
+    virtual void setMin(const UtcDateTime &dt);
+    virtual void setTimeSpan(const TimeSpan &ts);
+
+
+    //---
 
 
 private:

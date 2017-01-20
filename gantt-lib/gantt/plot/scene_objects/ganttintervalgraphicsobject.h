@@ -19,23 +19,13 @@ public:
 
     GanttInfoLeaf *innerInfo() const;
 
-
-signals:
-    void graphicsItemPressed();
-    void graphicsItemHoverEnter();
-    void graphicsItemHoverLeave();
-
-
 public slots:
     void setBoundingRectSize(const QSizeF &boundingRectSize);
-
     void updateItemGeometry();
-
 
 
 protected:
     void mousePressEvent(QGraphicsSceneMouseEvent *event);
-
     void hoverEnterEvent(QGraphicsSceneHoverEvent *event);
     void hoverLeaveEvent(QGraphicsSceneHoverEvent *event);
 

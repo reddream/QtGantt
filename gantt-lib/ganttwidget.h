@@ -49,7 +49,7 @@ public slots:
 
 private:
     void init();
-    void connectSceneToInfo();
+    void connectSceneWithInfo();
 
 private:
     Ui::GanttWidget *ui;

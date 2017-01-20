@@ -95,6 +95,7 @@ public slots:
     void recalc();
     void setMin(const UtcDateTime &min);
     void setTimeSpan(const TimeSpan &timeSpan);
+    void setLimits(const UtcDateTime &min, const TimeSpan &ts); ///< setMin + setTimeSpan
 
 signals:
     void minChanged();
@@ -124,9 +125,9 @@ private:
 
 
 private:
-    Precision m_mode;
-    UtcDateTime m_min;
-    TimeSpan m_timeSpan;
+    Precision _mode;
+    UtcDateTime _min;
+    TimeSpan _timeSpan;
 };
 
 #endif // DTLINE_H

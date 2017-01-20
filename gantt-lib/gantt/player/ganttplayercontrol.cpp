@@ -15,7 +15,6 @@ GanttPlayerControl::GanttPlayerControl(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    m_settings = NULL;
     m_timer = std::make_pair<QTimer*,PlayMode>(NULL,PlayMode_count);
     m_speedModifier = 1.0;
     setPlayFrequency(GANTTPLAYER_DEFAULT_FREQUENCY);
@@ -107,10 +106,9 @@ void GanttPlayerControl::setSettings(GanttPlayerSettings *settings)
 {
     if(!settings)
         return;
-    m_settings = settings;
-    setSpeedModifier(m_settings->currentSpeed());
+    setSpeedModifier(settings->currentSpeed());
 
-    connect(m_settings,SIGNAL(speedChanged(qreal)),this,SLOT(onSpeedChanged(qreal)));
+    connect(settings,SIGNAL(speedChanged(qreal)),this,SLOT(onSpeedChanged(qreal)));
 }
 
 qreal GanttPlayerControl::playFrequency() const

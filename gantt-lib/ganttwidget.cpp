@@ -81,15 +81,18 @@ void GanttWidget::init()
 {
     _treeInfo = new GanttInfoTree(this);
     _scene = new GanttScene(ui->ganttView,ui->widgetDtLine,this);
-    connectSceneToInfo();
+    connectSceneWithInfo();
 }
 
-void GanttWidget::connectSceneToInfo()
+void GanttWidget::connectSceneWithInfo()
 {
     connect(_treeInfo,SIGNAL(itemAdded(GanttInfoItem*)),_scene,SLOT(onItemAdded(GanttInfoItem*)));
     connect(_treeInfo,SIGNAL(itemRemoved(GanttInfoItem*)),_scene,SLOT(onItemRemoved(GanttInfoItem*)));
 
     connect(_treeInfo,SIGNAL(endInsertItems()),_scene,SLOT(onEndInsertItems()));
+    connect(_treeInfo,SIGNAL(endRemoveItems()),_scene,SLOT(onEndRemoveItems()));
 
+
+    connect(_treeInfo,SIGNAL(limitsChanged(UtcDateTime,TimeSpan)),ui->widgetDtLine,SLOT(setLimits(UtcDateTime,TimeSpan)));
 }
 

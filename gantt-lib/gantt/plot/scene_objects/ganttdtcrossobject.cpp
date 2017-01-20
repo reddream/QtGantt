@@ -5,11 +5,23 @@
 #include <QFontMetrics>
 #include <QPainter>
 
-GanttDtCrossObject::GanttDtCrossObject(QGraphicsItem *parent)
-    :QGraphicsObject(parent)
+void GanttDtCrossObject::init()
 {
     setZValue(1000);
     m_scene = NULL;
+}
+
+GanttDtCrossObject::GanttDtCrossObject(QGraphicsItem *parent)
+    :QGraphicsObject(parent)
+{
+    init();
+}
+
+GanttDtCrossObject::GanttDtCrossObject(GanttScene *scene, QGraphicsItem *parent)
+    : QGraphicsObject(parent)
+{
+    init();
+    setScene(scene);
 }
 
 QRectF GanttDtCrossObject::boundingRect() const

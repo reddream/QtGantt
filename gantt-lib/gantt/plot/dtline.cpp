@@ -114,20 +114,20 @@ void DtLine::drawBackground(QPainter *painter)
 
 void DtLine::drawBottom(QPainter *painter)
 {
-    if(timeSpanIsValid(m_timeSpan))
+    if(timeSpanIsValid(_timeSpan))
     {
         UtcDateTime dt;
-        UtcDateTime nextDt = displayedDtFewer(m_min, m_mode);
+        UtcDateTime nextDt = displayedDtFewer(_min, _mode);
         int l,r;
 
         do{
             dt = nextDt;
-            nextDt = displayedDtNextHatch(dt, m_mode);
+            nextDt = displayedDtNextHatch(dt, _mode);
             l = dtToPos(dt);
             r = dtToPos(nextDt);
             qDebug()<< "dt " << dt
                     << endl
-                    << "mode " << modeToString(m_mode)
+                    << "mode " << modeToString(_mode)
                     << "nextDt " << nextDt
                     << endl
                     << "l " << l
@@ -135,10 +135,10 @@ void DtLine::drawBottom(QPainter *painter)
                     << " rect "<< rect()
                     << endl
                     << "min " << min() << " max "<< max();
-            if(isDrawn(dt,m_mode)){
+            if(isDrawn(dt,_mode)){
                 static int kk = 0;
                 qDebug() << "isdrawn " << kk++;
-                if(extMode(m_mode)){
+                if(extMode(_mode)){
                     painter->drawLine(QPointF(l,itemHeight),
                                       QPointF(l,itemHeight*2)); // very big hatch
                 }
@@ -146,7 +146,7 @@ void DtLine::drawBottom(QPainter *painter)
                     painter->drawLine(QPointF(l,itemHeight),
                                       QPointF(l,itemHeight*(3.0/2))); // big hatch
 
-                drawBottomItemText(painter, dt, m_mode);
+                drawBottomItemText(painter, dt, _mode);
             }
             else{
                 painter->drawLine(QPointF(l,itemHeight),
@@ -218,7 +218,7 @@ void DtLine::drawBottomItemTextExt(QPainter *painter, const QString &text, int c
 
 void DtLine::drawTop(QPainter *painter)
 {
-    TopPrecision mode = mapToTop(m_mode);
+    TopPrecision mode = mapToTop(_mode);
     if(mode == topEmpty)
         return; // no paint
 
@@ -236,7 +236,7 @@ void DtLine::drawTop(QPainter *painter)
         r = dtToPos(nextDt);
         qDebug()<< "dt " << dt
                 << endl
-                << "mode " << modeToString(m_mode)
+                << "mode " << modeToString(_mode)
                 << "nextDt " << nextDt
                 << endl
                 << "l " << l
@@ -308,7 +308,7 @@ QPair<QRect, Qt::Alignment> DtLine::getTextArea(const QRect &rect, int l, int r,
 
 TimeSpan DtLine::timeSpan() const
 {
-    return m_timeSpan;
+    return _timeSpan;
 }
 
 bool DtLine::inRange(const UtcDateTime &dt) const
@@ -331,7 +331,7 @@ UtcDateTime DtLine::posToDt(int pos) const
     // inrange?
     int w = width();
     if(w > 0)
-        return m_min + m_timeSpan * (pos * 1.0 / w);
+        return _min + _timeSpan * (pos * 1.0 / w);
     // width == 0
     return UtcDateTime();
 }
@@ -339,9 +339,9 @@ UtcDateTime DtLine::posToDt(int pos) const
 int DtLine::dtToPos(const UtcDateTime &dt) const
 {
     // inrange?
-    long long totalMcsecs = m_timeSpan.totalMicroseconds();
+    long long totalMcsecs = _timeSpan.totalMicroseconds();
     if(totalMcsecs != 0)
-        return width() * m_min.microsecondsTo(dt) * 1. / totalMcsecs;
+        return width() * _min.microsecondsTo(dt) * 1. / totalMcsecs;
     return 0;
 }
 
@@ -906,10 +906,10 @@ bool DtLine::extMode(DtLine::Precision mode)
 
 int DtLine::precisiousWidth() const
 {
-    UtcDateTime dt1 = displayedDtFewer(min() , m_mode),dt2 = displayedDtGreater(min() , m_mode);
+    UtcDateTime dt1 = displayedDtFewer(min() , _mode),dt2 = displayedDtGreater(min() , _mode);
     int appWidth = 0;
     int tmp;
-    const int visualItemWidth = (m_mode==months1
+    const int visualItemWidth = (_mode==months1
                               ?MIN_WIDTH_FOR_MONTH_VISUALIZING
                               :MIN_WIDTH_FOR_TIME_VISUALIZING);
     if(inRange((tmp = dtToPos(dt1) + visualItemWidth/2))
@@ -920,7 +920,7 @@ int DtLine::precisiousWidth() const
                && inRange(tmp + visualItemWidth)){
         appWidth += rect().left() - tmp;
     }
-    dt1 = displayedDtFewer(max() , m_mode); dt2 = displayedDtGreater(max() , m_mode);
+    dt1 = displayedDtFewer(max() , _mode); dt2 = displayedDtGreater(max() , _mode);
     if(inRange((tmp = dtToPos(dt2) - visualItemWidth/2))
        && inRange(tmp + visualItemWidth) ){
         appWidth += (tmp + visualItemWidth) - rect().right();
@@ -942,15 +942,15 @@ int DtLine::calcVisItemCount(int width,int itemWidth) const
 
 DtLine::Precision DtLine::calculateTimeMode() const
 {
-    if(!timeSpanIsValid(m_timeSpan) || width() < MIN_WIDTH_FOR_TIME_VISUALIZING)
+    if(!timeSpanIsValid(_timeSpan) || width() < MIN_WIDTH_FOR_TIME_VISUALIZING)
         return (Precision)0;
 
-    if(m_min.year() == 1998){
-        formatForMode(m_mode);
+    if(_min.year() == 1998){
+        formatForMode(_mode);
     }
-    qreal   coef = (m_timeSpan.totalMicroseconds() * 1. /
+    qreal   coef = (_timeSpan.totalMicroseconds() * 1. /
                     calcVisItemCount(precisiousWidth(), MIN_WIDTH_FOR_TIME_VISUALIZING)),
-            monthCoef = (m_timeSpan.totalMicroseconds() * 1. /
+            monthCoef = (_timeSpan.totalMicroseconds() * 1. /
                          calcVisItemCount(precisiousWidth(), MIN_WIDTH_FOR_MONTH_VISUALIZING));
 
     Precision mode = Precision_count;
@@ -979,9 +979,9 @@ DtLine::Precision DtLine::calculateTimeMode() const
 
 void DtLine::recalc()
 {
-    m_mode = calculateTimeMode();
+    _mode = calculateTimeMode();
     qDebug() << "min "<< min() << " max "<< max();
-    qDebug() << "mode " << modeToString( m_mode) << " " << QDateTime::currentDateTime();
+    qDebug() << "mode " << modeToString( _mode) << " " << QDateTime::currentDateTime();
     update();
 }
 
@@ -991,24 +991,30 @@ void DtLine::setTimeSpan(const TimeSpan &timeSpan)
     if(timeSpan.totalMicroseconds() < 0)
     {
         qWarning("DtLine::setTimeSpan:: TimeSpan's msc's < 0 setting inner TimeSpan to 0");
-        m_timeSpan = TimeSpan();
+        _timeSpan = TimeSpan();
     } else
-        m_timeSpan = timeSpan;
+        _timeSpan = timeSpan;
     emit timeSpanChanged();
+}
+
+void DtLine::setLimits(const UtcDateTime &min, const TimeSpan &ts)
+{
+    setMin(min);
+    setTimeSpan(ts);
 }
 
 UtcDateTime DtLine::min() const
 {
-    return m_min;
+    return _min;
 }
 
 UtcDateTime DtLine::max() const
 {
-    return m_min + m_timeSpan;
+    return _min + _timeSpan;
 }
 
 void DtLine::setMin(const UtcDateTime &min)
 {
-    m_min = min;
+    _min = min;
     emit minChanged();
 }

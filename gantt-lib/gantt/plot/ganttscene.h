@@ -25,12 +25,7 @@ class GanttScene : public HFitScene
 {
     Q_OBJECT
 
-
-private:
     void init();
-
-    DtLine *_dtline;
-
 public:
     GanttScene(GanttGraphicsView *view, DtLine *dtline, QObject * parent = 0);
 
@@ -38,11 +33,12 @@ public:
     UtcDateTime posToDt(int pos) const;
 
 signals:
-
+    void limitsChanged(const UtcDateTime &min, const TimeSpan &ts);
 public slots:
     void onItemAdded(GanttInfoItem *item);
     void onItemRemoved(GanttInfoItem* item);
     void onEndInsertItems();
+    void onEndRemoveItems();
 
     void drawBackground(QPainter *painter, const QRectF &rect); ///< Задний план содержит сетку
 
@@ -117,6 +113,7 @@ private slots:
 
 private:
 
+    DtLine *_dtline;
     QList<GanttIntervalGraphicsObject*> m_items;
     QList<GanttCalcGraphicsObject*> m_calcItems;
     QMap<const GanttInfoItem*, QGraphicsObject*> m_itemByInfo;

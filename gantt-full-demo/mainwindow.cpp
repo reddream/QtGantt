@@ -11,6 +11,7 @@
 void MainWindow::init()
 {
     _model = new GanttTreeModel();
+    ui->ganttWidget->setModel(_model);
 }
 
 MainWindow::MainWindow(QWidget *parent) :

@@ -22,6 +22,7 @@ public:
     GanttInfoItem *root() const;
 
 signals:
+    void limitsChanged(const UtcDateTime &min, const TimeSpan &ts);
     void endInsertItems();
     void endRemoveItems();
     void itemAdded(GanttInfoItem *item);
@@ -37,7 +38,14 @@ public slots:
 
     void clear();
     void reset();
+private slots:
     void onDataChanged(const QModelIndex &from, const QModelIndex &to);
+    void onRowsInserted(const QModelIndex &parent, int start, int end);
+    void onColumnsInserted(const QModelIndex &parent, int start, int end);
+    void onRowsRemoved(const QModelIndex &parent, int start, int end);
+    void onColumnsRemoved(const QModelIndex &parent, int start, int end);
+
+    void updateLimits();
 
 
 private:

@@ -10,8 +10,11 @@ class GanttScene;
 
 class GanttDtCrossObject : public QGraphicsObject
 {
+
+    void init();
 public:
     GanttDtCrossObject(QGraphicsItem *parent = NULL);
+    GanttDtCrossObject(GanttScene *scene, QGraphicsItem *parent = NULL);
 
     QRectF boundingRect() const;
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);

@@ -10,16 +10,31 @@
 
 #include <QDebug>
 
-GanttCurrentDtSlider::GanttCurrentDtSlider(QGraphicsItem* parent) :
-    QGraphicsObject(parent)
+void GanttCurrentDtSlider::init()
 {
+    _scene = NULL;
+    _dtline = NULL;
+
     m_draw = true;
     setDraw(false);
 
     m_penWidth = 2;
     setCursor(Qt::OpenHandCursor);
     setZValue(20);
+}
 
+GanttCurrentDtSlider::GanttCurrentDtSlider(QGraphicsItem* parent) :
+    QGraphicsObject(parent)
+{
+    init();
+}
+
+GanttCurrentDtSlider::GanttCurrentDtSlider(GanttScene *scene, DtLine *dtline, QGraphicsItem *parent)
+    : QGraphicsObject(parent)
+{
+    init();
+    setDtLine(dtline);
+    setScene(scene);
 }
 
 void GanttCurrentDtSlider::setScene(GanttScene *scene)
@@ -27,9 +42,8 @@ void GanttCurrentDtSlider::setScene(GanttScene *scene)
     if(!scene)
         return;
 
-    m_scene = scene;
+    _scene = scene;
     scene->addItem(this);
-    connect(m_scene,SIGNAL(limitsChanged(UtcDateTime,UtcDateTime)),this,SLOT(updateTextRect()));
 
     setSlidersRect(scene->sceneRect());
 
@@ -38,7 +52,14 @@ void GanttCurrentDtSlider::setScene(GanttScene *scene)
 
 void GanttCurrentDtSlider::setDtLine(DtLine *dtline)
 {
+    if(!dtline){
+        qWarning("GanttCurrentDtSlider::setDtLine NULL");
+        return;
+    }
+
     _dtline = dtline;
+
+    connect(_dtline,SIGNAL(changed()),this,SLOT(updateTextRect()));
 }
 
 QRectF GanttCurrentDtSlider::boundingRect() const
@@ -68,7 +89,7 @@ void GanttCurrentDtSlider::paint(QPainter *painter, const QStyleOptionGraphicsIt
     painter->save();
     painter->setBrush(QBrush(Qt::white));
     painter->drawRect(m_textRect);
-    painter->setFont(m_scene->font());
+    painter->setFont(_scene->font());
     painter->drawText(m_textRect,m_dt.toString("HH:mm:ss dd.MM.yyyy"),QTextOption(Qt::AlignCenter));
     painter->restore();
 
@@ -114,9 +135,9 @@ void GanttCurrentDtSlider::updateShape()
 
 void GanttCurrentDtSlider::updateTextRect()
 {
-    if(!m_scene)
+    if(!_scene)
         return;
-    QFontMetrics fontMetrics(m_scene->font());
+    QFontMetrics fontMetrics(_scene->font());
     QRect textRect;
     {
         textRect =  fontMetrics.tightBoundingRect(m_dt.toString("dd.MM.yyyy HH:mm:ss"));
@@ -125,7 +146,7 @@ void GanttCurrentDtSlider::updateTextRect()
         textRect.moveTo(10,1);
     }
 
-    if(mapFromScene(m_scene->sceneRect().topRight()).x() < textRect.right())
+    if(mapFromScene(_scene->sceneRect().topRight()).x() < textRect.right())
     {
         textRect.moveTo(-textRect.width()-10,0);
     }
@@ -142,7 +163,7 @@ void GanttCurrentDtSlider::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 
     if(cursor().shape() == Qt::ClosedHandCursor)
     {
-        setDt(m_scene->posToDt(mapToScene(event->pos()).x()));
+        setDt(_scene->posToDt(mapToScene(event->pos()).x()));
     }
 }
 
@@ -176,7 +197,7 @@ void GanttCurrentDtSlider::updateScenePos()
     }
     else
     {
-        if(!m_scene)
+        if(!_scene)
         {
             Q_ASSERT(false);
             return;
@@ -184,7 +205,7 @@ void GanttCurrentDtSlider::updateScenePos()
 
         setVisible(true);
 
-        setPos((m_dt.isValid())?(m_scene->dtToPos(m_dt)):(m_slidersRect.left()), m_slidersRect.top());
+        setPos((m_dt.isValid())?(_scene->dtToPos(m_dt)):(m_slidersRect.left()), m_slidersRect.top());
     }
 }
 
@@ -203,7 +224,7 @@ void GanttCurrentDtSlider::updateRange(const GanttInfoNode *node)
 
 bool GanttCurrentDtSlider::outOfRange() const
 {
-    if(!m_scene)
+    if(!_scene)
     {
         Q_ASSERT(false);
         return true;
@@ -268,7 +289,7 @@ void GanttCurrentDtSlider::moveToEnd()
 
 void GanttCurrentDtSlider::moveToRangeStart()
 {
-    if(!m_scene)
+    if(!_scene)
     {
         Q_ASSERT(false);
         return;
@@ -279,7 +300,7 @@ void GanttCurrentDtSlider::moveToRangeStart()
 
 void GanttCurrentDtSlider::moveToRangeFinish()
 {
-    if(!m_scene)
+    if(!_scene)
     {
         Q_ASSERT(false);
         return;
@@ -362,7 +383,7 @@ bool GanttCurrentDtSlider::setDt(UtcDateTime dt)
     if(!m_initialized)
         m_initialized = true;
 
-    if(!m_scene)
+    if(!_scene)
     {
         Q_ASSERT(false);
         return false;
@@ -399,8 +420,8 @@ void GanttCurrentDtSlider::setPos(const QPointF &pos)
 
     QGraphicsItem::setPos(x,pos.y());
 
-    if(m_scene)
-        m_scene->invalidate(QRectF(),QGraphicsScene::BackgroundLayer);
+    if(_scene)
+        _scene->invalidate(QRectF(),QGraphicsScene::BackgroundLayer);
 }
 
 void GanttCurrentDtSlider::setPos(qreal x, qreal y)

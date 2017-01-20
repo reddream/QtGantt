@@ -12,7 +12,7 @@
 GanttIntervalGraphicsObject::GanttIntervalGraphicsObject(GanttInfoLeaf *info,QGraphicsItem *parent) :
     GanttGraphicsObject(info,parent)
 {
-    m_scene = NULL;
+    _scene = NULL;
     m_isSmall = true;
 
     if(innerInfo())
@@ -31,11 +31,10 @@ GanttIntervalGraphicsObject::GanttIntervalGraphicsObject(GanttInfoLeaf *info,QGr
 GanttIntervalGraphicsObject::~GanttIntervalGraphicsObject()
 {
 
-    if(m_scene)
+    if(_scene)
     {
-        m_scene->removeItem(this);
+        _scene->removeItem(this);
         setParentItem(NULL);
-        m_scene->update(sceneBoundingRect());
     }
 
     if(innerInfo())
@@ -54,9 +53,9 @@ void GanttIntervalGraphicsObject::paint(QPainter *painter, const QStyleOptionGra
 {
     Q_UNUSED(option);
     Q_UNUSED(widget);
-    if(!innerInfo() || !m_scene)
+    if(!innerInfo() || !_scene)
         return;
-    QColor color = (m_scene->currentItem() == this)?(innerInfo()->color().darker(130)):(innerInfo()->color());
+    QColor color = (_scene->currentItem() == this)?(innerInfo()->color().darker(130)):(innerInfo()->color());
 
     if(!m_isSmall)
     {
@@ -121,7 +120,7 @@ void GanttIntervalGraphicsObject::updateItemGeometry()
           itemWidth = _dtline->dtToPos(innerInfo()->finish()) - startPos;
 
     setBoundingRectSize(QSizeF(itemWidth, DEFAULT_ITEM_WIDTH));
-    setPos(startPos, 2*DEFAULT_ITEM_WIDTH + innerInfo()->pos());
+    setPos(startPos, innerInfo()->pos());
 }
 
 void GanttIntervalGraphicsObject::mousePressEvent(QGraphicsSceneMouseEvent *event)

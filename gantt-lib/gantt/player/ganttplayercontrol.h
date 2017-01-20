@@ -84,8 +84,6 @@ private:
     qreal m_playFrequency; ///< Число шагов в секунду
     qreal m_speedModifier;
 
-    GanttPlayerSettings *m_settings;
-
     QList<PlayerControlButton*> m_checkedButtons;
     std::pair<QTimer*,PlayMode> m_timer;
 };
