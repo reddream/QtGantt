@@ -234,17 +234,6 @@ void DtLine::drawTop(QPainter *painter)
         nextDt = displayedDtNext(dt, bMode);
         l = dtToPos(dt);
         r = dtToPos(nextDt);
-        qDebug()<< "dt " << dt
-                << endl
-                << "mode " << modeToString(_mode)
-                << "nextDt " << nextDt
-                << endl
-                << "l " << l
-                << " r " << r
-                << " rect "<< rect()
-                << endl
-                << "min " << min() << " max "<< max();
-
 
         drawTopItem(painter, dt, mode, l, r);
     } while(r <= rect().right());
@@ -263,7 +252,6 @@ void DtLine::drawTopItem(QPainter *painter, const UtcDateTime &dt, TopPrecision 
 
 void DtLine::drawTopItemText(QPainter *painter, const QString &text, const QRect &rect,  Qt::Alignment f)
 {
-    qDebug() << text;
     painter->drawText(rect, text  , QTextOption(f));
 }
 template<class TPrecision>
@@ -273,17 +261,12 @@ QPair<QRect, Qt::Alignment> DtLine::getTextArea(const QRect &rect, int l, int r,
     QRect textRect(l, rect.top() + topOffset , r - l, height);
     Qt::Alignment alignment(Qt::AlignCenter);
 
-    qDebug() << "rect "<< rect;
-    qDebug() << "l " << l << " r " << r;
     if(l < rect.left()){
         if( r > rect.right()){
             textRect.setLeft(rect.left());
             textRect.setWidth(width());
         }
         else{
-            qDebug() << "width for mode ["
-                     << modeToString(mode) << "] = "
-                     << widthForMode(mode);
             if(r - rect.left() > widthForMode(mode)){
                 textRect.setLeft(rect.left());
             }
@@ -302,7 +285,6 @@ QPair<QRect, Qt::Alignment> DtLine::getTextArea(const QRect &rect, int l, int r,
     if(alignment != Qt::AlignCenter)
         textRect.adjust(5,0,-5,0);
 
-    qDebug() << "textRect "<< textRect  ;
     return qMakePair(textRect,alignment);
 }
 
