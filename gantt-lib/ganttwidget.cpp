@@ -116,6 +116,6 @@ void GanttWidget::connectIntervals()
     connect(ui->widgetIntervalSlider,SIGNAL(rangeChangedManually(UtcDateTime,TimeSpan)),
                 ui->widgetDtLine,SLOT(setLimitsWithOffset(UtcDateTime,TimeSpan)));
     connect(ui->widgetDtLine,SIGNAL(changedManually(UtcDateTime,TimeSpan)),
-                ui->widgetIntervalSlider,SLOT(setLimits(UtcDateTime,TimeSpan)));
+                ui->widgetIntervalSlider,SLOT(setRange(UtcDateTime,TimeSpan)));
 }
 

@@ -29,8 +29,8 @@ void GanttIntervalSlider::init()
 
     setMouseTracking(true);
 
-    connect(this,SIGNAL(beginMoved(long long)),this,SLOT(emitRangeChangedManually()));
-    connect(this,SIGNAL(endMoved(long long)),this,SLOT(emitRangeChangedManually()));
+    connect(this,SIGNAL(beginMovedManually(long long)),this,SLOT(emitRangeChangedManually()));
+    connect(this,SIGNAL(endMovedManually(long long)),this,SLOT(emitRangeChangedManually()));
 
 }
 
@@ -199,6 +199,12 @@ void GanttIntervalSlider::setMin(const UtcDateTime &dt)
 void GanttIntervalSlider::setTimeSpan(const TimeSpan &ts)
 {
     setLimits(m_minValue,dtToVal(ts + valToDt(m_minValue)));
+}
+
+void GanttIntervalSlider::setRange(const UtcDateTime &min, const TimeSpan &ts)
+{
+    setBeginHandle(dtToVal(min));
+    setEndHandle(dtToVal(min+ts));
 }
 
 void GanttIntervalSlider::setLimits(long long min, long long max)

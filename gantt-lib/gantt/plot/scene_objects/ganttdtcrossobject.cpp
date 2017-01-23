@@ -97,11 +97,11 @@ void GanttDtCrossObject::updatePaths()
         textRect.adjust(-adjust,-adjust,adjust,adjust);
         offsetY = - textRect.height();
         textRect.moveTo(offsetX,offsetY);
-        if(mapFromScene(m_scene->sceneRect().topRight()).x() < textRect.width())
-        {
-            textRect.moveTo(-textRect.width()-offsetX,offsetY - 5);
-        }
-
+        QPointF mappedTopRight = mapFromScene(m_scene->sceneRect().topRight());
+        if(-mappedTopRight.y() < textRect.height())
+            textRect.moveTo(10, offsetY = 5);
+        if(mappedTopRight.x() < textRect.width())
+            textRect.moveTo(-textRect.width()-offsetX,offsetY);
         prepareGeometryChange();
         m_linesPath = linesPath;
         m_textRect = textRect;

@@ -52,8 +52,8 @@ public:
     void setHandleSize(int new_handle_value);///< Устанавливает размер бегунков
 
     /** Устанавливают новые значения для бегунков */
-    virtual void setEndHandle(long long endHandle);
-    virtual void setBeginHandle(long long beginHandle);
+    virtual void setEndHandle(long long endHandle, bool manually = false);
+    virtual void setBeginHandle(long long beginHandle, bool manually = false);
 
 
     /** Устанавливают геометрию слайдера */
@@ -91,6 +91,8 @@ public:
     void setVisible(bool visible);
 
 signals:
+    void beginMovedManually(long long value);
+    void endMovedManually(long long value);
 
     void beginMoved(long long value);
     void endMoved(long long value);

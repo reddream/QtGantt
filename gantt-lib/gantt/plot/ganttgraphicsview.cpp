@@ -90,6 +90,7 @@ void GanttGraphicsView::initialize()
     setHSliderHeight(15);
 
     setContextMenuPolicy(Qt::CustomContextMenu);
+    setMouseTracking(true);
 }
 
 void GanttGraphicsView::setHSliderHeight(int hSliderHeight)
@@ -101,6 +102,30 @@ void GanttGraphicsView::setHSliderHeight(int hSliderHeight)
     horizontalScrollBar()->setStyleSheet(
                 QString("QScrollBar {height:%1px;}").arg(m_hSliderHeight));
 }
+
+void GanttGraphicsView::mousePressEvent(QMouseEvent *event)
+{
+    if(event->button() == Qt::MiddleButton){
+        _lastCursor = cursor();
+        setCursor(Qt::ClosedHandCursor);
+    }
+    QGraphicsView::mousePressEvent(event);
+}
+
+void GanttGraphicsView::mouseReleaseEvent(QMouseEvent *event)
+{
+    if(event->button() == Qt::MiddleButton){
+        setCursor(_lastCursor);
+    }
+    QGraphicsView::mouseReleaseEvent(event);
+}
+
+//void GanttGraphicsView::wheelEvent(QWheelEvent *event)
+//{
+//    if(event->buttons() & Qt::MiddleButton){
+//        setCursor();
+//    }
+//}
 
 
 

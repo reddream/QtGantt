@@ -28,11 +28,15 @@ class GanttScene : public HFitScene
     void init();
 public:
     GanttScene(GanttGraphicsView *view, DtLine *dtline, QObject * parent = 0);
-
     int dtToPos(const UtcDateTime &dt) const;
     UtcDateTime posToDt(int pos) const;
-
     void setTreeInfo(GanttInfoTree *treeInfo);
+
+protected:
+    void mousePressEvent(QGraphicsSceneMouseEvent *event);
+    void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event);
+    void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
+    void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
 
 signals:
     void limitsChanged(const UtcDateTime &min, const TimeSpan &ts);
@@ -93,11 +97,6 @@ public slots:
 
     GanttGraphicsObject *objectForPos(const QPointF& pos);
 
-protected:
-    void mousePressEvent(QGraphicsSceneMouseEvent *event);
-    void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event);
-    void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
-    void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
 
 private:
     void connectDtLine();

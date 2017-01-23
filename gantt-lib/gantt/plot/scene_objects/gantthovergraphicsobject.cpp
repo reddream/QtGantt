@@ -8,6 +8,7 @@
 void GanttHoverGraphicsObject::init()
 {
     _item = NULL;
+    setVisible(false);  // if no item - hide
 }
 
 GanttHoverGraphicsObject::GanttHoverGraphicsObject(QGraphicsItem* parent)
@@ -59,6 +60,7 @@ void GanttHoverGraphicsObject::setPos(int y)
 
 void GanttHoverGraphicsObject::setItem(GanttInfoItem *item)
 {
+    qDebug() << "setItem " << item;
     disconnectItem();
     if(!item)
         return;
@@ -109,6 +111,7 @@ void GanttHoverGraphicsObject::connectItem()
     connect(_item,SIGNAL(posChanged()),this,SLOT(onItemPosChanged()));
     connect(_item,SIGNAL(aboutToBeDeleted()),this,SLOT(disconnectItem()));
 
+    qDebug() << "con: setPos: " << _item->pos();
     setPos(_item->pos());       // show it over _item pos
     setVisible(true);           //
 }

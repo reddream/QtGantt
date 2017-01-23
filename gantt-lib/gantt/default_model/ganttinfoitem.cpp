@@ -242,19 +242,14 @@ void GanttInfoItem::tryDelete()
 
 qreal GanttInfoItem::calcPos() const
 {
-    GanttInfoNode * p_parent = parent();
-
-    if(!p_parent)
+    if(!_parent)
         return 0.0; // m_root
-
-    qreal base = p_parent->calcPos();
-
-
-    if(!p_parent->isExpanded())
+    qreal base = _parent->calcPos();
+    if(!_parent->isExpanded())
         return base;
 
-    qreal offset = (p_parent->parent())?(DEFAULT_ITEM_HEIGHT):(0); // if root needn't extra offset
-    const QList<GanttInfoItem*>& items = p_parent->_items;
+    qreal offset = (_parent->parent())?(DEFAULT_ITEM_HEIGHT):(0); // if root needn't extra offset
+    const QList<GanttInfoItem*>& items = _parent->_items;
     // looking for this item, stops on found
     for(int i = 0; i < items.size(); ++i)
     {

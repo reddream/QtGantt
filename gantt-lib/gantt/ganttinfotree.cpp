@@ -242,8 +242,9 @@ void GanttInfoTree::fillRecursive(GanttInfoItem *item, const QModelIndex &index)
         for(int i = 0; i < _model->rowCount(index); ++i){
             QModelIndex childIndex = _model->index(i,0,index);
             GanttInfoItem *childItem = makeInfoItem(childIndex);
-            fillRecursive(childItem,childIndex);
             ((GanttInfoNode*)item)->append(childItem);
+
+            fillRecursive(childItem,childIndex); // tale recursion
         }
     }
 }

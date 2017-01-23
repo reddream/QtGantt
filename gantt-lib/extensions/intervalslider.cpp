@@ -42,7 +42,7 @@ long long IntervalSlider::endHandle() const
     return m_endValue;
 }
 
-void IntervalSlider::setEndHandle(long long endValue)
+void IntervalSlider::setEndHandle(long long endValue, bool manually)
 {
     if(m_endValue==endValue)
         return;
@@ -58,7 +58,8 @@ void IntervalSlider::setEndHandle(long long endValue)
         m_endValue=m_beginValue;
     }
 
-    emit valueChanged(IntervalSlider::EndHandle,m_endValue);
+    if(manually)
+        emit endMovedManually(m_endValue);
     emit endMoved(m_endValue);
     update();
 }
@@ -67,7 +68,7 @@ long long IntervalSlider::beginHandle() const
     return m_beginValue;
 }
 
-void IntervalSlider::setBeginHandle(long long beginValue)
+void IntervalSlider::setBeginHandle(long long beginValue, bool manually)
 {
     if(m_beginValue==beginValue)
         return;
@@ -84,7 +85,8 @@ void IntervalSlider::setBeginHandle(long long beginValue)
         m_beginValue=m_endValue;
     }
 
-    emit valueChanged(IntervalSlider::BeginHandle,m_beginValue);
+    if(manually)
+        emit beginMovedManually(m_beginValue);
     emit beginMoved(m_beginValue);
     update();
 }
@@ -277,12 +279,11 @@ void IntervalSlider::paintEvent(QPaintEvent *event)
 {
     Q_UNUSED(event);
     QPainter painter( this );
-//    painter.setClipRegion( event->region() );
 
     QStyleOption opt;
     opt.init(this);
 
-    QRect sliderRect = opt.rect/*.adjusted(1,1,-1,-1)*/;
+    QRect sliderRect = opt.rect;
 
     drawSliderLine( &painter, sliderRect );
 

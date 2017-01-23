@@ -139,13 +139,10 @@ UtcDateTime GanttScene::slidersDt() const
 void GanttScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
     QGraphicsScene::mousePressEvent(event);
-    if(event->buttons() & Qt::LeftButton)
-    {
+    if(event->button() == Qt::LeftButton){
         QGraphicsObject *object = objectForPos(event->scenePos());
         if(object)
-        {
             setCurrentItem(object);
-        }
     }
 
     mouseMoveEvent(event);
@@ -197,12 +194,8 @@ void GanttScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 
 void GanttScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
-    if(event->button() == Qt::RightButton)
-    {
-        if(m_crossObject)
-        {
-            m_crossObject->setVisible(false);
-        }
+    if(event->button() == Qt::RightButton){
+        m_crossObject->setVisible(false);
     }
 
     QGraphicsScene::mouseReleaseEvent(event);
@@ -308,9 +301,11 @@ void GanttScene::setCurrentItem(QGraphicsObject *currentItem)
 
     if(m_currentItem)
     {
-        if(GanttIntervalGraphicsObject *graphicsObject = dynamic_cast<GanttIntervalGraphicsObject*>(m_currentItem.data()))
+        if(GanttIntervalGraphicsObject *graphicsObject =
+                dynamic_cast<GanttIntervalGraphicsObject*>(m_currentItem.data()))
             info = graphicsObject->info();
-        if(GanttCalcGraphicsObject *graphicsObject = dynamic_cast<GanttCalcGraphicsObject*>(m_currentItem.data()))
+        if(GanttCalcGraphicsObject *graphicsObject =
+                dynamic_cast<GanttCalcGraphicsObject*>(m_currentItem.data()))
             info = graphicsObject->info();
 
         QRectF itemRect = m_currentItem->mapToScene(m_currentItem->boundingRect()).boundingRect();
@@ -330,8 +325,9 @@ void GanttScene::setCurrentItem(QGraphicsObject *currentItem)
 GanttGraphicsObject *GanttScene::objectForPos(const QPointF &pos)
 {
     GanttGraphicsObject *object;
-    if((object = dynamic_cast<GanttGraphicsObject*>(itemAt(pos))))
+    if((object = dynamic_cast<GanttGraphicsObject*>(itemAt(pos)))){
         return object;
+    }
     return itemByInfo(_treeInfo->infoForVPos(pos.y()));
 }
 const QList<GanttIntervalGraphicsObject *>& GanttScene::dtItems() const
