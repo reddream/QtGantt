@@ -8,6 +8,38 @@ enum defaults {
     heightConstraint = 2 * itemHeight,
 };
 
+DtLine::Precision DtLine::greaterPrecision(DtLine::Precision mode)
+{
+    int res = mode;
+    ++res;
+    if(res >= (int)Precision_count){
+        qWarning("Precision::greaterPrecision out of range");
+        return minMode();
+    }
+    return static_cast<Precision>(res);
+}
+
+DtLine::Precision DtLine::lessPrecision(DtLine::Precision mode)
+{
+    int res = mode;
+    --res;
+    if(res < 0){
+        qWarning("Precision::lessPrecision out of range");
+        return maxMode();
+    }
+    return static_cast<Precision>(res);
+}
+
+DtLine::Precision DtLine::minMode()
+{
+    return seconds1;
+}
+
+DtLine::Precision DtLine::maxMode()
+{
+    return years1;
+}
+
 QString DtLine::modeToString(DtLine::Precision mode)
 {
     switch(mode)
@@ -120,24 +152,13 @@ void DtLine::drawBottom(QPainter *painter)
         UtcDateTime nextDt = displayedDtFewer(_min, _mode);
         int l,r;
 
+
         do{
             dt = nextDt;
             nextDt = displayedDtNextHatch(dt, _mode);
             l = dtToPos(dt);
             r = dtToPos(nextDt);
-            qDebug()<< "dt " << dt
-                    << endl
-                    << "mode " << modeToString(_mode)
-                    << "nextDt " << nextDt
-                    << endl
-                    << "l " << l
-                    << " r " << r
-                    << " rect "<< rect()
-                    << endl
-                    << "min " << min() << " max "<< max();
             if(isDrawn(dt,_mode)){
-                static int kk = 0;
-                qDebug() << "isdrawn " << kk++;
                 if(extMode(_mode)){
                     painter->drawLine(QPointF(l,itemHeight),
                                       QPointF(l,itemHeight*2)); // very big hatch
@@ -151,40 +172,9 @@ void DtLine::drawBottom(QPainter *painter)
             else{
                 painter->drawLine(QPointF(l,itemHeight),
                                   QPointF(l,itemHeight*(5.0/4))); // little hatch
-                qDebug() << "else";
             }
         } while(r <= rect().right());
     }
-
-
-//        qDebug() << "+";
-//        UtcDateTime dt = displayedDtFewer(m_min,m_mode),nextDt;
-//        qDebug() << "dspl";
-//        while(dt <= max())
-//        {
-//            nextDt=displayedDtNextHatch(dt,m_mode);
-//            int curOffset=dtToPos(dt);
-//            if(isDrawn(dt,m_mode))
-//            {
-//                static int kk = 0;
-//                qDebug() << "isdrawn " << kk++;
-//                painter->drawLine(QPointF(curOffset,itemHeight),QPointF(curOffset,itemHeight*(3.0/2))); // big hatch
-//                QFont dtFont("Goudy Old Style", 8);
-//                painter->setFont(dtFont);
-//                drawBottomItemText(painter, dt.toString(formatForMode(m_mode), curOffset, dtToPos(nextDt), mode);
-
-//            }
-//            else{
-//                painter->drawLine(QPointF(curOffset,itemHeight),QPointF(curOffset,itemHeight*(5.0/4))); // little hatch
-//                qDebug() << "else";
-//            }
-
-//            qDebug() << "dt " << dt ;
-//            dt = nextDt;
-//            qDebug() << "dt after " << dt ;
-//        }
-//    }
-//    qDebug() << "-";
 }
 
 void DtLine::drawBottomItemText(QPainter *painter, const UtcDateTime &dt, DtLine::Precision mode)
@@ -313,7 +303,7 @@ UtcDateTime DtLine::posToDt(int pos) const
     // inrange?
     int w = width();
     if(w > 0)
-        return _min + _timeSpan * (pos * 1.0 / w);
+        return _min + _timeSpan * (pos * 1. / w);
     // width == 0
     return UtcDateTime();
 }
@@ -323,7 +313,7 @@ int DtLine::dtToPos(const UtcDateTime &dt) const
     // inrange?
     long long totalMcsecs = _timeSpan.totalMicroseconds();
     if(totalMcsecs != 0)
-        return width() * _min.microsecondsTo(dt) * 1. / totalMcsecs;
+        return width() * (((double)_min.microsecondsTo(dt)) / totalMcsecs) ;
     return 0;
 }
 
@@ -804,7 +794,7 @@ UtcDateTime DtLine::displayedDtNext(const UtcDateTime &dt, DtLine::Precision mod
 
 UtcDateTime DtLine::displayedDtNextHatch(const UtcDateTime &dt, DtLine::Precision mode)
 {
-    return dt.addMicroseconds(mcsecsForMode(mode,dt.date()) / segmentCountForMode(mode,dt.date()));
+    return dt.addMicroseconds(mcsecsForMode(greaterPrecision(mode),dt.date()));
 }
 
 //UtcDateTime DtLine::displayedDtPrevious(const UtcDateTime &dt, DtLine::Precision mode)
@@ -962,8 +952,6 @@ DtLine::Precision DtLine::calculateTimeMode() const
 void DtLine::recalc()
 {
     _mode = calculateTimeMode();
-    qDebug() << "min "<< min() << " max "<< max();
-    qDebug() << "mode " << modeToString( _mode) << " " << QDateTime::currentDateTime();
     update();
 }
 
@@ -982,6 +970,7 @@ void DtLine::setTimeSpan(const TimeSpan &timeSpan)
 #define DTLINE_LIMITS_COEF 0.1
 void DtLine::setLimits(const UtcDateTime &min, const TimeSpan &ts)
 {
+    qDebug() << "setLimits " << min << ' ' << ts.toString();
     blockSignals(true);
     setMin(min);
     setTimeSpan(ts);
@@ -993,6 +982,11 @@ void DtLine::setLimitsWithOffset(const UtcDateTime &min, const TimeSpan &ts)
 {
     TimeSpan deltaTs = ts * DTLINE_LIMITS_COEF;
     setLimits(min - deltaTs, ts + 2 * deltaTs);
+}
+
+void DtLine::emitChangedManually()
+{
+    emit changedManually(_min,_timeSpan);
 }
 
 UtcDateTime DtLine::min() const

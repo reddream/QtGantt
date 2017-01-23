@@ -13,10 +13,11 @@
 
 #include <QDebug>
 
-GanttIntervalSlider::GanttIntervalSlider(QWidget *parent )
-    : IntervalSlider(parent)
+void GanttIntervalSlider::init()
 {
     m_drawCurrentDt = false;
+    m_shiftRange = 0;
+    m_minTimeSize = 30*_MICROSECONDS_IN_SECOND;
     setOffsetV(7);
     setHandleSize(6);
     setSliderV(8);
@@ -26,10 +27,17 @@ GanttIntervalSlider::GanttIntervalSlider(QWidget *parent )
 
     setStyleSheet("background-color: rgb(21, 168, 194)");
 
-    m_shiftRange = 0;
-    m_minTimeSize = 0;
-
     setMouseTracking(true);
+
+    connect(this,SIGNAL(beginMoved(long long)),this,SLOT(emitRangeChangedManually()));
+    connect(this,SIGNAL(endMoved(long long)),this,SLOT(emitRangeChangedManually()));
+
+}
+
+GanttIntervalSlider::GanttIntervalSlider(QWidget *parent )
+    : IntervalSlider(parent)
+{
+    init();
 }
 
 void GanttIntervalSlider::drawHandle(QPainter *painter, const QRect &handleRect, bool is_selected) const
@@ -122,9 +130,6 @@ void GanttIntervalSlider::drawCurrentTime(QPainter *painter, const QRect &slider
     painter->drawRect(currentTimeRect.adjusted(0,0,0,-1));
 }
 
-
-
-
 long long GanttIntervalSlider::minTimeSize() const
 {
     return m_minTimeSize;
@@ -160,6 +165,11 @@ UtcDateTime GanttIntervalSlider::right() const
     return valToDt(m_endValue);
 }
 
+TimeSpan GanttIntervalSlider::timeSpan() const
+{
+    return right() - left();
+}
+
 UtcDateTime GanttIntervalSlider::min() const
 {
     return valToDt(m_minValue);
@@ -191,6 +201,15 @@ void GanttIntervalSlider::setTimeSpan(const TimeSpan &ts)
     setLimits(m_minValue,dtToVal(ts + valToDt(m_minValue)));
 }
 
+void GanttIntervalSlider::setLimits(long long min, long long max)
+{
+    if(min > max)
+        return;
+    if(max - min < m_minTimeSize)
+        max = min + m_minTimeSize;
+    IntervalSlider::setLimits(min,max);
+}
+
 void GanttIntervalSlider::setMinTimeSize(long long minTimeSize)
 {
     m_minTimeSize = minTimeSize;
@@ -220,6 +239,21 @@ UtcDateTime GanttIntervalSlider::endDt() const
 bool GanttIntervalSlider::outOfLimits(const UtcDateTime &dt) const
 {
     return dt<valToDt(m_minValue) || dt > valToDt(m_maxValue);
+}
+
+void GanttIntervalSlider::emitRangeChanged()
+{
+    emit rangeChanged(left(),timeSpan());
+}
+
+void GanttIntervalSlider::emitRangeChangedManually()
+{
+    emit rangeChangedManually(left(),timeSpan());
+}
+
+void GanttIntervalSlider::setLimits(const UtcDateTime &min, const TimeSpan &ts)
+{
+    setLimits(dtToVal(min),dtToVal(min + ts));
 }
 
 void GanttIntervalSlider::setCurrentTimeRectColor(const QColor &currentTimeRectColor)

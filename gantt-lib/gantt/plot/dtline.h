@@ -54,6 +54,10 @@ class GANTTLIBSHARED_EXPORT DtLine : public QWidget
         TopPrecision_count
     };
 
+    static Precision greaterPrecision(Precision mode);
+    static Precision lessPrecision(Precision mode);
+    static Precision minMode();
+    static Precision maxMode();
     static QString modeToString(Precision mode);
     static QString modeToString(TopPrecision mode);
 
@@ -97,11 +101,13 @@ public slots:
     void setTimeSpan(const TimeSpan &timeSpan);
     void setLimits(const UtcDateTime &min, const TimeSpan &ts); ///< setMin + setTimeSpan
     void setLimitsWithOffset(const UtcDateTime &min, const TimeSpan &ts);
+    void emitChangedManually();
 
 signals:
     void minChanged();
     void timeSpanChanged();
     void changed();
+    void changedManually(const UtcDateTime &min, const TimeSpan &ts);
 
 protected:
     void paintEvent(QPaintEvent *);

@@ -5,15 +5,22 @@
 #include <QGraphicsScene>
 #include <QPainter>
 
+void GanttHoverGraphicsObject::init()
+{
+    _item = NULL;
+}
+
 GanttHoverGraphicsObject::GanttHoverGraphicsObject(QGraphicsItem* parent)
     : QGraphicsObject(parent)
 {
+    init();
     m_scene = NULL;
 }
 
 GanttHoverGraphicsObject::GanttHoverGraphicsObject(GanttScene *scene, QGraphicsItem *parent)
     : QGraphicsObject(parent)
 {
+    init();
     setScene(scene);
 }
 
@@ -44,18 +51,64 @@ void GanttHoverGraphicsObject::paint(QPainter *painter, const QStyleOptionGraphi
 
 }
 
-void GanttHoverGraphicsObject::setPos(const QPointF &pos)
+void GanttHoverGraphicsObject::setPos(int y)
 {
     qreal x = (m_scene)?(m_scene->sceneRect().left()):(0);
-    QGraphicsItem::setPos(x,pos.y());
+    QGraphicsItem::setPos(x,y);
 }
 
-void GanttHoverGraphicsObject::setPos(qreal x, qreal y)
+void GanttHoverGraphicsObject::setItem(GanttInfoItem *item)
 {
-    setPos(QPointF(x,y));
+    disconnectItem();
+    if(!item)
+        return;
+    _item = item;
+    connectItem();
+}
+
+
+void GanttHoverGraphicsObject::setPos(const QPointF &pos)
+{
+    setPos(pos.y());
+}
+
+void GanttHoverGraphicsObject::setPos(qreal /*x*/, qreal y)
+{
+    setPos(y);
 }
 
 void GanttHoverGraphicsObject::onViewResized()
 {
     prepareGeometryChange();
+}
+
+void GanttHoverGraphicsObject::onItemPosChanged()
+{
+    if(!_item){
+        qCritical("last item not disconnected");
+        return;
+    }
+    setPos(_item->pos());
+}
+
+void GanttHoverGraphicsObject::disconnectItem()
+{
+    if(!_item)
+        return;
+
+    _item->disconnect(this);
+    _item = NULL;
+    setVisible(false); // hide if no item
+}
+
+void GanttHoverGraphicsObject::connectItem()
+{
+    if(!_item)
+        return;
+
+    connect(_item,SIGNAL(posChanged()),this,SLOT(onItemPosChanged()));
+    connect(_item,SIGNAL(aboutToBeDeleted()),this,SLOT(disconnectItem()));
+
+    setPos(_item->pos());       // show it over _item pos
+    setVisible(true);           //
 }

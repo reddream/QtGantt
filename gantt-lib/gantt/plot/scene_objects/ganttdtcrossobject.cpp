@@ -83,7 +83,7 @@ void GanttDtCrossObject::updatePaths()
         QPainterPath linesPath ;
         linesPath.moveTo(rel.x(),0);
         linesPath.lineTo(0,0);
-//        linesPath.lineTo(0,/*mapFromScene(QPointF(0,m_scene->headerBottom())).y()*/);
+        linesPath.lineTo(0,mapFromScene(QPointF(0,0)).y());
 
         qreal offsetX = 4,
                 offsetY = 0;

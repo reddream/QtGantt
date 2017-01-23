@@ -61,12 +61,14 @@ int GanttInfoItem::indexOf(const GanttInfoItem* p_item) const
 
 void GanttInfoItem::updatePos()
 {
-    /// TODO _pos member
-    emit posChanged();
+    setPos(calcPos());
 }
+
+
 
 void GanttInfoItem::init()
 {
+    _pos = 0;
     _linkCnt = 0;
     _deleted = false;
     _parent = NULL;
@@ -214,6 +216,7 @@ void GanttInfoItem::setParent(GanttInfoNode *parent)
         return;
 
     _parent = parent;
+    setPos(calcPos());
     emit parentChanged();
 }
 
@@ -237,17 +240,17 @@ void GanttInfoItem::tryDelete()
     _mutex.unlock();
 }
 
-qreal GanttInfoItem::pos() const
+qreal GanttInfoItem::calcPos() const
 {
     GanttInfoNode * p_parent = parent();
 
     if(!p_parent)
         return 0.0; // m_root
 
-    qreal base = p_parent->pos();
+    qreal base = p_parent->calcPos();
 
 
-    if(!p_parent->expanded())
+    if(!p_parent->isExpanded())
         return base;
 
     qreal offset = (p_parent->parent())?(DEFAULT_ITEM_HEIGHT):(0); // if root needn't extra offset
@@ -262,6 +265,17 @@ qreal GanttInfoItem::pos() const
     }
 
     return base + offset;
+}
+
+int GanttInfoItem::pos() const
+{
+    return _pos;
+}
+
+void GanttInfoItem::setPos(int pos)
+{
+    _pos = pos;
+    emit posChanged();
 }
 
 

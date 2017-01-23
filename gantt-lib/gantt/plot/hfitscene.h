@@ -22,7 +22,8 @@ public slots:
 protected:
     void updateWidth(int w);
     void updateHeight(int h);
-private:
+
+protected:
     GanttGraphicsView *_view;
 };
 

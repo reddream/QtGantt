@@ -120,22 +120,11 @@ void GanttIntervalGraphicsObject::updateItemGeometry()
           itemWidth = _dtline->dtToPos(innerInfo()->finish()) - startPos;
 
     setBoundingRectSize(QSizeF(itemWidth, DEFAULT_ITEM_WIDTH));
-    setPos(startPos, innerInfo()->pos());
+    setPos(startPos, innerInfo()->calcPos());
 }
 
 void GanttIntervalGraphicsObject::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
-//    if(!m_scene || !innerInfo())
-//        return;
-
-//    if(innerInfo()->parent() && (this == m_scene->itemAt(event->scenePos())))
-//        if((!innerInfo()->parent()->isExpanded() && (event->button() == Qt::LeftButton))
-//                /*|| (innerInfo()->parent()->isExpanded() && (event->button() == Qt::RightButton))*/)
-//        {
-//            m_scene->changeExpanding(innerInfo()->parent()->index());
-//            emit graphicsItemPressed();
-//        }
-
     QGraphicsItem::mousePressEvent(event);
 }
 

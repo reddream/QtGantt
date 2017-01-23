@@ -12,8 +12,10 @@
 //class GanttGraphicsView;
 class GanttIntervalGraphicsObject;
 class GanttCalcGraphicsObject;
+class GanttGraphicsObject;
 class GanttDtCrossObject;
 class GanttHoverGraphicsObject;
+class GanttInfoTree;
 
 //class QModelIndex;
 
@@ -30,6 +32,8 @@ public:
     int dtToPos(const UtcDateTime &dt) const;
     UtcDateTime posToDt(int pos) const;
 
+    void setTreeInfo(GanttInfoTree *treeInfo);
+
 signals:
     void limitsChanged(const UtcDateTime &min, const TimeSpan &ts);
 public slots:
@@ -40,7 +44,7 @@ public slots:
 
     void drawBackground(QPainter *painter, const QRectF &rect); ///< Задний план содержит сетку
 
-    QGraphicsObject* itemByInfo(const GanttInfoItem *key) const;
+    GanttGraphicsObject* itemByInfo(const GanttInfoItem *key) const;
 
     void updateSliderRect();
 
@@ -84,12 +88,14 @@ public slots:
     void moveSliderToViewStart();
     void moveSliderToViewFinish();
     void moveSliderToStart();
+    void setCurrentByInfo(GanttInfoItem *info);
     void setCurrentItem(QGraphicsObject *currentItem);
 
-    QGraphicsObject *objectForPos(const QPointF& pos);
+    GanttGraphicsObject *objectForPos(const QPointF& pos);
 
 protected:
     void mousePressEvent(QGraphicsSceneMouseEvent *event);
+    void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event);
     void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
 
@@ -112,19 +118,21 @@ private slots:
 
 private:
 
+    GanttInfoTree *_treeInfo;
     DtLine *_dtline;
     QList<GanttIntervalGraphicsObject*> m_items;
     QList<GanttCalcGraphicsObject*> m_calcItems;
-    QMap<const GanttInfoItem*, QGraphicsObject*> m_itemByInfo;
+    QMap<const GanttInfoItem*, GanttGraphicsObject*> m_itemByInfo;
     QMap<UtcDateTime,const GanttInfoLeaf*> m_infoByStart,
                                             m_infoByFinish;
 
     GanttCurrentDtSlider *m_slider;
-    QPointer<QGraphicsView> m_view;
     GanttDtCrossObject *m_crossObject;
     GanttHoverGraphicsObject *m_hoverObject;
     QPointer<QGraphicsObject> m_currentItem;
 };
+
+
 
 
 

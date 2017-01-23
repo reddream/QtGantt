@@ -35,5 +35,12 @@ void GanttInfoLeaf::callForEachItemRecursively(void (*func)(GanttInfoItem *))
         (*func)(this);
 }
 
+GanttInfoNode *GanttInfoLeaf::node()
+{
+    if(parent())
+        return parent()->node();
+    return NULL;
+}
+
 
 

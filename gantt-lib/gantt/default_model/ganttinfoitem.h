@@ -32,7 +32,9 @@ public:
 
     virtual int columnCount() const = 0;
     virtual qreal height() const = 0;
-    virtual qreal pos() const;
+    virtual qreal calcPos() const;
+    int pos() const;
+    void setPos(int pos);
 
     QModelIndex index() const;
 
@@ -44,6 +46,7 @@ public:
 
     bool hasStart() const;
     bool isDot() const;
+    virtual GanttInfoNode *node() = 0;
 
 
 
@@ -69,7 +72,7 @@ signals:
     void changed();
 
 public slots:
-    void updatePos();
+    virtual void updatePos();
     void setStart(const UtcDateTime &start);
     void setTimeSpan(const TimeSpan &ts);
     void setColor(const QColor &color);
@@ -95,6 +98,7 @@ private:
     unsigned int _linkCnt;
     bool _deleted;
     QMutex _mutex;
+    int _pos;
 };
 
 #endif // GANTTINFOITEM_H

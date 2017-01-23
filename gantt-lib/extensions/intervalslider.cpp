@@ -14,7 +14,6 @@
 IntervalSlider::IntervalSlider(QWidget *parent) :
     QWidget(parent)
 {
-    hide();
     m_isHidden = false;
     m_limitsSet = false;
     m_leftOffset = m_rightOffset = 0;
@@ -122,16 +121,6 @@ void IntervalSlider::setBeginAndEnd(long long begin, long long end)
 {
     if(begin> end)
         return;
-
-//    if(begin<m_minValue)
-//        begin = m_minValue;
-//    if(begin>m_maxValue)
-//        begin = m_maxValue;
-
-//    if(end<m_minValue)
-//        end = m_minValue;
-//    if(end>m_maxValue)
-//        end = m_maxValue;
 
     setBeginHandle(m_minValue);
     setEndHandle(m_maxValue);

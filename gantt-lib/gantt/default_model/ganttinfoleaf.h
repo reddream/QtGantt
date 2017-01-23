@@ -24,6 +24,7 @@ public:
     int columnCount() const;
     qreal height() const;
     void callForEachItemRecursively(void (*func)(GanttInfoItem*));
+    GanttInfoNode *node();
 
 private:
 

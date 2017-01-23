@@ -348,7 +348,7 @@ void GanttTreeModel::addItems(const QList<GanttInfoItem *> &items)
     for(int i = 0; i<m_root->size() ; ++i)
     {
         GanttInfoNode *node = m_root->nodeAt(i);
-        if(node && node->expanded())
+        if(node && node->isExpanded())
         {
             emit needCollapse(node);
         }
@@ -384,7 +384,7 @@ void GanttTreeModel::addItems(GanttInfoItem *item)
     for(int i = 0; i<m_root->size() ; ++i)
     {
         GanttInfoNode *node = m_root->nodeAt(i);
-        if(node && node->expanded())
+        if(node && node->isExpanded())
         {
             emit needCollapse(node);
         }

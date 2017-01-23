@@ -71,22 +71,11 @@ void GanttCalcGraphicsObject::updateItemGeometry()
 
     qreal calcPos = _scene->dtToPos(innerInfo()->start());
 
-    setPos(calcPos, innerInfo()->pos());
+    setPos(calcPos, innerInfo()->calcPos());
 }
 
 void GanttCalcGraphicsObject::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
-//    if(!m_scene || !innerInfo())
-//        return;
-
-//    if((this == m_scene->itemAt(event->scenePos())))
-//        if((!innerInfo()->isExpanded() && (event->button() == Qt::LeftButton))
-//                /*|| (innerInfo()->isExpanded() && (event->button() == Qt::RightButton))*/)
-//        {
-//            m_scene->changeExpanding(innerInfo()->index());
-//            emit graphicsItemPressed();
-//        }
-
     QGraphicsItem::mousePressEvent(event);
 }
 

@@ -11,6 +11,7 @@ class GanttIntervalSlider : public IntervalSlider, public IDtInterval
 {
     Q_OBJECT
 
+    void init();
 public:
     explicit GanttIntervalSlider(QWidget *parent = 0);
 
@@ -31,9 +32,9 @@ public:
     void reset();
 
     //--- IDtInterval impl
-
     virtual UtcDateTime left() const;
     virtual UtcDateTime right() const;
+    virtual TimeSpan timeSpan() const;
     virtual UtcDateTime min() const;
     virtual UtcDateTime max() const;
 
@@ -44,13 +45,13 @@ public:
 
 
     //---
-
-
-private:
-    bool outOfLimits(const UtcDateTime& dt) const;
-
+signals:
+    void rangeChanged(const UtcDateTime &min, const TimeSpan &ts);
+    void rangeChangedManually(const UtcDateTime &min, const TimeSpan &ts);
 
 public slots:
+    void setLimits(long long min, long long max);
+    void setLimits(const UtcDateTime &min, const TimeSpan &ts);
     void setCurrentTime(const UtcDateTime &dt);
     void setDrawCurrentDt(bool draw);
     void setMinTimeSize(long long minTimeSize);
@@ -58,7 +59,15 @@ public slots:
 protected:
     void drawHandle(QPainter *painter, const QRect &handleRect, bool is_selected) const;
     void drawSliderLine(QPainter *painter, const QRect &sliderRect) const;
+
     void drawCurrentTime(QPainter *painter, const QRect &sliderRect) const;
+
+
+private:
+    bool outOfLimits(const UtcDateTime& dt) const;
+private slots:
+    void emitRangeChanged();
+    void emitRangeChangedManually();
 
 private:
     UtcDateTime m_currentTime;

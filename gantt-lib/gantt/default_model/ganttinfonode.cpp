@@ -101,6 +101,11 @@ int GanttInfoNode::columnCount() const
     return  1; //Only title  //GanttTreeModel::Fields_count;
 }
 
+GanttInfoNode *GanttInfoNode::node()
+{
+    return this;
+}
+
 qreal GanttInfoNode::height() const
 {
     qreal nodeHeight = DEFAULT_ITEM_WIDTH;
@@ -125,11 +130,19 @@ int GanttInfoNode::indexOf(const GanttInfoItem * p_item) const
     return _items.indexOf(p);
 }
 
+void GanttInfoNode::onItemExpandingChange(int id)
+{
+    for(int i = id + 1; i < size(); ++i)
+        at(i)->updatePos();
+}
+
 void GanttInfoNode::onSelfExpandingChange()
 {
-    for(int i = 1; i < size(); ++i){
+    for(int i = 0; i < size(); ++i)
         at(i)->updatePos();
-    }
+
+    if(parent())
+        parent()->onItemExpandingChange(row());
 }
 
 void GanttInfoNode::init()
@@ -151,17 +164,34 @@ void GanttInfoNode::callForEachItemRecursively(void (*func)(GanttInfoItem *))
 
     (*func)(this);
 }
-void GanttInfoNode::setExpanded(bool newExpanded)
-{
-    if(!_expanded && newExpanded)
-        emit expanded();
-    if(_expanded && !newExpanded)
-        emit collapsed();
 
-    _expanded = newExpanded;
+void GanttInfoNode::updatePos()
+{
+    GanttInfoItem::updatePos();
+    foreach(GanttInfoItem* item, _items)
+        item->updatePos();
 }
 
-bool GanttInfoNode::expanded() const
+void GanttInfoNode::setExpanded(bool newExpanded)
+{
+    if(!_expanded && newExpanded){
+        _expanded = newExpanded;
+        emit expanded();
+    }
+    else if(_expanded && !newExpanded){
+        _expanded = newExpanded;
+        emit collapsed();
+    }
+    else
+        _expanded = newExpanded;
+}
+
+void GanttInfoNode::changeExpanding()
+{
+    setExpanded(!isExpanded());
+}
+
+bool GanttInfoNode::isExpanded() const
 {
     return _expanded;
 }

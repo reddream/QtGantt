@@ -37,12 +37,17 @@ public:
 
 
 
-    bool expanded() const;
+    bool isExpanded() const;
     void setExpanded(bool expanded);
+    void changeExpanding();
 
     qreal height() const;
     int columnCount() const;
+    GanttInfoNode *node();
     void callForEachItemRecursively(void (*func)(GanttInfoItem*));
+
+public slots:
+    void updatePos();
     
 signals:
     void itemsChanged();
@@ -50,6 +55,9 @@ signals:
     
 protected:
     int indexOf(const GanttInfoItem * p_item) const;
+
+protected slots:
+    void onItemExpandingChange(int id);
 private slots:
     void onSelfExpandingChange();
 

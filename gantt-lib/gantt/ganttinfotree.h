@@ -19,8 +19,9 @@ public:
     void setModel(IGanttModel *model);
     void connectTreeView(QTreeView *view);
     void disconnectTreeView(QTreeView *view);
-    GanttInfoItem *itemForIndex(const QModelIndex &index, GanttInfoItem *item = NULL) const;
+    GanttInfoItem *infoForIndex(const QModelIndex &index, GanttInfoItem *item = NULL) const;
     GanttInfoItem *root() const;
+    GanttInfoItem *infoForVPos(int vpos);
 
 
 signals:
@@ -31,10 +32,14 @@ signals:
     void itemAboutToBeDeleted(GanttInfoItem *item);
     void itemRemoved(GanttInfoItem *item);
     void currentChanged(const QModelIndex &index);
+    void currentChanged(GanttInfoItem *item);
     void needExpand(const QModelIndex &index);
     void needCollapse(const QModelIndex &index);
 
 public slots:
+    void onCurrentItemChanged(GanttInfoItem *item);
+    void onItemExpanded();
+    void onItemCollapsed();
     void onClicked(const QModelIndex &index);
     void onExpanded(const QModelIndex &index);
     void onCollapsed(const QModelIndex &index);
@@ -50,9 +55,10 @@ private slots:
     void onItemAboutToBeDeleted();
 
     void updateLimits();
-
+    void connectNewItem(GanttInfoItem *item);
 
 private:
+    GanttInfoItem *lookupForVPos(int vpos, GanttInfoNode *node);
     void fillRecursive(GanttInfoItem *item,const QModelIndex &index);
     GanttInfoItem *makeInfoItem(const QModelIndex &index);
     void disconnectLastModel();
