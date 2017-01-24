@@ -53,6 +53,7 @@ public slots:
     void setRange(const UtcDateTime &min, const TimeSpan &ts);
     void setLimits(long long min, long long max);
     void setLimits(const UtcDateTime &min, const TimeSpan &ts);
+    void setLimitsWithOffset(const UtcDateTime &min, const TimeSpan &ts);
     void setCurrentTime(const UtcDateTime &dt);
     void setDrawCurrentDt(bool draw);
     void setMinTimeSize(long long minTimeSize);

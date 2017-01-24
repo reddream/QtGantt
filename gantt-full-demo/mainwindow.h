@@ -19,6 +19,8 @@ public:
     ~MainWindow();
 
 
+protected:
+    void keyPressEvent(QKeyEvent *e);
 
 private:
     Ui::MainWindow *ui;

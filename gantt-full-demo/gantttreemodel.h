@@ -10,7 +10,7 @@
 
 class GanttWidget;
 
-class GANTTLIBSHARED_EXPORT GanttTreeModel : public QAbstractItemModel, public IGanttModel
+class GanttTreeModel : public QAbstractItemModel, public IGanttModel
 {
     Q_OBJECT
 

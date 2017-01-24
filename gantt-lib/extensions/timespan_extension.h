@@ -6,9 +6,9 @@
 
 bool timeSpanIsValid(const TimeSpan &ts);
 
-TimeSpan GANTTLIBSHARED_EXPORT operator*(const TimeSpan &ts, double d);
-TimeSpan GANTTLIBSHARED_EXPORT operator*(double d, const TimeSpan &ts);
-TimeSpan GANTTLIBSHARED_EXPORT operator/(const TimeSpan &ts, double d);
+TimeSpan GANTTLIBSHARED_EXPORT operator*(const TimeSpan &ts, const qreal d);
+TimeSpan GANTTLIBSHARED_EXPORT operator*(const qreal d, const TimeSpan &ts);
+TimeSpan GANTTLIBSHARED_EXPORT operator/(const TimeSpan &ts, const qreal d);
 
 
 #endif // TIMESPAN_EXTENSION_H

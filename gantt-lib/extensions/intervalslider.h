@@ -37,6 +37,7 @@ class GANTTLIBSHARED_EXPORT IntervalSlider : public QWidget
 {
     Q_OBJECT
 
+    void init();
 public:
     enum  ClippedHandle
     {
@@ -71,7 +72,7 @@ public:
     long long minValue() const;
 
     virtual void setLimits(long long minValue,long long maxValue);
-    virtual void setHandles(long long beginHandle,long long endHandle);
+    virtual void setHandles(long long beginHandle,long long endHandle, bool manually = false);
 
     int handleSize() const;
     int sliderV() const{return m_sliderV;}
@@ -106,6 +107,7 @@ protected:
     void mouseMoveEvent( QMouseEvent *e );
     void mouseReleaseEvent( QMouseEvent *e );
     void mousePressEvent( QMouseEvent *e );
+    void mouseDoubleClickEvent(QMouseEvent *e);
 
     void keyPressEvent(QKeyEvent *e);
     void keyReleaseEvent(QKeyEvent *e);
@@ -120,7 +122,10 @@ private:
     void setMaxValue(long long maxValue);
     void setMinValue(long long minValue);
 
-    void setBeginAndEnd(long long begin, long long end);
+    void setBeginAndEnd(long long begin, long long end, bool manually = false);
+
+    void setPressedAt(int pos);
+    void clearPressed();
 
 
 protected:
@@ -134,18 +139,21 @@ protected:
     int m_handleH,
         m_sliderV,
         m_offsetV,
-        m_borderWidth;
+        m_borderWidth,
+        _pressedAt;
 
     qreal m_leftOffset,
         m_rightOffset;
 
     bool m_shiftModifier,
         m_limitsSet,
-        m_isHidden;
+        m_isHidden,
+        _pressed;
 
 protected:
     virtual bool moveHandles(long long deltaVal, bool manually = false);
 
+    long long pointToValue(int x, ClippedHandle handle) const;
     long long pointToValue(const QPoint &p,ClippedHandle handle) const;  ///< Handles exists in the own relative coordinate system, so needs to know which system before translation
     int valueToPoint(long long value,ClippedHandle handle) const;        ///< Handles exists in the own relative coordinate system, so needs to know which system before translation
 

@@ -106,6 +106,7 @@ void GanttGraphicsView::setHSliderHeight(int hSliderHeight)
 void GanttGraphicsView::mousePressEvent(QMouseEvent *event)
 {
     if(event->button() == Qt::MiddleButton){
+        qDebug() << "GanttGraphicsView::mousePressEvent(";
         _lastCursor = cursor();
         setCursor(Qt::ClosedHandCursor);
     }
@@ -115,6 +116,7 @@ void GanttGraphicsView::mousePressEvent(QMouseEvent *event)
 void GanttGraphicsView::mouseReleaseEvent(QMouseEvent *event)
 {
     if(event->button() == Qt::MiddleButton){
+        qDebug() << "GanttGraphicsView::mouseReleaseEvent(";
         setCursor(_lastCursor);
     }
     QGraphicsView::mouseReleaseEvent(event);

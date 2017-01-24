@@ -15,8 +15,8 @@ GanttCalcGraphicsObject::GanttCalcGraphicsObject(GanttInfoNode* node, QGraphicsI
     m_shapePath.moveTo(0,0);
     m_shapePath.lineTo(0,(DEFAULT_ITEM_HEIGHT-6)/2);
     m_shapePath.addEllipse(QPointF(0,(DEFAULT_ITEM_HEIGHT/2)),3,3);
-    m_shapePath.moveTo(0,DEFAULT_ITEM_HEIGHT - (DEFAULT_ITEM_HEIGHT-6)/2);
-    m_shapePath.lineTo(0,DEFAULT_ITEM_HEIGHT);
+//    m_shapePath.moveTo(0,DEFAULT_ITEM_HEIGHT - (DEFAULT_ITEM_HEIGHT-6)/2);
+//    m_shapePath.lineTo(0,DEFAULT_ITEM_HEIGHT);
 
     if(innerInfo())
     {

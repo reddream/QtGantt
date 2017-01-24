@@ -22,12 +22,13 @@ class GanttScene;
 class GANTTLIBSHARED_EXPORT GanttWidget : public QWidget
 {
     Q_OBJECT
-
+    void init();
 public:
     explicit GanttWidget(QWidget *parent = 0);
     ~GanttWidget();
 
 
+    void installEventWatcherInterval(QObject *watcher);
     void setPlayerSpeeds(qreal minMultiply, qreal maxMultiply);///< Устанавливает минимальную и максимальную скорости воспроизведения
     void showPlayer(bool show);
     bool player() const;
@@ -40,15 +41,11 @@ public:
 signals:
 
 private slots:
-
+    void onTreeFilled();
     void onGanttViewCustomContextMenuRequested(const QPoint&);
-
-public slots:
-
 
 
 private:
-    void init();
     void connectSceneWithInfo();
     void connectIntervals();
 

@@ -11,9 +11,9 @@
 #include <QDebug>
 
 
-IntervalSlider::IntervalSlider(QWidget *parent) :
-    QWidget(parent)
+void IntervalSlider::init()
 {
+    _pressed = false;
     m_isHidden = false;
     m_limitsSet = false;
     m_leftOffset = m_rightOffset = 0;
@@ -37,6 +37,12 @@ IntervalSlider::IntervalSlider(QWidget *parent) :
 
     connect(this,SIGNAL(beginMoved(long long)),this,SLOT(update()));
     connect(this,SIGNAL(endMoved(long long)),this,SLOT(update()));
+}
+
+IntervalSlider::IntervalSlider(QWidget *parent) :
+    QWidget(parent)
+{
+    init();
 
 }
 long long IntervalSlider::endHandle() const
@@ -121,20 +127,33 @@ void IntervalSlider::setMinValue(long long minValue)
     update();
 }
 
-void IntervalSlider::setBeginAndEnd(long long begin, long long end)
+void IntervalSlider::setBeginAndEnd(long long begin, long long end, bool manually)
 {
-    if(begin> end)
+    if(begin > end)
         return;
 
-    setBeginHandle(m_minValue);
-    setEndHandle(m_maxValue);
+    setBeginHandle(m_minValue, manually);
+    setEndHandle(m_maxValue, manually);
 
-    setBeginHandle(begin);
-    setEndHandle(end);
+    setBeginHandle(begin, manually);
+    setEndHandle(end, manually);
 
 }
 
-void IntervalSlider::setLimits(long long minValue,long long maxValue)
+void IntervalSlider::setPressedAt(int pos)
+{
+    _pressed = true;
+    _pressedAt = pos;
+}
+
+void IntervalSlider::clearPressed()
+{
+    _pressed = false;
+    _pressedAt = -1;
+}
+
+
+void IntervalSlider::setLimits(long long minValue, long long maxValue)
 {
     if(!m_limitsSet)
     {
@@ -146,20 +165,20 @@ void IntervalSlider::setLimits(long long minValue,long long maxValue)
     setMinValue(minValue);
     setMaxValue(maxValue);
 
-    setBeginAndEnd(minValue,maxValue);
+    setBeginAndEnd(minValue,maxValue,true);
 }
 
-void IntervalSlider::setHandles(long long beginHandle, long long endHandle)
+void IntervalSlider::setHandles(long long beginHandle, long long endHandle, bool manually)
 {
     if(m_clippedHandle == BeginHandle)
     {
-        setBeginHandle(beginHandle);
-        setEndHandle(endHandle);
+        setBeginHandle(beginHandle,manually);
+        setEndHandle(endHandle,manually);
     }
     else if(m_clippedHandle == EndHandle)
     {
-        setEndHandle(endHandle);
-        setBeginHandle(beginHandle);
+        setEndHandle(endHandle,manually);
+        setBeginHandle(beginHandle,manually);
     }
 }
 
@@ -205,27 +224,7 @@ void IntervalSlider::setOffsetV(int new_offsetV)
 
 long long IntervalSlider::pointToValue(const QPoint &p,ClippedHandle handle) const
 {
-    int x = p.x() - halfHandleSize();
-    int offset = m_leftOffset;
-    long long widthDiff = handleSize() +((handle==NoHandle)?(0):(handleSize())) + m_rightOffset + m_leftOffset,
-         relWidth= width() - widthDiff;
-    switch(handle)
-    {
-    case EndHandle:
-        offset += handleSize();
-        break;
-    default:
-        offset += 0;
-        break;
-    }
-    long long relValue =(m_maxValue-m_minValue)?
-            (((1.0*x-offset) / relWidth * (m_maxValue-m_minValue))+0.5)
-              :(0);
-    if (relValue<0)
-        relValue=0;
-    if(relValue>m_maxValue-m_minValue)
-        relValue=m_maxValue-m_minValue;
-    return m_minValue+relValue;
+    return pointToValue(p.x(),handle);
 }
 
 int IntervalSlider::valueToPoint(long long value,ClippedHandle handle) const
@@ -492,53 +491,80 @@ bool IntervalSlider::moveHandles(long long deltaVal,bool manually)
     return true;
 }
 
+long long IntervalSlider::pointToValue(int arg_x, IntervalSlider::ClippedHandle handle) const
+{
+    int x = arg_x - halfHandleSize();
+    int offset = m_leftOffset;
+    long long widthDiff = handleSize() +((handle==NoHandle)?(0):(handleSize())) + m_rightOffset + m_leftOffset,
+         relWidth= width() - widthDiff;
+    switch(handle)
+    {
+    case EndHandle:
+        offset += handleSize();
+        break;
+    default:
+        offset += 0;
+        break;
+    }
+    long long relValue =(m_maxValue-m_minValue)?
+            (((1.0*x-offset) / relWidth * (m_maxValue-m_minValue))+0.5)
+              :(0);
+    if (relValue<0)
+        relValue=0;
+    if(relValue>m_maxValue-m_minValue)
+        relValue=m_maxValue-m_minValue;
+    return m_minValue+relValue;
+}
+
 void IntervalSlider::mouseMoveEvent(QMouseEvent *e)
 {
     long long val,deltaVal;
 
+    if(_pressed){
+        val = pointToValue(e->pos(), NoHandle);
+
+        deltaVal = val - pointToValue(_pressedAt, NoHandle);
+        _pressedAt = e->pos().x();
+
+        if(endHandle() + deltaVal > m_maxValue)
+            deltaVal = m_maxValue - endHandle();
+        if(beginHandle() + deltaVal < m_minValue)
+            deltaVal = - beginHandle() + m_minValue;
+
+        moveHandles(deltaVal,true);
+    }
+
     if(m_clippedHandle==BeginHandle)
     {
         val = pointToValue(e->pos(),BeginHandle);
-        if(m_shiftModifier)
-        {
-            deltaVal = val-beginHandle();
-            if(endHandle()+deltaVal>m_maxValue)
-            {
-                deltaVal=m_maxValue-endHandle();
-            }
-            moveHandles(deltaVal,true);
-        }
-        else
-            setBeginHandle(val,true);
+
+        setBeginHandle(val,true);
     }
     else if(m_clippedHandle==EndHandle)
     {
         val = pointToValue(e->pos(),EndHandle);
-        if(m_shiftModifier)
-        {
-            deltaVal = val-endHandle();
-            if(beginHandle()+deltaVal<m_minValue)
-            {
-                deltaVal=-beginHandle()+m_minValue;
-            }
-            moveHandles(deltaVal,true);
-        }
-        else
-            setEndHandle(val,true);
+
+        setEndHandle(val,true);
     }
     update();
+    QWidget::mouseMoveEvent(e);
 }
 
 void IntervalSlider::mouseReleaseEvent(QMouseEvent *e)
 {
+    clearPressed();
     m_clippedHandle=NoHandle;
     mouseMoveEvent(e);
     update();
+    QWidget::mouseReleaseEvent(e);
 }
 
 void IntervalSlider::mousePressEvent(QMouseEvent *e)
 {
     const QPoint &p = e->pos();
+
+    if(m_shiftModifier)
+        setPressedAt(e->pos().x());
 
     if(posOverBeginHandle(p))
         m_clippedHandle = BeginHandle;
@@ -548,4 +574,11 @@ void IntervalSlider::mousePressEvent(QMouseEvent *e)
         m_clippedHandle=NoHandle;
 
     mouseMoveEvent(e);
+    QWidget::mousePressEvent(e);
+}
+
+void IntervalSlider::mouseDoubleClickEvent(QMouseEvent *e)
+{
+    setBeginAndEnd(m_minValue, m_maxValue, true);
+    QWidget::mouseDoubleClickEvent(e);
 }

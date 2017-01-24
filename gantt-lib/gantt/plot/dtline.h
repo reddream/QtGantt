@@ -11,6 +11,8 @@
 class GANTTLIBSHARED_EXPORT DtLine : public QWidget
 {
     Q_OBJECT
+    void init();
+public:
 
     enum Precision
     {
@@ -61,7 +63,6 @@ class GANTTLIBSHARED_EXPORT DtLine : public QWidget
     static QString modeToString(Precision mode);
     static QString modeToString(TopPrecision mode);
 
-public:
     explicit DtLine(QWidget *parent = 0);
 
     UtcDateTime min() const;
@@ -97,15 +98,21 @@ public:
 
 public slots:
     void recalc();
-    void setMin(const UtcDateTime &min);
-    void setTimeSpan(const TimeSpan &timeSpan);
-    void setLimits(const UtcDateTime &min, const TimeSpan &ts); ///< setMin + setTimeSpan
-    void setLimitsWithOffset(const UtcDateTime &min, const TimeSpan &ts);
+    void setMin(const UtcDateTime &min, bool manually = false);
+    void setTimeSpan(const TimeSpan &timeSpan, bool manually = false);
+    void setLimits(const UtcDateTime &min, const TimeSpan &ts, bool manually = false); ///< setMin + setTimeSpan
+    void setLimitsWithOffset(const UtcDateTime &min, const TimeSpan &ts, bool manually = false);
+
+    void zoom(int delta, qreal relPos = 0.5); // default: center
+    void slide(qreal deltaPercent); // slide dt
+
     void emitChangedManually();
 
 signals:
     void minChanged();
+    void minChangedManually();
     void timeSpanChanged();
+    void timeSpanChangedManually();
     void changed();
     void changedManually(const UtcDateTime &min, const TimeSpan &ts);
 
@@ -114,7 +121,6 @@ protected:
     void resizeEvent(QResizeEvent *);
 
 private:
-    void init();
     bool inRange(int pos) const;
     bool inView(const QRect &rect) const;
 
@@ -135,6 +141,8 @@ private:
     Precision _mode;
     UtcDateTime _min;
     TimeSpan _timeSpan;
+
+    static const TimeSpan _minTimeSpan;
 };
 
 #endif // DTLINE_H

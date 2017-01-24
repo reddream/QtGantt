@@ -37,10 +37,15 @@ protected:
     void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event);
     void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
+    void wheelEvent(QGraphicsSceneWheelEvent *event);
 
 signals:
     void limitsChanged(const UtcDateTime &min, const TimeSpan &ts);
+
+    void scroll(int delta);
+    void slideByPercent(qreal percent);
 public slots:
+    void onTreeInfoReset();
     void onItemAdded(GanttInfoItem *item);
     void onItemRemoved(GanttInfoItem* item);
     void onEndInsertItems();
@@ -103,6 +108,10 @@ private:
 
     void updateSlider();
     void updateItems();
+    void createPersistentItems();
+    void addPersistentItems();
+    void removePersistentItems();
+    void addInfoItem(GanttInfoItem *item);
 
 private slots:
     void onVisItemDestroyed();
@@ -125,7 +134,7 @@ private:
     QMap<UtcDateTime,const GanttInfoLeaf*> m_infoByStart,
                                             m_infoByFinish;
 
-    GanttCurrentDtSlider *m_slider;
+    GanttCurrentDtSlider *m_playerCurrent;
     GanttDtCrossObject *m_crossObject;
     GanttHoverGraphicsObject *m_hoverObject;
     QPointer<QGraphicsObject> m_currentItem;

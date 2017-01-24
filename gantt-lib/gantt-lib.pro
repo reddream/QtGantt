@@ -15,7 +15,6 @@ SOURCES += \
     gantt/default_model/ganttinfoitem.cpp \
     gantt/default_model/ganttinfoleaf.cpp \
     gantt/default_model/ganttinfonode.cpp \
-    gantt/default_model/gantttreemodel.cpp \
     gantt/default_model/iganttmodel.cpp \
     gantt/ganttinfotree.cpp \
     gantt/player/ganttplayercontrol.cpp \
@@ -43,7 +42,6 @@ HEADERS +=\
     gantt/default_model/ganttinfonode.h \
     gantt/default_model/ganttinfoitem.h \
     gantt/default_model/ganttinfoleaf.h \
-    gantt/default_model/gantttreemodel.h \
     gantt/default_model/iganttmodel.h \
     gantt/ganttinfotree.h \
     gantt/player/ganttplayercontrol.h \

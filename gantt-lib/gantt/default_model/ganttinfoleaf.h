@@ -7,6 +7,8 @@
 
 #include <QColor>
 
+class GanttInfoNode;
+
 class GANTTLIBSHARED_EXPORT GanttInfoLeaf : public GanttInfoItem
 {
     Q_OBJECT

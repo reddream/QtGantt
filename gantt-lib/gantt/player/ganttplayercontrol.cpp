@@ -9,51 +9,54 @@
 
 #include <QDebug>
 
+void GanttPlayerControl::init()
+{
+    m_timer = std::make_pair<QTimer*,PlayMode>(NULL,PlayMode_count);
+    m_speedModifier = 1.0;
+    setPlayFrequency(GANTTPLAYER_DEFAULT_FREQUENCY);
+
+
+    ui->stop->setActiveIcon(QIcon(":/icons/stop_off_64.png"));
+    ui->stop->setCheckedIcon(QIcon(":/icons/stop_on_64.png"));
+
+    ui->fragmentBegin->setActiveIcon(QIcon(":/icons/begin_off_64.png"));
+    ui->fragmentBegin->setCheckedIcon(QIcon(":/icons/begin_on_64.png"));
+
+    ui->prevEvent->setActiveIcon(QIcon(":/icons/prev_off_64.png"));
+    ui->prevEvent->setCheckedIcon(QIcon(":/icons/prev_on_64.png"));
+
+    ui->stepBackward->setActiveIcon(QIcon(":/icons/back_step_off_64.png"));
+    ui->stepBackward->setCheckedIcon(QIcon(":/icons/back_step_on_64.png"));
+
+    ui->backward->setActiveIcon(QIcon(":/icons/back_off_64.png"));
+    ui->backward->setCheckedIcon(QIcon(":/icons/back_on_64.png"));
+
+    ui->pause->setActiveIcon(QIcon(":/icons/pause_off_64.png"));
+    ui->pause->setCheckedIcon(QIcon(":/icons/pause_on_64.png"));
+
+    ui->forward->setActiveIcon(QIcon(":/icons/forward_off_64.png"));
+    ui->forward->setCheckedIcon(QIcon(":/icons/forward_on_64.png"));
+
+    ui->stepForward->setActiveIcon(QIcon(":/icons/forward_step_off_64.png"));
+    ui->stepForward->setCheckedIcon(QIcon(":/icons/forward_step_on_64.png"));
+
+    ui->nextEvent->setActiveIcon(QIcon(":/icons/next_off_64.png"));
+    ui->nextEvent->setCheckedIcon(QIcon(":/icons/next_on_64.png"));
+
+    ui->fragmentEnd->setActiveIcon(QIcon(":/icons/end_off_64.png"));
+    ui->fragmentEnd->setCheckedIcon(QIcon(":/icons/end_on_64.png"));
+
+    ui->record->setActiveIcon(QIcon(":/icons/rec_off_64.png"));
+    ui->record->setCheckedIcon(QIcon(":/icons/rec_on_64.png"));
+}
+
 GanttPlayerControl::GanttPlayerControl(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::GanttPlayerControl)
 {
     ui->setupUi(this);
 
-    m_timer = std::make_pair<QTimer*,PlayMode>(NULL,PlayMode_count);
-    m_speedModifier = 1.0;
-    setPlayFrequency(GANTTPLAYER_DEFAULT_FREQUENCY);
-
-
-    ui->stop->setActiveIcon(QIcon(":/images/Buttons 64x64/stop_off_64.png"));
-    ui->stop->setCheckedIcon(QIcon(":/images/Buttons 64x64/stop_on_64.png"));
-
-    ui->fragmentBegin->setActiveIcon(QIcon(":/images/Buttons 64x64/begin_off_64.png"));
-    ui->fragmentBegin->setCheckedIcon(QIcon(":/images/Buttons 64x64/begin_on_64.png"));
-
-    ui->prevEvent->setActiveIcon(QIcon(":/images/Buttons 64x64/prev_off_64.png"));
-    ui->prevEvent->setCheckedIcon(QIcon(":/images/Buttons 64x64/prev_on_64.png"));
-
-    ui->stepBackward->setActiveIcon(QIcon(":/images/Buttons 64x64/back_step_off_64.png"));
-    ui->stepBackward->setCheckedIcon(QIcon(":/images/Buttons 64x64/back_step_on_64.png"));
-
-    ui->backward->setActiveIcon(QIcon(":/images/Buttons 64x64/back_off_64.png"));
-    ui->backward->setCheckedIcon(QIcon(":/images/Buttons 64x64/back_on_64.png"));
-
-    ui->pause->setActiveIcon(QIcon(":/images/Buttons 64x64/pause_off_64.png"));
-    ui->pause->setCheckedIcon(QIcon(":/images/Buttons 64x64/pause_on_64.png"));
-
-    ui->forward->setActiveIcon(QIcon(":/images/Buttons 64x64/forward_off_64.png"));
-    ui->forward->setCheckedIcon(QIcon(":/images/Buttons 64x64/forward_on_64.png"));
-
-    ui->stepForward->setActiveIcon(QIcon(":/images/Buttons 64x64/forward_step_off_64.png"));
-    ui->stepForward->setCheckedIcon(QIcon(":/images/Buttons 64x64/forward_step_on_64.png"));
-
-    ui->nextEvent->setActiveIcon(QIcon(":/images/Buttons 64x64/next_off_64.png"));
-    ui->nextEvent->setCheckedIcon(QIcon(":/images/Buttons 64x64/next_on_64.png"));
-
-    ui->fragmentEnd->setActiveIcon(QIcon(":/images/Buttons 64x64/end_off_64.png"));
-    ui->fragmentEnd->setCheckedIcon(QIcon(":/images/Buttons 64x64/end_on_64.png"));
-
-    ui->record->setActiveIcon(QIcon(":/images/Buttons 64x64/rec_off_64.png"));
-    ui->record->setCheckedIcon(QIcon(":/images/Buttons 64x64/rec_on_64.png"));
-
-
+    init();
 }
 
 GanttPlayerControl::~GanttPlayerControl()

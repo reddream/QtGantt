@@ -48,7 +48,7 @@ void GanttPlayerSettings::initActions()
 {
     QAction *p_action;
 
-    p_action = new QAction(QIcon(":/images/Buttons 64x64/reg_speed_on_64.png"),QString::fromUtf8("Выбор скорости воспроизведения"),this);
+    p_action = new QAction(QIcon(":/icons/reg_speed_on_64.png"),QString::fromUtf8("Выбор скорости воспроизведения"),this);
 
     QMenu *menu = new QMenu(this);
     QGroupBox* speedSelectionWidget = new QGroupBox(QString::fromUtf8("Скорость воспроизведения"));
@@ -114,7 +114,7 @@ void GanttPlayerSettings::initActions()
     if(p_button)
         p_button->setPopupMode(QToolButton::InstantPopup);
 
-//    p_action = new QAction(QIcon(":/images/Buttons 64x64/reg_step_on_64.png"),QString::fromUtf8("выбор шага воспроизведения"),this);
+//    p_action = new QAction(QIcon(":/icons/reg_step_on_64.png"),QString::fromUtf8("выбор шага воспроизведения"),this);
 //    addAction(p_action);
 }
 

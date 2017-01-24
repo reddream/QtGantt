@@ -3,6 +3,8 @@
 
 #include <QPainter>
 
+const TimeSpan DtLine::_minTimeSpan(30 * _MICROSECONDS_IN_SECOND);
+
 enum defaults {
     itemHeight = 20,
     heightConstraint = 2 * itemHeight,
@@ -125,6 +127,12 @@ void DtLine::init()
     connect(this,SIGNAL(minChanged()),this,SIGNAL(changed()));
     connect(this,SIGNAL(timeSpanChanged()),this,SIGNAL(changed()));
     connect(this,SIGNAL(changed()),this,SLOT(recalc()));
+
+    connect(this,SIGNAL(minChangedManually()),this,SLOT(emitChangedManually()));
+    connect(this,SIGNAL(timeSpanChangedManually()),this,SLOT(emitChangedManually()));
+
+    connect(this,SIGNAL(minChangedManually()),this,SIGNAL(minChanged()));
+    connect(this,SIGNAL(timeSpanChangedManually()),this,SIGNAL(timeSpanChanged()));
 }
 
 void DtLine::drawBackground(QPainter *painter)
@@ -956,32 +964,63 @@ void DtLine::recalc()
 }
 
 
-void DtLine::setTimeSpan(const TimeSpan &timeSpan)
+void DtLine::setTimeSpan(const TimeSpan &timeSpan, bool manually)
 {
-    if(timeSpan.totalMicroseconds() < 0)
-    {
-        qWarning("DtLine::setTimeSpan:: TimeSpan's msc's < 0 setting inner TimeSpan to 0");
-        _timeSpan = TimeSpan();
-    } else
+    if(timeSpan < _minTimeSpan)
+        _timeSpan = _minTimeSpan;
+    else
         _timeSpan = timeSpan;
-    emit timeSpanChanged();
+
+    if(manually)
+        emit timeSpanChangedManually();
 }
 
-#define DTLINE_LIMITS_COEF 0.1
-void DtLine::setLimits(const UtcDateTime &min, const TimeSpan &ts)
+void DtLine::setLimits(const UtcDateTime &min, const TimeSpan &ts, bool manually)
 {
-    qDebug() << "setLimits " << min << ' ' << ts.toString();
     blockSignals(true);
     setMin(min);
     setTimeSpan(ts);
     blockSignals(false);
+
+    if(manually)
+        emitChangedManually();
     emit changed();
 }
 
-void DtLine::setLimitsWithOffset(const UtcDateTime &min, const TimeSpan &ts)
+void DtLine::setLimitsWithOffset(const UtcDateTime &min, const TimeSpan &ts, bool manually)
 {
-    TimeSpan deltaTs = ts * DTLINE_LIMITS_COEF;
-    setLimits(min - deltaTs, ts + 2 * deltaTs);
+    static const qreal coef = 0.1;
+    TimeSpan deltaTs = ts * coef;
+    setLimits(min - deltaTs, ts + 2 * deltaTs, manually);
+}
+
+void DtLine::zoom(int delta, qreal relPos)
+{
+    static const qreal  zoom_coef = 0.01,
+                        pos_zoom_coef = zoom_coef / 120,
+                        neg_zoom_coef = pos_zoom_coef / (1 - 2 * zoom_coef);
+
+    const qreal efficientCoeff = ( delta > 0
+                                   ? pos_zoom_coef
+                                   : neg_zoom_coef),
+            tsReduceCoeff = 1 - 2 * delta * efficientCoeff;
+    if(tsReduceCoeff < 0){
+        qWarning("DtLine::zoom tsReduceCoeff < 0");
+        return;
+    }
+
+    if(timeSpanIsValid(_timeSpan) && _min.isValid()){
+        setLimits(_min + 2 * relPos * delta * efficientCoeff * _timeSpan,
+                  _timeSpan * tsReduceCoeff
+                  , true); // manually
+    }
+}
+
+void DtLine::slide(qreal deltaPercent)
+{
+    if(timeSpanIsValid(_timeSpan) && _min.isValid()){
+        setMin(_min + _timeSpan * deltaPercent, true); // manually
+    }
 }
 
 void DtLine::emitChangedManually()
@@ -999,8 +1038,9 @@ UtcDateTime DtLine::max() const
     return _min + _timeSpan;
 }
 
-void DtLine::setMin(const UtcDateTime &min)
+void DtLine::setMin(const UtcDateTime &min, bool manually)
 {
     _min = min;
-    emit minChanged();
+    if(manually)
+        emit minChangedManually();
 }

@@ -4,14 +4,20 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <time.h>
+#include <QKeyEvent>
 #include "utcdatetime.h"
 #include "gantt-lib_global_values.h"
+#include "gantttreemodel.h"
 
 
 void MainWindow::init()
 {
     _model = new GanttTreeModel();
+    ui->treeView->setModel(_model);
+    ui->ganttWidget->installEventWatcherInterval(this);
+
     ui->ganttWidget->setModel(_model);
+    ui->ganttWidget->setView(ui->treeView);
 }
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -26,7 +32,13 @@ MainWindow::MainWindow(QWidget *parent) :
 
 MainWindow::~MainWindow()
 {
-  delete ui;
+    delete ui;
+}
+
+void MainWindow::keyPressEvent(QKeyEvent *e)
+{
+
+    QMainWindow::keyPressEvent(e);
 }
 
 QList<GanttInfoItem*> generateTest()

@@ -11,6 +11,7 @@ PlayerControlButton::PlayerControlButton(QWidget * parent )
     m_borderPen = QPen(QBrush(QColor::fromRgb(36,110,161)),1,Qt::SolidLine, Qt::SquareCap, Qt::RoundJoin);
     m_hoverStatus = false;
     setMouseTracking(true);
+    setCursor(Qt::PointingHandCursor);
 }
 
 void PlayerControlButton::paintEvent(QPaintEvent *e)
@@ -32,6 +33,17 @@ void PlayerControlButton::mouseMoveEvent(QMouseEvent *e)
 {
     setHoverStatus(true);
     QPushButton::mouseMoveEvent(e);
+}
+
+void PlayerControlButton::mousePressEvent(QMouseEvent *e)
+{
+    QPushButton::mousePressEvent(e);
+}
+
+void PlayerControlButton::mouseReleaseEvent(QMouseEvent *e)
+{
+
+    QPushButton::mouseReleaseEvent(e);
 }
 
 void PlayerControlButton::leaveEvent(QEvent *e)

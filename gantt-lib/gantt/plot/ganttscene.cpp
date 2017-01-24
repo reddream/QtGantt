@@ -12,7 +12,7 @@
 #include "ganttinfoleaf.h"
 #include "ganttinfonode.h"
 
-
+#include <QApplication>
 #include <QGraphicsView>
 
 #include <QScrollBar>
@@ -75,54 +75,54 @@ void GanttScene::updateSceneItems()
 
 void GanttScene::makeStep(int step)
 {
-    if(m_slider)
-        m_slider->makeStep(step);
+    if(m_playerCurrent)
+        m_playerCurrent->makeStep(step);
 }
 
 void GanttScene::moveSliderToNextEventStart()
 {
-    if(m_slider)
+    if(m_playerCurrent)
     {
         const GanttInfoLeaf* nextEventInfo = nextEvent(slidersDt());
         if(nextEventInfo)
         {
-            m_slider->setDt(nextEventInfo->start());
+            m_playerCurrent->setDt(nextEventInfo->start());
         }
         else
-            m_slider->moveToEnd();
+            m_playerCurrent->moveToEnd();
     }
 }
 
 void GanttScene::moveSliderToPrevEventFinish()
 {
-    if(m_slider)
+    if(m_playerCurrent)
     {
         const GanttInfoLeaf* prevEventInfo = prevEvent(slidersDt());
         if(prevEventInfo)
         {
-            m_slider->setDt(prevEventInfo->finish());
+            m_playerCurrent->setDt(prevEventInfo->finish());
         }
         else
-            m_slider->moveToBegin();
+            m_playerCurrent->moveToBegin();
     }
 }
 
 void GanttScene::moveSliderToViewStart()
 {
-    if(m_slider)
-        m_slider->moveToRangeStart();
+    if(m_playerCurrent)
+        m_playerCurrent->moveToRangeStart();
 }
 
 void GanttScene::moveSliderToViewFinish()
 {
-    if(m_slider)
-        m_slider->moveToRangeFinish();
+    if(m_playerCurrent)
+        m_playerCurrent->moveToRangeFinish();
 }
 
 void GanttScene::moveSliderToStart()
 {
-    if(m_slider)
-        m_slider->moveToBegin();
+    if(m_playerCurrent)
+        m_playerCurrent->moveToBegin();
 }
 
 void GanttScene::setCurrentByInfo(GanttInfoItem *info)
@@ -132,7 +132,7 @@ void GanttScene::setCurrentByInfo(GanttInfoItem *info)
 
 UtcDateTime GanttScene::slidersDt() const
 {
-    return m_slider->dt();
+    return m_playerCurrent->dt();
 }
 
 
@@ -167,12 +167,11 @@ void GanttScene::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
 
 void GanttScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
-    if(event->buttons() & Qt::RightButton)
-    {
+    if(event->buttons() & Qt::RightButton){
         if(_view)
         {
             QRectF viewRect = _view->mapToScene(_view->viewport()->geometry()).boundingRect();
-            if(viewRect.contains(event->scenePos()) && m_crossObject)
+            if(viewRect.contains(event->scenePos()))
             {
                 m_crossObject->setVisible(true);
                 m_crossObject->setPos(event->scenePos());
@@ -187,7 +186,9 @@ void GanttScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
             qCritical("m_view is null");
         }
     }
-
+    if(event->buttons() & Qt::MiddleButton){
+        _dtline->slide((event->lastScenePos().x() - event->scenePos().x()) * 1. / width());
+    }
 
     QGraphicsScene::mouseMoveEvent(event);
 }
@@ -199,6 +200,23 @@ void GanttScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
     }
 
     QGraphicsScene::mouseReleaseEvent(event);
+}
+
+void GanttScene::wheelEvent(QGraphicsSceneWheelEvent *event)
+{
+    if(QApplication::keyboardModifiers() & Qt::ControlModifier){
+        _dtline->zoom(event->delta(), event->scenePos().x() * 1. / width());
+        return; // forbid VSrollBar
+    }
+
+
+    QGraphicsScene::wheelEvent(event);
+}
+
+void GanttScene::onTreeInfoReset()
+{
+    clear();
+    addInfoItem(_treeInfo->root());
 }
 
 void GanttScene::connectDtLine()
@@ -272,6 +290,15 @@ QRectF GanttScene::elementsBoundingRect()
 void GanttScene::clear()
 {
     m_currentItem = NULL;
+
+    removePersistentItems();
+    QGraphicsScene::clear();
+    m_items.clear();
+    m_calcItems.clear();
+    m_itemByInfo.clear();
+    m_infoByFinish.clear();
+    m_infoByStart.clear();
+    addPersistentItems();
 }
 
 
@@ -337,17 +364,17 @@ const QList<GanttIntervalGraphicsObject *>& GanttScene::dtItems() const
 
 void GanttScene::setDrawCurrentDtSlider(bool enable)
 {
-    if(m_slider)
-        m_slider->setDraw(enable);
+    if(m_playerCurrent)
+        m_playerCurrent->setDraw(enable);
 }
 
 
 void GanttScene::updateSlider()
 {
-    if(!m_slider)
+    if(!m_playerCurrent)
         return;
 
-    m_slider->updateScenePos();
+    m_playerCurrent->updateScenePos();
 }
 
 void GanttScene::updateItems()
@@ -357,6 +384,41 @@ void GanttScene::updateItems()
 
     foreach(GanttCalcGraphicsObject *o, m_calcItems)
         o->updateItemGeometry();
+}
+
+void GanttScene::createPersistentItems()
+{
+    m_playerCurrent = new GanttCurrentDtSlider(this,_dtline);
+    m_crossObject = new GanttDtCrossObject(this);
+    m_hoverObject = new GanttHoverGraphicsObject(this);
+
+    connect(m_playerCurrent,SIGNAL(dtChanged(UtcDateTime)),this,SIGNAL(currentDtChanged(UtcDateTime)));
+}
+
+void GanttScene::addPersistentItems()
+{
+    addItem(m_playerCurrent);
+    addItem(m_crossObject);
+    addItem(m_hoverObject);
+}
+
+void GanttScene::removePersistentItems()
+{
+    removeItem(m_playerCurrent);
+    removeItem(m_crossObject);
+    removeItem(m_hoverObject);
+}
+
+void GanttScene::addInfoItem(GanttInfoItem *item)
+{
+    onItemAdded(item);
+    GanttInfoNode *node = qobject_cast<GanttInfoNode*>(item);
+    if(node){
+        for(int i = 0; i < node->size(); ++i){
+            addInfoItem(node->at(i));
+        }
+    }
+
 }
 
 void GanttScene::onGraphicsItemPress()
@@ -483,7 +545,7 @@ void GanttScene::onItemRemoved(GanttInfoItem *item)
 void GanttScene::onEndInsertItems()
 {
 //    m_slider->updateRange();   /// TODO
-    m_slider->setToBegin();
+    m_playerCurrent->setToBegin();
     updateSceneRect();
 }
 
@@ -509,12 +571,12 @@ void GanttScene::removeByInfoLeaf(const GanttInfoLeaf *leaf)
 
 void GanttScene::updateSliderRect()
 {
-    if(!m_slider || views().isEmpty())
+    if(!m_playerCurrent || views().isEmpty())
         return;
 
     QGraphicsView* p_view = views()[0];
 
-    m_slider->setSlidersRect(QRectF( MIN_WIDTH_FOR_TIME_VISUALIZING/2
+    m_playerCurrent->setSlidersRect(QRectF( MIN_WIDTH_FOR_TIME_VISUALIZING/2
                              ,p_view->verticalScrollBar()->value()
                              ,width()-MIN_WIDTH_FOR_TIME_VISUALIZING
                              ,p_view->height() ) );
@@ -530,11 +592,7 @@ void GanttScene::init()
 
     setSceneRect(0,0,GANTTSCENE_MIN_WIDTH,0);
 
-    m_slider = new GanttCurrentDtSlider(this,_dtline);
-    m_crossObject = new GanttDtCrossObject(this);
-    m_hoverObject = new GanttHoverGraphicsObject(this);
-
-    connect(m_slider,SIGNAL(dtChanged(UtcDateTime)),this,SIGNAL(currentDtChanged(UtcDateTime)));
+    createPersistentItems();
 
     updateSliderRect();
 }

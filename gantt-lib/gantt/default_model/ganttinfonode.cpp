@@ -1,5 +1,6 @@
 #include "ganttinfonode.h"
-#include "gantttreemodel.h"
+#include "ganttinfoitem.h"
+#include "ganttinfoleaf.h"
 
 #include "gantt-lib_global_values.h"
 

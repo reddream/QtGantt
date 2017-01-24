@@ -14,6 +14,7 @@ class GanttPlayerControl : public QWidget
 {
     Q_OBJECT
 
+    void init();
 public:
     explicit GanttPlayerControl(QWidget *parent = 0);
     ~GanttPlayerControl();
@@ -38,32 +39,18 @@ private slots:
     void makeStepBackward();
 
     void onSpeedChanged(qreal mult);
-
     void updateTimers();
 
-
     void on_fragmentBegin_clicked();
-
     void on_fragmentEnd_clicked();
-
     void on_nextEvent_clicked();
-
-
     void on_prevEvent_clicked();
-
-
     void on_stepBackward_clicked();
-
     void on_stepForward_clicked();
-
     void uncheckAll();
-
     void on_forward_clicked(bool checked);
-
     void on_backward_clicked(bool checked);
-
     void on_pause_clicked();
-
     void on_stop_clicked();
 
 private:

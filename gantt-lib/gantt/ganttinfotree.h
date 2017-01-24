@@ -25,6 +25,7 @@ public:
 
 
 signals:
+    void treeReset();
     void limitsChanged(const UtcDateTime &min, const TimeSpan &ts);
     void endInsertItems();
     void endRemoveItems();

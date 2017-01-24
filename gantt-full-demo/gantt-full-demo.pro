@@ -15,9 +15,11 @@ include(../gantt-lib-include.pri)
 include(../demo-lib-include.pri)
 
 SOURCES += main.cpp\
-        mainwindow.cpp
+        mainwindow.cpp \
+    gantttreemodel.cpp
 
-HEADERS  += mainwindow.h
+HEADERS  += mainwindow.h \
+    gantttreemodel.h
 
 FORMS    += mainwindow.ui
 

@@ -127,6 +127,7 @@ void GanttInfoTree::reset()
     fillRecursive(_root,QModelIndex());
     qDebug() << "reset, root sz "<<_root->size();
     emit endInsertItems();
+    emit treeReset();
 }
 
 void GanttInfoTree::onItemExpanded()
@@ -270,7 +271,6 @@ GanttInfoItem *GanttInfoTree::makeInfoItem(const QModelIndex &index)
                                  , index
                                  , _iGanttModel->color(index) );
     }
-    qDebug() << "item Added " << item->title();
 
     emit itemAdded(item);
     return item;

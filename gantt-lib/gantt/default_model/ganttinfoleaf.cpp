@@ -1,5 +1,5 @@
 #include "ganttinfoleaf.h"
-#include "gantttreemodel.h"
+#include "ganttinfonode.h"
 
 #include "gantt-lib_global_values.h"
 
@@ -21,7 +21,7 @@ GanttInfoLeaf::GanttInfoLeaf(const QString &title, const UtcDateTime &start, con
 
 int GanttInfoLeaf::columnCount() const
 {
-    return GanttTreeModel::Fields_count;
+    return 4;
 }
 
 qreal GanttInfoLeaf::height() const

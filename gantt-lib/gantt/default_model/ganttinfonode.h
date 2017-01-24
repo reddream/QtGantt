@@ -2,7 +2,6 @@
 #define GANTTINFONODE_H
 
 #include "ganttinfoleaf.h"
-
 #include <QList>
 #include <QModelIndex>
 

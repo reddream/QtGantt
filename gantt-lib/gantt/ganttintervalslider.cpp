@@ -1,6 +1,7 @@
 #include "ganttintervalslider.h"
 #include "utcdatetime.h"
 #include "timespan.h"
+#include "timespan_extension.h"
 #include "gantt-lib_global_values.h"
 
 #include <QPainter>
@@ -59,7 +60,6 @@ void GanttIntervalSlider::drawSliderLine(QPainter *painter, const QRect &sliderR
 {
     int top = sliderRect.y() + (m_offsetV>0?m_offsetV:0),
             width = sliderRect.width() - handleSize();
-    qDebug() << "handlesize " << handleSize();
 
     int beginRectLeft = sliderRect.x() + halfHandleSize(),
             beginRectWidth = valueToPoint(m_beginValue,BeginHandle) - halfHandleSize() - sliderRect.x(),
@@ -261,6 +261,13 @@ void GanttIntervalSlider::emitRangeChangedManually()
 void GanttIntervalSlider::setLimits(const UtcDateTime &min, const TimeSpan &ts)
 {
     setLimits(dtToVal(min),dtToVal(min + ts));
+}
+
+void GanttIntervalSlider::setLimitsWithOffset(const UtcDateTime &min, const TimeSpan &ts)
+{
+    static const qreal coef = 0.1;
+    TimeSpan deltaTs = ts * coef;
+    setLimits(min - deltaTs, ts + 2 * deltaTs);
 }
 
 void GanttIntervalSlider::setCurrentTimeRectColor(const QColor &currentTimeRectColor)

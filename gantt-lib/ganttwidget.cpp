@@ -23,11 +23,9 @@ GanttWidget::GanttWidget(QWidget *parent) :
         layout()->setSpacing(0);
     }
 
-    ui->treeView->setContentsMargins(0,0,0,0);
-    ui->treeView->setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
-    ui->treeView->verticalScrollBar()->setStyleSheet("QScrollBar {width:0px;}");
-
-    installEventFilter(ui->widgetIntervalSlider);
+//    ui->treeView->setContentsMargins(0,0,0,0);
+//    ui->treeView->setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
+//    ui->treeView->verticalScrollBar()->setStyleSheet("QScrollBar {width:0px;}");
 
     ui->playerControl->setSettings(ui->playerSettings);
 
@@ -36,6 +34,15 @@ GanttWidget::GanttWidget(QWidget *parent) :
 GanttWidget::~GanttWidget()
 {
     delete ui;
+}
+
+void GanttWidget::installEventWatcherInterval(QObject *watcher)
+{
+    if(!watcher){
+        qCritical("GanttWidget::installEventFilterInterval: null watcher");
+        return;
+    }
+    watcher->installEventFilter(ui->widgetIntervalSlider);
 }
 
 void GanttWidget::setPlayerSpeeds(qreal minMultiply, qreal maxMultiply)
@@ -65,7 +72,7 @@ void GanttWidget::setModel(IGanttModel *model)
     _treeInfo->setModel(model);
 
     /// TODO remove
-    setView(ui->treeView);
+//    setView(ui->treeView);
 }
 
 void GanttWidget::setView(QTreeView *view, bool inner)
@@ -76,6 +83,13 @@ void GanttWidget::setView(QTreeView *view, bool inner)
 
     view->setModel(_treeInfo->model());
     _treeInfo->connectTreeView(view);
+}
+
+void GanttWidget::onTreeFilled()
+{
+    _treeInfo->disconnect(_scene,SLOT(onItemAdded(GanttInfoItem*)));
+
+    connect(_treeInfo,SIGNAL(itemAdded(GanttInfoItem*)),_scene,SLOT(onItemAdded(GanttInfoItem*)));
 }
 
 void GanttWidget::onGanttViewCustomContextMenuRequested(const QPoint &point)
@@ -100,8 +114,9 @@ void GanttWidget::connectSceneWithInfo()
 //    connect(_scene,SIGNAL(currentItemChanged(const GanttInfoItem*)),_treeInfo,SLOT(onCurrent));
 
     connect(_treeInfo,SIGNAL(currentChanged(GanttInfoItem*)),_scene,SLOT(setCurrentByInfo(GanttInfoItem*)));
-    connect(_treeInfo,SIGNAL(itemAdded(GanttInfoItem*)),_scene,SLOT(onItemAdded(GanttInfoItem*)));
-    connect(_treeInfo,SIGNAL(itemAboutToBeDeleted(GanttInfoItem*)),_scene,SLOT(onItemRemoved(GanttInfoItem*)));
+    connect(_treeInfo,SIGNAL(treeReset()),_scene,SLOT(onTreeInfoReset()));
+//    connect(_treeInfo,SIGNAL(treeReset()),this,SLOT(onTreeFilled()));
+//    connect(_treeInfo,SIGNAL(itemAboutToBeDeleted(GanttInfoItem*)),_scene,SLOT(onItemRemoved(GanttInfoItem*)));
 
     connect(_treeInfo,SIGNAL(endInsertItems()),_scene,SLOT(onEndInsertItems()));
     connect(_treeInfo,SIGNAL(endRemoveItems()),_scene,SLOT(onEndRemoveItems()));
@@ -110,11 +125,13 @@ void GanttWidget::connectSceneWithInfo()
 
 void GanttWidget::connectIntervals()
 {   //DtLine shows a bit more than GanttIntervalSlider
-    connect(_treeInfo,SIGNAL(limitsChanged(UtcDateTime,TimeSpan)),ui->widgetIntervalSlider,SLOT(setLimits(UtcDateTime,TimeSpan)));
-    connect(_treeInfo,SIGNAL(limitsChanged(UtcDateTime,TimeSpan)),ui->widgetDtLine,SLOT(setLimitsWithOffset(UtcDateTime,TimeSpan)));
+    connect(_treeInfo,SIGNAL(limitsChanged(UtcDateTime,TimeSpan)),
+            ui->widgetIntervalSlider,SLOT(setLimitsWithOffset(UtcDateTime,TimeSpan)));
+    connect(_treeInfo,SIGNAL(limitsChanged(UtcDateTime,TimeSpan)),
+            ui->widgetDtLine,SLOT(setLimitsWithOffset(UtcDateTime,TimeSpan)));
 
     connect(ui->widgetIntervalSlider,SIGNAL(rangeChangedManually(UtcDateTime,TimeSpan)),
-                ui->widgetDtLine,SLOT(setLimitsWithOffset(UtcDateTime,TimeSpan)));
+                ui->widgetDtLine,SLOT(setLimits(UtcDateTime,TimeSpan)));
     connect(ui->widgetDtLine,SIGNAL(changedManually(UtcDateTime,TimeSpan)),
                 ui->widgetIntervalSlider,SLOT(setRange(UtcDateTime,TimeSpan)));
 }
