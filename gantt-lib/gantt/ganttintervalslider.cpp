@@ -18,9 +18,9 @@ void GanttIntervalSlider::init()
     m_drawCurrentDt = false;
     m_shiftRange = 0;
     m_minTimeSize = 30*_MICROSECONDS_IN_SECOND;
-    setOffsetV(7);
+    setOffsetV(-3);
     setHandleSize(6);
-    setSliderV(8);
+    setSliderV(20);
 
     setCurrentTimeRectWidth(4);
     setCurrentTimeRectColor(Qt::red);
@@ -57,13 +57,14 @@ void GanttIntervalSlider::drawHandle(QPainter *painter, const QRect &handleRect,
 
 void GanttIntervalSlider::drawSliderLine(QPainter *painter, const QRect &sliderRect) const
 {
-    int top = sliderRect.y() + m_offsetV,
+    int top = sliderRect.y() + (m_offsetV>0?m_offsetV:0),
             width = sliderRect.width() - handleSize();
+    qDebug() << "handlesize " << handleSize();
 
     int beginRectLeft = sliderRect.x() + halfHandleSize(),
             beginRectWidth = valueToPoint(m_beginValue,BeginHandle) - halfHandleSize() - sliderRect.x(),
             innerRectLeft = beginRectLeft + beginRectWidth,
-            innerRectWidth = valueToPoint(m_endValue,EndHandle) - beginRectWidth,
+            innerRectWidth = valueToPoint(m_endValue,EndHandle) - beginRectWidth - handleSize()/2,
             endRectLeft = innerRectLeft + innerRectWidth,
             endRectWidth = width - valueToPoint(m_endValue,EndHandle);
     QLinearGradient foregroundGradient(QPoint(0,top),QPoint(0,top + m_sliderV));
@@ -135,19 +136,19 @@ long long GanttIntervalSlider::minTimeSize() const
     return m_minTimeSize;
 }
 
-void GanttIntervalSlider::setBeginHandle(long long beginHandle)
+void GanttIntervalSlider::setBeginHandle(long long beginHandle, bool manually)
 {
     if(endHandle() - beginHandle < minTimeSize())
         beginHandle = endHandle() - minTimeSize();
-    IntervalSlider::setBeginHandle(beginHandle);
+    IntervalSlider::setBeginHandle(beginHandle, manually);
 
 }
 
-void GanttIntervalSlider::setEndHandle(long long endHandle)
+void GanttIntervalSlider::setEndHandle(long long endHandle, bool manually)
 {
     if(endHandle - beginHandle() < minTimeSize())
         endHandle = beginHandle() + minTimeSize();
-    IntervalSlider::setEndHandle(endHandle);
+    IntervalSlider::setEndHandle(endHandle, manually);
 }
 
 void GanttIntervalSlider::reset()

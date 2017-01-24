@@ -127,25 +127,10 @@
                          <uid>{4f0f7faa-b69b-4a18-8980-36ba3d0bde27}</uid>
                         </DElement>
                        </base-DElement>
+                       <text>Player</text>
                        <pos>x:120;y:135</pos>
                        <rect>x:-70;y:-120;w:140;h:240</rect>
                       </DBoundary>
-                     </instance>
-                    </item>
-                    <item>
-                     <instance type="DAnnotation">
-                      <DAnnotation>
-                       <base-DElement>
-                        <DElement>
-                         <uid>{f8bcac87-310c-4893-a2a5-a215ff4951f5}</uid>
-                        </DElement>
-                       </base-DElement>
-                       <text>Player</text>
-                       <pos>x:90;y:20</pos>
-                       <rect>x:0;y:0;w:61;h:35</rect>
-                       <auto-sized>false</auto-sized>
-                       <visual-role>1</visual-role>
-                      </DAnnotation>
                      </instance>
                     </item>
                     <item>
@@ -164,6 +149,7 @@
                          <pos>x:135;y:360</pos>
                          <rect>x:-55;y:-30;w:110;h:60</rect>
                          <visual-role>0</visual-role>
+                         <visual-role2>2</visual-role2>
                         </DObject>
                        </base-DObject>
                       </DClass>
@@ -186,7 +172,7 @@
                     </item>
                    </qlist>
                   </elements>
-                  <last-modified>1484921049670</last-modified>
+                  <last-modified>1485199666682</last-modified>
                   <toolbarid>Classes</toolbarid>
                  </MDiagram>
                 </base-MDiagram>
@@ -275,7 +261,7 @@
                             <qlist>
                              <item>
                               <MClassMember>
-                               <uid>{1e228ec1-34b1-43b6-ab70-e5cb7e3cb888}</uid>
+                               <uid>{e5b59026-4c77-450c-9246-08917c080215}</uid>
                                <visibility>1</visibility>
                                <type>2</type>
                                <declaration>explicit GanttWidget(QWidget *parent = 0)</declaration>
@@ -283,7 +269,7 @@
                              </item>
                              <item>
                               <MClassMember>
-                               <uid>{2d15a8d7-0c80-43e4-b64b-37067570112f}</uid>
+                               <uid>{f8c144dc-8044-4b4c-b4bf-cf2230839c47}</uid>
                                <visibility>1</visibility>
                                <type>2</type>
                                <declaration>void setPlayerSpeeds(qreal minMultiply, qreal maxMultiply)</declaration>
@@ -291,7 +277,7 @@
                              </item>
                              <item>
                               <MClassMember>
-                               <uid>{e4fa7c1f-31b4-40d0-a4cd-6e2e79363e64}</uid>
+                               <uid>{43dff6fb-d3b0-4686-b264-d46122af6a03}</uid>
                                <visibility>1</visibility>
                                <type>2</type>
                                <declaration>void showPlayer(bool show)</declaration>
@@ -299,7 +285,7 @@
                              </item>
                              <item>
                               <MClassMember>
-                               <uid>{6c7e47ab-f71a-4e0e-80c4-7cb7cd911cbd}</uid>
+                               <uid>{21aad3b3-76ce-4d06-bd5c-2785ac1305f4}</uid>
                                <visibility>1</visibility>
                                <type>2</type>
                                <properties>4</properties>
@@ -308,7 +294,7 @@
                              </item>
                              <item>
                               <MClassMember>
-                               <uid>{9ed2272a-efa4-479a-ae74-d2e73ae467a5}</uid>
+                               <uid>{49d7ab55-ed8c-44a9-8887-5317708faa92}</uid>
                                <visibility>1</visibility>
                                <type>2</type>
                                <declaration>void setModel(IGanttModel *model)</declaration>
@@ -316,7 +302,7 @@
                              </item>
                              <item>
                               <MClassMember>
-                               <uid>{112c0939-ae24-437c-9db6-9a69ef007d80}</uid>
+                               <uid>{c26cf917-27f4-4b48-a159-3b0526e27b5c}</uid>
                                <visibility>1</visibility>
                                <type>2</type>
                                <declaration>void setView(QTreeView *view, bool inner = false)</declaration>
@@ -324,7 +310,7 @@
                              </item>
                              <item>
                               <MClassMember>
-                               <uid>{cf416036-81a1-490f-bebe-b1d19fe51d6a}</uid>
+                               <uid>{4c4f9705-57dd-44f5-a744-918ee6b3d7ea}</uid>
                                <visibility>5</visibility>
                                <type>2</type>
                                <declaration>void onGanttViewCustomContextMenuRequested(const QPoint&amp;)</declaration>
@@ -332,7 +318,7 @@
                              </item>
                              <item>
                               <MClassMember>
-                               <uid>{99c38fb7-8a88-4054-a2f0-4aab2fe02649}</uid>
+                               <uid>{8d2ca9fa-870f-4bd5-bf5c-a459595bbbb0}</uid>
                                <visibility>3</visibility>
                                <type>2</type>
                                <declaration>void init()</declaration>
@@ -340,7 +326,7 @@
                              </item>
                              <item>
                               <MClassMember>
-                               <uid>{54f896ea-00b4-4f62-8636-737b280b0851}</uid>
+                               <uid>{76b76772-3852-4366-bb38-8ccb1eb1cc00}</uid>
                                <visibility>3</visibility>
                                <type>2</type>
                                <declaration>void connectSceneWithInfo()</declaration>
@@ -348,7 +334,7 @@
                              </item>
                              <item>
                               <MClassMember>
-                               <uid>{cb38a930-cd18-41b1-b33e-0805e00e214d}</uid>
+                               <uid>{fd3b4db8-6c59-4f03-982e-6ba633dee528}</uid>
                                <visibility>3</visibility>
                                <type>1</type>
                                <declaration>Ui::GanttWidget *ui</declaration>
@@ -356,7 +342,7 @@
                              </item>
                              <item>
                               <MClassMember>
-                               <uid>{ec756bef-24fa-4e46-b08a-550f3461ed2e}</uid>
+                               <uid>{624983f4-aab4-4617-8157-121c553dbe3e}</uid>
                                <visibility>3</visibility>
                                <type>1</type>
                                <declaration>GanttInfoTree *_treeInfo</declaration>
@@ -364,7 +350,7 @@
                              </item>
                              <item>
                               <MClassMember>
-                               <uid>{96df9ed5-eba9-4f4e-bff2-b74f3aae4019}</uid>
+                               <uid>{0d78d84f-4421-40a9-b478-7c45c5bf4922}</uid>
                                <visibility>3</visibility>
                                <type>1</type>
                                <declaration>GanttScene *_scene</declaration>
@@ -372,7 +358,7 @@
                              </item>
                              <item>
                               <MClassMember>
-                               <uid>{efdaa8e3-f763-49fd-8201-32f8d41fee09}</uid>
+                               <uid>{375dac96-0b60-4d1b-b88a-7bc37ea0b8e5}</uid>
                                <visibility>3</visibility>
                                <type>1</type>
                                <declaration>bool m_playerShown</declaration>

@@ -35,7 +35,9 @@ IntervalSlider::IntervalSlider(QWidget *parent) :
     m_clippedHandle = NoHandle;
     m_shiftModifier = false;
 
-    connect(this,SIGNAL(valueChanged(IntervalSlider::ClippedHandle,long long)),this,SLOT(update()));
+    connect(this,SIGNAL(beginMoved(long long)),this,SLOT(update()));
+    connect(this,SIGNAL(endMoved(long long)),this,SLOT(update()));
+
 }
 long long IntervalSlider::endHandle() const
 {
@@ -280,24 +282,21 @@ void IntervalSlider::paintEvent(QPaintEvent *event)
     Q_UNUSED(event);
     QPainter painter( this );
 
-    QStyleOption opt;
-    opt.init(this);
-
-    QRect sliderRect = opt.rect;
+    QRect sliderRect = rect();
 
     drawSliderLine( &painter, sliderRect );
 
     QRect beginHandleRect(
                 valueToPoint(m_beginValue,BeginHandle) - halfHandleSize(),
-                sliderRect.y(),
+                sliderRect.y() /*+ m_borderWidth*/ - (m_offsetV<0?m_offsetV:0),
                 handleSize(),
-                sliderRect.height()
+                sliderRect.height() - 2*m_borderWidth + 2*(m_offsetV<0?m_offsetV:0)
                 )
         , endHandleRect(
                 valueToPoint(m_endValue,EndHandle) - halfHandleSize(),
-                sliderRect.y(),
+                sliderRect.y()/*+m_borderWidth*/ - (m_offsetV<0?m_offsetV:0),
                 handleSize(),
-                sliderRect.height()
+                sliderRect.height() - 2*m_borderWidth + 2*(m_offsetV<0?m_offsetV:0)
                 );
 
 
@@ -347,7 +346,7 @@ void IntervalSlider::drawSliderLine(QPainter *painter, const QRect &sliderRect) 
         sliderH = sliderRect.width();
 
     QRect rSlot( sliderRect.x() + halfHandleSize(),
-                   sliderRect.y() + m_offsetV,
+                   sliderRect.y() + (m_offsetV>0?m_offsetV:0),
                    sliderH - 2 * halfHandleSize(), sliderV );
     QBrush brush = palette().brush( QPalette::Dark );
 
@@ -419,7 +418,7 @@ void IntervalSlider::setLeftOffset(qreal value)
 
 int IntervalSlider::intervalSliderHeight() const
 {
-    return m_sliderV+2*(m_offsetV+m_borderWidth);
+    return qMax(m_sliderV+2*(m_offsetV+m_borderWidth), m_sliderV+m_borderWidth);
 }
 
 qreal IntervalSlider::begin() const
@@ -463,7 +462,7 @@ void IntervalSlider::setVisible(bool visible)
 }
 
 
-bool IntervalSlider::moveHandles(long long deltaVal)
+bool IntervalSlider::moveHandles(long long deltaVal,bool manually)
 {
     if(!deltaVal)
         return false;
@@ -483,10 +482,12 @@ bool IntervalSlider::moveHandles(long long deltaVal)
 
     blockSignals(false);
 
+    if(manually){
+        emit beginMovedManually(beginHandle());
+        emit endMovedManually(endHandle());
+    }
     emit beginMoved(beginHandle());
-    emit valueChanged(BeginHandle , beginHandle());
     emit endMoved(endHandle());
-    emit valueChanged(EndHandle , endHandle());
 
     return true;
 }
@@ -505,10 +506,10 @@ void IntervalSlider::mouseMoveEvent(QMouseEvent *e)
             {
                 deltaVal=m_maxValue-endHandle();
             }
-            moveHandles(deltaVal);
+            moveHandles(deltaVal,true);
         }
         else
-            setBeginHandle(val);
+            setBeginHandle(val,true);
     }
     else if(m_clippedHandle==EndHandle)
     {
@@ -520,10 +521,10 @@ void IntervalSlider::mouseMoveEvent(QMouseEvent *e)
             {
                 deltaVal=-beginHandle()+m_minValue;
             }
-            moveHandles(deltaVal);
+            moveHandles(deltaVal,true);
         }
         else
-            setEndHandle(val);
+            setEndHandle(val,true);
     }
     update();
 }

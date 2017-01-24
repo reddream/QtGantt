@@ -984,6 +984,11 @@ void DtLine::setLimitsWithOffset(const UtcDateTime &min, const TimeSpan &ts)
     setLimits(min - deltaTs, ts + 2 * deltaTs);
 }
 
+void DtLine::emitChangedManually()
+{
+    emit changedManually(_min,_timeSpan);
+}
+
 UtcDateTime DtLine::min() const
 {
     return _min;

@@ -27,8 +27,8 @@ public:
 
     long long minTimeSize() const;
 
-    void setBeginHandle(long long beginHandle);
-    void setEndHandle(long long endHandle);
+    void setBeginHandle(long long beginHandle, bool manually = false);
+    void setEndHandle(long long endHandle, bool manually = false);
     void reset();
 
     //--- IDtInterval impl

@@ -10,8 +10,7 @@
  * \brief The IntervalSlider class
  *
  * signals: beginMoved(long long val),
- *          endMoved(long long val),
- *          valueChanged(ClippedHandle handle,long long val) - Same to beginMoved and EndMoved, emits simultaneously
+ *          endMoved(long long val)
  *
  * members: long long handleH - width() of handle
  *          long long sliderV - height() of slider rectangle
@@ -96,9 +95,6 @@ signals:
 
     void beginMoved(long long value);
     void endMoved(long long value);
-
-    void valueChanged(IntervalSlider::ClippedHandle e, long long value);
-
 protected:
     void paintEvent( QPaintEvent *event );
     virtual void drawHandle( QPainter *painter,
@@ -148,7 +144,7 @@ protected:
         m_isHidden;
 
 protected:
-    virtual bool moveHandles(long long deltaVal);
+    virtual bool moveHandles(long long deltaVal, bool manually = false);
 
     long long pointToValue(const QPoint &p,ClippedHandle handle) const;  ///< Handles exists in the own relative coordinate system, so needs to know which system before translation
     int valueToPoint(long long value,ClippedHandle handle) const;        ///< Handles exists in the own relative coordinate system, so needs to know which system before translation

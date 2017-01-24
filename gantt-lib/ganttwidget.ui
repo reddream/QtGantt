@@ -13,9 +13,12 @@
   <property name="windowTitle">
    <string>GanttWidget</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_2">
+  <layout class="QVBoxLayout" name="verticalLayout_2" stretch="0,1">
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout">
+    <layout class="QHBoxLayout" name="horizontalLayout" stretch="0,1">
+     <property name="spacing">
+      <number>0</number>
+     </property>
      <item>
       <widget class="GanttPlayerSettings" name="playerSettings" native="true">
        <property name="sizePolicy">
@@ -57,7 +60,7 @@
        </sizepolicy>
       </property>
      </widget>
-     <widget class="QWidget" name="">
+     <widget class="QWidget" name="layoutWidget">
       <layout class="QVBoxLayout" name="verticalLayout">
        <property name="spacing">
         <number>0</number>
