@@ -46,6 +46,7 @@ private slots:
 
 
 private:
+    void connectPlayer();
     void connectSceneWithInfo();
     void connectIntervals();
 

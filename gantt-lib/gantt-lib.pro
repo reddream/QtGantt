@@ -12,15 +12,13 @@ DEFINES += GANTTLIB_LIBRARY
 include(../gantt-lib-include.pri)
 
 SOURCES += \
-    gantt/default_model/ganttinfoitem.cpp \
-    gantt/default_model/ganttinfoleaf.cpp \
-    gantt/default_model/ganttinfonode.cpp \
-    gantt/default_model/iganttmodel.cpp \
-    gantt/ganttinfotree.cpp \
+    gantt/info/ganttinfoitem.cpp \
+    gantt/info/ganttinfoleaf.cpp \
+    gantt/info/ganttinfonode.cpp \
+    gantt/info/ganttinfotree.cpp \
     gantt/player/ganttplayercontrol.cpp \
     gantt/player/ganttplayersettings.cpp \
     gantt/player/playercontrolbutton.cpp \
-    gantt/plot/dtline.cpp \
     gantt/plot/ganttscene.cpp \
     gantt/plot/scene_objects/ganttcalcgraphicsobject.cpp \
     gantt/plot/scene_objects/ganttcurrentdtslider.cpp \
@@ -30,24 +28,25 @@ SOURCES += \
     gantt/plot/scene_objects/ganttintervalgraphicsobject.cpp \
     gantt/plot/hfitscene.cpp \
     gantt/plot/ganttgraphicsview.cpp \
+    extensions/dtline.cpp \
     extensions/appeventfilter.cpp \
     extensions/intervalslider.cpp \
     extensions/timespan_extension.cpp \
+    extensions/idtinterval.cpp \
     ganttwidget.cpp \
     gantt/ganttintervalslider.cpp \
-    extensions/idtinterval.cpp
+    gantt/interfaces/iganttmodel.cpp \
+    gantt/plot/ganttdtline.cpp
 
 HEADERS +=\
         gantt-lib_global.h \
-    gantt/default_model/ganttinfonode.h \
-    gantt/default_model/ganttinfoitem.h \
-    gantt/default_model/ganttinfoleaf.h \
-    gantt/default_model/iganttmodel.h \
-    gantt/ganttinfotree.h \
+    gantt/info/ganttinfonode.h \
+    gantt/info/ganttinfoitem.h \
+    gantt/info/ganttinfoleaf.h \
+    gantt/info/ganttinfotree.h \
     gantt/player/ganttplayercontrol.h \
     gantt/player/ganttplayersettings.h \
     gantt/player/playercontrolbutton.h \
-    gantt/plot/dtline.h \
     gantt/plot/ganttscene.h \
     gantt/plot/scene_objects/ganttcalcgraphicsobject.h \
     gantt/plot/scene_objects/ganttcurrentdtslider.h \
@@ -61,9 +60,12 @@ HEADERS +=\
     extensions/gantt-lib_global_values.h \
     extensions/intervalslider.h \
     extensions/timespan_extension.h \
+    extensions/idtinterval.h \
+    extensions/dtline.h \
     ganttwidget.h \
     gantt/ganttintervalslider.h \
-    extensions/idtinterval.h
+    gantt/plot/ganttdtline.h \
+    gantt/interfaces/iganttmodel.h
 
 unix {
     target.path = /usr/lib

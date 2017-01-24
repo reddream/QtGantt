@@ -78,7 +78,7 @@
       </widget>
      </item>
      <item>
-      <widget class="DtLine" name="widgetDtLine" native="true"/>
+      <widget class="GanttDtLine" name="widgetDtLine" native="true"/>
      </item>
      <item>
       <widget class="GanttGraphicsView" name="ganttView">
@@ -96,12 +96,6 @@
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
-  <customwidget>
-   <class>DtLine</class>
-   <extends>QWidget</extends>
-   <header>dtline.h</header>
-   <container>1</container>
-  </customwidget>
   <customwidget>
    <class>GanttPlayerControl</class>
    <extends>QWidget</extends>
@@ -123,6 +117,12 @@
    <class>GanttIntervalSlider</class>
    <extends>QWidget</extends>
    <header>ganttintervalslider.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>GanttDtLine</class>
+   <extends>QWidget</extends>
+   <header>ganttdtline.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

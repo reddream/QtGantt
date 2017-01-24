@@ -56,8 +56,8 @@ void GanttWidget::showPlayer(bool show)
     ui->playerControl->setVisible(show);
     ui->playerSettings->setVisible(show);
 
-//    if(m_scene)
-//        m_scene->setDrawCurrentDtSlider(show);
+    if(_scene)
+        _scene->setDrawCurrentDtSlider(show);
 
     update();
 }
@@ -99,24 +99,31 @@ void GanttWidget::onGanttViewCustomContextMenuRequested(const QPoint &point)
     emit customContextMenuRequested(point);
 }
 
+void GanttWidget::connectPlayer()
+{
+    connect(ui->playerControl,SIGNAL(makeStep(int)),_scene,SLOT(makeStep(int)));
+    connect(ui->playerControl,SIGNAL(goToNextEventStart()),_scene,SLOT(moveSliderToNextEventStart()));
+    connect(ui->playerControl,SIGNAL(goToPrevEventFinish()),_scene,SLOT(moveSliderToPrevEventFinish()));
+    connect(ui->playerControl,SIGNAL(goToViewStart()),_scene,SLOT(moveSliderToViewStart()));
+    connect(ui->playerControl,SIGNAL(goToViewFinish()),_scene,SLOT(moveSliderToViewFinish()));
+    connect(ui->playerControl,SIGNAL(stop()),_scene,SLOT(moveSliderToStart()));
+}
+
 void GanttWidget::init()
 {
     _treeInfo = new GanttInfoTree(this);
     _scene = new GanttScene(ui->ganttView,ui->widgetDtLine,this);
     connectSceneWithInfo();
     connectIntervals();
+    connectPlayer();
 }
 
 void GanttWidget::connectSceneWithInfo()
 {
     _scene->setTreeInfo(_treeInfo);
 
-//    connect(_scene,SIGNAL(currentItemChanged(const GanttInfoItem*)),_treeInfo,SLOT(onCurrent));
-
     connect(_treeInfo,SIGNAL(currentChanged(GanttInfoItem*)),_scene,SLOT(setCurrentByInfo(GanttInfoItem*)));
     connect(_treeInfo,SIGNAL(treeReset()),_scene,SLOT(onTreeInfoReset()));
-//    connect(_treeInfo,SIGNAL(treeReset()),this,SLOT(onTreeFilled()));
-//    connect(_treeInfo,SIGNAL(itemAboutToBeDeleted(GanttInfoItem*)),_scene,SLOT(onItemRemoved(GanttInfoItem*)));
 
     connect(_treeInfo,SIGNAL(endInsertItems()),_scene,SLOT(onEndInsertItems()));
     connect(_treeInfo,SIGNAL(endRemoveItems()),_scene,SLOT(onEndRemoveItems()));

@@ -25,7 +25,6 @@ public:
 
     QRectF boundingRect() const;
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
-    QPainterPath shape() const;
 
     void updateShape();
 
@@ -47,12 +46,13 @@ public:
 
     void setVisible(bool visible);
 
+    int height() const;
+    void setHeight(int height);
+
 protected:
     void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
     void mousePressEvent(QGraphicsSceneMouseEvent *event);
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
-
-
 
 signals:
     void dtChanged(UtcDateTime dt);
@@ -73,19 +73,15 @@ public slots:
     void moveToRangeFinish();
 
 private:
-
-//    QPair<UtcDateTime,UtcDateTime> getLimits(const GanttInfoItem *root) const;
     bool outOfRange() const;
     bool outOfBounds(const UtcDateTime &dt) const;
+    void initPath();
+
 
 private:
-    QRectF m_slidersRect; ///< The rectangle, where slider can actually move.
+    QPainterPath _arrowPath;
     QRect m_textRect;
-
-    QPainterPath m_sliderShape;
-    QPainterPath m_rhombus;
-
-    qreal m_penWidth;
+    int _height;
 
     UtcDateTime m_dt;
     UtcDateTime m_minDt,m_maxDt;
@@ -93,8 +89,8 @@ private:
     GanttScene* _scene;
     DtLine *_dtline;
 
-    bool m_initialized;
-    bool m_draw, m_visible;
+    bool _initialized;
+    bool _draw, _visible;
 };
 
 #endif // GANTTCURRENTTIMESLIDER_H

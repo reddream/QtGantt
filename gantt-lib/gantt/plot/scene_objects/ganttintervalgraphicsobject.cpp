@@ -61,6 +61,7 @@ void GanttIntervalGraphicsObject::paint(QPainter *painter, const QStyleOptionGra
     {
         QRectF drawRect = boundingRect().adjusted(0,5,0,-5);
         painter->fillRect(drawRect,QBrush(color));
+        painter->setPen(QPen(QColor(0x644C26)));
         painter->drawRect(drawRect);
     }
     else
@@ -111,7 +112,7 @@ void GanttIntervalGraphicsObject::setBoundingRectSize(const QSizeF &boundingRect
     m_boundingRectSize = boundingRectSize;
 }
 
-void GanttIntervalGraphicsObject::updateItemGeometry()
+void GanttIntervalGraphicsObject::updateItemGeometry(bool checkIntersect)
 {
     if( !innerInfo())
         return;
@@ -121,6 +122,9 @@ void GanttIntervalGraphicsObject::updateItemGeometry()
 
     setBoundingRectSize(QSizeF(itemWidth, DEFAULT_ITEM_WIDTH));
     setPos(startPos, innerInfo()->calcPos());
+
+    if(checkIntersect)
+        checkIntersection();
 }
 
 void GanttIntervalGraphicsObject::mousePressEvent(QGraphicsSceneMouseEvent *event)
@@ -140,6 +144,30 @@ void GanttIntervalGraphicsObject::hoverLeaveEvent(QGraphicsSceneHoverEvent *even
     emit graphicsItemHoverLeave();
 
     QGraphicsItem::hoverLeaveEvent(event);
+}
+
+template<typename T>
+QPair<T,T> join(const QPair<T,T> &p1, const QPair<T,T> &p2, const T& (*func)(const T&,const T&)){
+    return qMakePair(func(p1.first,p2.first), func(p1.second, p2.second));
+}
+
+void GanttIntervalGraphicsObject::checkIntersection()
+{
+    QList<QGraphicsItem*> hitItems = collidingItems();
+    QPair<int, int> collisionRange = qMakePair(-1,-1);
+    int count = 0;
+
+    foreach(QGraphicsItem *item, hitItems){
+        GanttIntervalGraphicsObject *intervalObject = dynamic_cast<GanttIntervalGraphicsObject*>(item);
+        if(!intervalObject)
+            continue;
+
+        ++count;
+        collisionRange = join(collisionRange,
+                              qMakePair<int,int>(intervalObject->boundingRect().left(), intervalObject->boundingRect().right()),
+                              qMax<int>);
+    }
+
 }
 
 

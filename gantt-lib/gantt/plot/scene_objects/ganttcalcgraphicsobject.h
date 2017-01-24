@@ -24,13 +24,14 @@ public:
     GanttInfoNode *innerInfo() const;
 
 public slots:
-    void updateItemGeometry();
+    void updateItemGeometry(bool checkIntersection = false);
 
 protected:
     void mousePressEvent(QGraphicsSceneMouseEvent *event);
 
     void hoverEnterEvent(QGraphicsSceneHoverEvent *event);
     void hoverLeaveEvent(QGraphicsSceneHoverEvent *event);
+
 
 private:
     QPainterPath m_shapePath;

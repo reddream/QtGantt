@@ -39,7 +39,8 @@ message(Library directory: $$LIB_DIR)
 INCLUDEPATH += $$LIB_DIR
 INCLUDEPATH += $$LIB_DIR/extensions
 INCLUDEPATH += $$LIB_DIR/gantt
-INCLUDEPATH += $$LIB_DIR/gantt/default_model
+INCLUDEPATH += $$LIB_DIR/gantt/interfaces
+INCLUDEPATH += $$LIB_DIR/gantt/info
 INCLUDEPATH += $$LIB_DIR/gantt/player
 INCLUDEPATH += $$LIB_DIR/gantt/plot
 INCLUDEPATH += $$LIB_DIR/gantt/plot/scene_objects

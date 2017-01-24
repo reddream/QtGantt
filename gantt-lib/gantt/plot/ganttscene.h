@@ -3,7 +3,7 @@
 
 
 #include "ganttcurrentdtslider.h"
-#include "dtline.h"
+#include "ganttdtline.h"
 
 #include "hfitscene.h"
 #include <QMap>
@@ -27,7 +27,7 @@ class GanttScene : public HFitScene
 
     void init();
 public:
-    GanttScene(GanttGraphicsView *view, DtLine *dtline, QObject * parent = 0);
+    GanttScene(GanttGraphicsView *view, GanttDtLine *dtline, QObject * parent = 0);
     int dtToPos(const UtcDateTime &dt) const;
     UtcDateTime posToDt(int pos) const;
     void setTreeInfo(GanttInfoTree *treeInfo);
@@ -55,7 +55,7 @@ public slots:
 
     GanttGraphicsObject* itemByInfo(const GanttInfoItem *key) const;
 
-    void updateSliderRect();
+    void updateSliderHeight();
 
     UtcDateTime slidersDt() const;
 
@@ -127,17 +127,17 @@ private slots:
 private:
 
     GanttInfoTree *_treeInfo;
-    DtLine *_dtline;
-    QList<GanttIntervalGraphicsObject*> m_items;
-    QList<GanttCalcGraphicsObject*> m_calcItems;
-    QMap<const GanttInfoItem*, GanttGraphicsObject*> m_itemByInfo;
-    QMap<UtcDateTime,const GanttInfoLeaf*> m_infoByStart,
-                                            m_infoByFinish;
+    GanttDtLine *_dtline;
+    QList<GanttIntervalGraphicsObject*> _items;
+    QList<GanttCalcGraphicsObject*> _calcItems;
+    QMap<const GanttInfoItem*, GanttGraphicsObject*> _itemByInfo;
+    QMap<UtcDateTime,const GanttInfoLeaf*> _infoByStart,
+                                            _infoByFinish;
 
-    GanttCurrentDtSlider *m_playerCurrent;
-    GanttDtCrossObject *m_crossObject;
-    GanttHoverGraphicsObject *m_hoverObject;
-    QPointer<QGraphicsObject> m_currentItem;
+    GanttCurrentDtSlider *_playerCurrent;
+    GanttDtCrossObject *_crossObject;
+    GanttHoverGraphicsObject *_hoverObject;
+    QPointer<QGraphicsObject> _currentItem;
 };
 
 

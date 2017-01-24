@@ -64,7 +64,7 @@ GanttInfoNode *GanttCalcGraphicsObject::innerInfo() const
     return qobject_cast<GanttInfoNode*>(m_info);
 }
 
-void GanttCalcGraphicsObject::updateItemGeometry()
+void GanttCalcGraphicsObject::updateItemGeometry(bool checkIntersect)
 {
     if(!_scene || !innerInfo())
         return;
@@ -72,6 +72,7 @@ void GanttCalcGraphicsObject::updateItemGeometry()
     qreal calcPos = _scene->dtToPos(innerInfo()->start());
 
     setPos(calcPos, innerInfo()->calcPos());
+
 }
 
 void GanttCalcGraphicsObject::mousePressEvent(QGraphicsSceneMouseEvent *event)

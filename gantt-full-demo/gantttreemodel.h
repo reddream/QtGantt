@@ -31,56 +31,56 @@ public:
     GanttTreeModel(GanttInfoNode *root = NULL,QObject * parent = 0);
     ~GanttTreeModel();
 
-    QVariant data(const QModelIndex &index, int role) const;
-    Qt::ItemFlags flags(const QModelIndex &index) const;
+    QVariant data(const QModelIndex &iGanttIndex, int role) const;
+    Qt::ItemFlags flags(const QModelIndex &iGanttIndex) const;
     QVariant headerData(int section, Qt::Orientation orientation,
                         int role = Qt::DisplayRole) const;
     QModelIndex index(int row, int column,
                       const QModelIndex &parent = QModelIndex()) const;
-    QModelIndex parent(const QModelIndex &index) const;
+    QModelIndex parent(const QModelIndex &iGanttIndex) const;
     int rowCount(const QModelIndex &parent = QModelIndex()) const;
     int columnCount(const QModelIndex &parent = QModelIndex()) const;
 
-    bool setData(const QModelIndex &index, const QVariant &value,
+    bool setData(const QModelIndex &iGanttIndex, const QVariant &value,
                  int role = Qt::EditRole);
 
     void addItems(const QList<GanttInfoItem*>& items);
     void addItems(GanttInfoItem* item);
 
-    GanttInfoItem *itemForName(const QString& title) const;
+    GanttInfoItem *itemForName(const QString& iGanttTitle) const;
 
 
     GanttInfoNode *root() const;
 
     // --- Interface implementation
 
-    QString     title(const QModelIndex &index) const {
+    QString     iGanttTitle(const QModelIndex &index) const {
         GanttInfoItem *item =itemForIndex(index);
         if(item)
             return item->title();
         return QString();
     }
 
-    UtcDateTime start(const QModelIndex &index) const {
+    UtcDateTime iGanttStart(const QModelIndex &index) const {
         GanttInfoItem *item =itemForIndex(index);
         if(item)
             return item->start();
         return UtcDateTime();
     }
-    TimeSpan timeSpan(const QModelIndex &index) const {
+    TimeSpan iGanttTimeSpan(const QModelIndex &index) const {
         GanttInfoItem *item =itemForIndex(index);
         if(item)
             return item->timeSpan();
         return TimeSpan();
     }
-    QColor      color(const QModelIndex &index) const {
+    QColor      iGanttColor(const QModelIndex &index) const {
         GanttInfoItem *item =itemForIndex(index);
         if(item)
             return item->color();
         return Qt::green;
     }
 
-    QModelIndex index(const QString &title) const {
+    QModelIndex iGanttIndex(const QString &title) const {
         QModelIndexList matches = match(index(0,0),Qt::DisplayRole,QVariant::fromValue(title));
         if(matches.isEmpty()){
             qDebug() << "not found";
@@ -102,12 +102,12 @@ public slots:
     void clear();
 
 private:
-    GanttInfoItem* itemForIndex(const QModelIndex& index) const;
-    GanttInfoLeaf* leafForIndex(const QModelIndex& index) const;
-    GanttInfoNode* nodeForIndex(const QModelIndex& index) const;
+    GanttInfoItem* itemForIndex(const QModelIndex& iGanttIndex) const;
+    GanttInfoLeaf* leafForIndex(const QModelIndex& iGanttIndex) const;
+    GanttInfoNode* nodeForIndex(const QModelIndex& iGanttIndex) const;
 
     void initIndexes(GanttInfoItem* item);
-    GanttInfoItem *itemForNameHelper(const QString& title,GanttInfoNode* node) const;
+    GanttInfoItem *itemForNameHelper(const QString& iGanttTitle,GanttInfoNode* node) const;
 
 private:
 

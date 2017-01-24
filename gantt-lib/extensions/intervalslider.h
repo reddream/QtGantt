@@ -39,8 +39,7 @@ class GANTTLIBSHARED_EXPORT IntervalSlider : public QWidget
 
     void init();
 public:
-    enum  ClippedHandle
-    {
+    enum  ClippedHandle{
         NoHandle,
         BeginHandle,
         EndHandle

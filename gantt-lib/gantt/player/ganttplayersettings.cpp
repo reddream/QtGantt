@@ -20,6 +20,8 @@ GanttPlayerSettings::GanttPlayerSettings(QWidget *parent) :
     m_precision = 1000;
     setToolButtonStyle(Qt::ToolButtonIconOnly);
     setStyleSheet("QToolBar { border: 0px }");
+//    setMaximumHeight(16);
+//    setMinimumHeight(16);
 
     initActions();
 }
@@ -54,9 +56,6 @@ void GanttPlayerSettings::initActions()
     QGroupBox* speedSelectionWidget = new QGroupBox(QString::fromUtf8("Скорость воспроизведения"));
 
     QWidgetAction *wa = new QWidgetAction(this);
-
-
-
 
     m_slider = new QSlider(menu);
 
