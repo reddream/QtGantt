@@ -124,15 +124,16 @@ void DtLine::init()
     setMaximumHeight(heightConstraint);
     setMinimumHeight(heightConstraint);
 
-    connect(this,SIGNAL(minChanged()),this,SIGNAL(changed()));
-    connect(this,SIGNAL(timeSpanChanged()),this,SIGNAL(changed()));
-    connect(this,SIGNAL(changed()),this,SLOT(recalc()));
+    connect(this,SIGNAL(minChanged()),this,SIGNAL(rangeChanged()));
+    connect(this,SIGNAL(timeSpanChanged()),this,SIGNAL(rangeChanged()));
+    connect(this,SIGNAL(rangeChanged()),this,SLOT(recalc()));
 
     connect(this,SIGNAL(minChangedManually()),this,SLOT(emitChangedManually()));
     connect(this,SIGNAL(timeSpanChangedManually()),this,SLOT(emitChangedManually()));
 
     connect(this,SIGNAL(minChangedManually()),this,SIGNAL(minChanged()));
     connect(this,SIGNAL(timeSpanChangedManually()),this,SIGNAL(timeSpanChanged()));
+    connect(this,SIGNAL(rangeChangedManually(UtcDateTime,TimeSpan)),this,SIGNAL(rangeChanged()));
 }
 
 void DtLine::drawBackground(QPainter *painter)
@@ -973,18 +974,15 @@ void DtLine::setTimeSpan(const TimeSpan &timeSpan, bool manually)
 
     if(manually)
         emit timeSpanChangedManually();
+    else
+        emit timeSpanChanged();
+    qDebug() << "timeSpan changed";
 }
 
 void DtLine::setLimits(const UtcDateTime &min, const TimeSpan &ts, bool manually)
 {
-    blockSignals(true);
     setMin(min);
     setTimeSpan(ts);
-    blockSignals(false);
-
-    if(manually)
-        emitChangedManually();
-    emit changed();
 }
 
 void DtLine::setLimitsWithOffset(const UtcDateTime &min, const TimeSpan &ts, bool manually)
@@ -1025,7 +1023,7 @@ void DtLine::slide(qreal deltaPercent)
 
 void DtLine::emitChangedManually()
 {
-    emit changedManually(_min,_timeSpan);
+    emit rangeChangedManually(_min,_timeSpan);
 }
 
 UtcDateTime DtLine::min() const
@@ -1043,4 +1041,5 @@ void DtLine::setMin(const UtcDateTime &min, bool manually)
     _min = min;
     if(manually)
         emit minChangedManually();
+    emit minChanged();
 }

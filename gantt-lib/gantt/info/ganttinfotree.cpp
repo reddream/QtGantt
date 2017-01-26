@@ -126,24 +126,27 @@ void GanttInfoTree::reset()
     clear();
     fillRecursive(_root,QModelIndex());
     qDebug() << "reset, root sz "<<_root->size();
-    emit endInsertItems();
+
     emit treeReset();
+    emit endInsertItems();
 }
 
-void GanttInfoTree::onItemExpanded()
+void GanttInfoTree::onNodeExpanded()
 {
-    GanttInfoItem *item = qobject_cast<GanttInfoItem*>(sender());
-    if(!item)
+    GanttInfoNode *node = qobject_cast<GanttInfoNode*>(sender());
+    if(!node)
         return;
-    emit needExpand(item->index());
+    emit expanded(node);
+    emit needExpand(node->index());
 }
 
-void GanttInfoTree::onItemCollapsed()
+void GanttInfoTree::onNodeCollapsed()
 {
-    GanttInfoItem *item = qobject_cast<GanttInfoItem*>(sender());
-    if(!item)
+    GanttInfoNode *node = qobject_cast<GanttInfoNode*>(sender());
+    if(!node)
         return;
-    emit needCollapse(item->index());
+    emit collapsed(node);
+    emit needCollapse(node->index());
 }
 
 void GanttInfoTree::onDataChanged(const QModelIndex &/*from*/, const QModelIndex &/*to*/)
@@ -312,8 +315,8 @@ void GanttInfoTree::connectNewItem(GanttInfoItem *item)
     connect(item,SIGNAL(aboutToBeDeleted()),this,SLOT(onItemAboutToBeDeleted()));
 
     if(GanttInfoNode *node = qobject_cast<GanttInfoNode*>(item)){
-        connect(node,SIGNAL(expanded()),this,SLOT(onItemExpanded()));
-        connect(node,SIGNAL(collapsed()),this,SLOT(onItemCollapsed()));
+        connect(node,SIGNAL(expanded()),this,SLOT(onNodeExpanded()));
+        connect(node,SIGNAL(collapsed()),this,SLOT(onNodeCollapsed()));
     }
 
 }
