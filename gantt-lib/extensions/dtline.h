@@ -113,8 +113,8 @@ signals:
     void minChangedManually();
     void timeSpanChanged();
     void timeSpanChangedManually();
-    void changed();
-    void changedManually(const UtcDateTime &min, const TimeSpan &ts);
+    void rangeChanged();
+    void rangeChangedManually(const UtcDateTime &min, const TimeSpan &ts);
 
 protected:
     void paintEvent(QPaintEvent *);

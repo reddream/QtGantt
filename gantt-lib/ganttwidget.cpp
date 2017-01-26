@@ -122,11 +122,15 @@ void GanttWidget::connectSceneWithInfo()
 {
     _scene->setTreeInfo(_treeInfo);
 
-    connect(_treeInfo,SIGNAL(currentChanged(GanttInfoItem*)),_scene,SLOT(setCurrentByInfo(GanttInfoItem*)));
+    connect(_treeInfo,SIGNAL(currentChanged(GanttInfoItem*)),_scene,SLOT(setCurrentItemByInfo(GanttInfoItem*)));
     connect(_treeInfo,SIGNAL(treeReset()),_scene,SLOT(onTreeInfoReset()));
 
     connect(_treeInfo,SIGNAL(endInsertItems()),_scene,SLOT(onEndInsertItems()));
     connect(_treeInfo,SIGNAL(endRemoveItems()),_scene,SLOT(onEndRemoveItems()));
+
+    connect(_treeInfo,SIGNAL(expanded(GanttInfoNode*)),_scene,SLOT(onExpanded(GanttInfoNode*)));
+    connect(_treeInfo,SIGNAL(collapsed(GanttInfoNode*)),_scene,SLOT(onCollapsed(GanttInfoNode*)));
+
 
 }
 
@@ -139,7 +143,7 @@ void GanttWidget::connectIntervals()
 
     connect(ui->widgetIntervalSlider,SIGNAL(rangeChangedManually(UtcDateTime,TimeSpan)),
                 ui->widgetDtLine,SLOT(setLimits(UtcDateTime,TimeSpan)));
-    connect(ui->widgetDtLine,SIGNAL(changedManually(UtcDateTime,TimeSpan)),
+    connect(ui->widgetDtLine,SIGNAL(rangeChangedManually(UtcDateTime,TimeSpan)),
                 ui->widgetIntervalSlider,SLOT(setRange(UtcDateTime,TimeSpan)));
 }
 

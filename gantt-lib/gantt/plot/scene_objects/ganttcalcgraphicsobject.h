@@ -24,7 +24,7 @@ public:
     GanttInfoNode *innerInfo() const;
 
 public slots:
-    void updateItemGeometry(bool checkIntersection = false);
+    void updateItemGeometry();
 
 protected:
     void mousePressEvent(QGraphicsSceneMouseEvent *event);

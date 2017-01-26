@@ -21,7 +21,8 @@ public:
 
 public slots:
     void setBoundingRectSize(const QSizeF &boundingRectSize);
-    void updateItemGeometry(bool checkIntersect = false);
+    void updateItemGeometry();
+    void updateIntersection();
 
 
 protected:
@@ -30,13 +31,10 @@ protected:
     void hoverLeaveEvent(QGraphicsSceneHoverEvent *event);
 
 private:
-    void checkIntersection();
+    bool _isSmall;
 
-private:
-    bool m_isSmall;
-
-    QSizeF m_boundingRectSize;
-
+    QSizeF _boundingRectSize;
+    QRectF _intersection;
 
 };
 

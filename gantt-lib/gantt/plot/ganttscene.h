@@ -50,10 +50,12 @@ public slots:
     void onItemRemoved(GanttInfoItem* item);
     void onEndInsertItems();
     void onEndRemoveItems();
+    void onExpanded(GanttInfoNode *which);
+    void onCollapsed(GanttInfoNode *which);
 
     void drawBackground(QPainter *painter, const QRectF &rect); ///< Задний план содержит сетку
 
-    GanttGraphicsObject* itemByInfo(const GanttInfoItem *key) const;
+    GanttGraphicsObject* itemForInfo(const GanttInfoItem *key) const;
 
     void updateSliderHeight();
 
@@ -61,7 +63,7 @@ public slots:
 
     const GanttInfoLeaf *nextEvent(const UtcDateTime &curDt) const;
     const GanttInfoLeaf *prevEvent(const UtcDateTime &curDt) const;
-    void removeByInfoLeaf(const GanttInfoLeaf* leaf);
+    void removeItemForInfoLeaf(const GanttInfoLeaf* leaf);
 
     const QList<GanttIntervalGraphicsObject *>& dtItems() const;
 
@@ -90,6 +92,7 @@ public slots:
     void onViewResized(const QSize& newSize);
     void updateSceneRect();
     void updateSceneItems();
+    void updateIntersections();         ///< updates all intersections
 
     void makeStep(int step);
     void moveSliderToNextEventStart();
@@ -97,7 +100,7 @@ public slots:
     void moveSliderToViewStart();
     void moveSliderToViewFinish();
     void moveSliderToStart();
-    void setCurrentByInfo(GanttInfoItem *info);
+    void setCurrentItemByInfo(GanttInfoItem *info);
     void setCurrentItem(QGraphicsObject *currentItem);
 
     GanttGraphicsObject *objectForPos(const QPointF& pos);
@@ -114,6 +117,7 @@ private:
     void addInfoItem(GanttInfoItem *item);
 
 private slots:
+    void updateIntersectionR(GanttInfoItem *item);   ///< updates intersection recursively
     void onVisItemDestroyed();
     void onGraphicsItemPress();
     void onGraphicsItemHoverEnter();
@@ -130,9 +134,9 @@ private:
     GanttDtLine *_dtline;
     QList<GanttIntervalGraphicsObject*> _items;
     QList<GanttCalcGraphicsObject*> _calcItems;
-    QMap<const GanttInfoItem*, GanttGraphicsObject*> _itemByInfo;
-    QMap<UtcDateTime,const GanttInfoLeaf*> _infoByStart,
-                                            _infoByFinish;
+    QMap<const GanttInfoItem*, GanttGraphicsObject*> _itemForInfo;
+    QMap<UtcDateTime,const GanttInfoLeaf*> _infoForStart,
+                                            _infoForFinish;
 
     GanttCurrentDtSlider *_playerCurrent;
     GanttDtCrossObject *_crossObject;

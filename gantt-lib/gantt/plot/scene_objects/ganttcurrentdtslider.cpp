@@ -58,7 +58,7 @@ void GanttCurrentDtSlider::setDtLine(DtLine *dtline)
 
     _dtline = dtline;
 
-    connect(_dtline,SIGNAL(changed()),this,SLOT(updateTextRect()));
+    connect(_dtline,SIGNAL(rangeChanged()),this,SLOT(updateTextRect()));
 }
 
 QRectF GanttCurrentDtSlider::boundingRect() const
