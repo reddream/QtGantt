@@ -976,13 +976,12 @@ void DtLine::setTimeSpan(const TimeSpan &timeSpan, bool manually)
         emit timeSpanChangedManually();
     else
         emit timeSpanChanged();
-    qDebug() << "timeSpan changed";
 }
 
 void DtLine::setLimits(const UtcDateTime &min, const TimeSpan &ts, bool manually)
 {
-    setMin(min);
-    setTimeSpan(ts);
+    setMin(min, manually);
+    setTimeSpan(ts, manually);
 }
 
 void DtLine::setLimitsWithOffset(const UtcDateTime &min, const TimeSpan &ts, bool manually)

@@ -90,13 +90,6 @@ void GanttWidget::dataReset()
     _treeInfo->reset();
 }
 
-void GanttWidget::onTreeFilled()
-{
-    _treeInfo->disconnect(_scene,SLOT(onItemAdded(GanttInfoItem*)));
-
-    connect(_treeInfo,SIGNAL(itemAdded(GanttInfoItem*)),_scene,SLOT(onItemAdded(GanttInfoItem*)));
-}
-
 void GanttWidget::onGanttViewCustomContextMenuRequested(const QPoint &point)
 {
     QPoint widgetPoint =ui->ganttView->mapTo(this,point);
@@ -129,9 +122,10 @@ void GanttWidget::connectSceneWithInfo()
 
     connect(_treeInfo,SIGNAL(currentChanged(GanttInfoItem*)),_scene,SLOT(setCurrentItemByInfo(GanttInfoItem*)));
     connect(_treeInfo,SIGNAL(treeReset()),_scene,SLOT(onTreeInfoReset()));
+    connect(_treeInfo,SIGNAL(rowsInserted(GanttInfoItem*,int,int)),_scene,SLOT(addInfoItem(GanttInfoItem*,int,int)));
 
-    connect(_treeInfo,SIGNAL(endInsertItems()),_scene,SLOT(onEndInsertItems()));
-    connect(_treeInfo,SIGNAL(endRemoveItems()),_scene,SLOT(onEndRemoveItems()));
+
+    connect(_treeInfo,SIGNAL(endRemoveItems()),_scene,SLOT(updateSceneRect()));
 
     connect(_treeInfo,SIGNAL(expanded(GanttInfoNode*)),_scene,SLOT(onExpanded(GanttInfoNode*)));
     connect(_treeInfo,SIGNAL(collapsed(GanttInfoNode*)),_scene,SLOT(onCollapsed(GanttInfoNode*)));

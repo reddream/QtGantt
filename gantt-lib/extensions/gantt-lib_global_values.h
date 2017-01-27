@@ -1,6 +1,9 @@
 #ifndef GANTTLIB_GLOBAL_VALUES_H
 #define GANTTLIB_GLOBAL_VALUES_H
 
+#define PLAYER_CURSOR_PRESSED   (Qt::SizeHorCursor)
+#define PLAYER_CURSOR_OVER      (Qt::PointingHandCursor)
+
 #define SLIDER_COLOR (QColor(125,179,250))
 #define HEADER_COLOR (QColor(32,97,196))
 

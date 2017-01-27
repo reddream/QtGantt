@@ -29,7 +29,6 @@ SOURCES += \
     gantt/plot/hfitscene.cpp \
     gantt/plot/ganttgraphicsview.cpp \
     extensions/dtline.cpp \
-    extensions/appeventfilter.cpp \
     extensions/intervalslider.cpp \
     extensions/timespan_extension.cpp \
     extensions/idtinterval.cpp \
@@ -56,7 +55,6 @@ HEADERS +=\
     gantt/plot/scene_objects/ganttintervalgraphicsobject.h \
     gantt/plot/hfitscene.h \
     gantt/plot/ganttgraphicsview.h \
-    extensions/appeventfilter.h \
     extensions/gantt-lib_global_values.h \
     extensions/intervalslider.h \
     extensions/timespan_extension.h \

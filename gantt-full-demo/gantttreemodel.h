@@ -45,7 +45,9 @@ public:
                  int role = Qt::EditRole);
 
     void addItems(const QList<GanttInfoItem*>& items);
-    void addItems(GanttInfoItem* item);
+    void addNode(GanttInfoNode *node);
+//    void addItems(GanttInfoItem* item, bool inner = false);
+    void insertItem(GanttInfoItem *item, GanttInfoNode *parent = NULL);
 
     GanttInfoItem *itemForName(const QString& iGanttTitle) const;
 
@@ -106,7 +108,7 @@ private:
     GanttInfoLeaf* leafForIndex(const QModelIndex& iGanttIndex) const;
     GanttInfoNode* nodeForIndex(const QModelIndex& iGanttIndex) const;
 
-    void initIndexes(GanttInfoItem* item);
+    void setIndex(GanttInfoItem* item);
     GanttInfoItem *itemForNameHelper(const QString& iGanttTitle,GanttInfoNode* node) const;
 
 private:

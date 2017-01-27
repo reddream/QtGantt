@@ -17,7 +17,7 @@ void GanttCurrentDtSlider::init()
     _height = 0;
     setDraw(false);
 
-    setCursor(Qt::PointingHandCursor);
+    setCursor(PLAYER_CURSOR_OVER);
     setZValue(20);
 
     initPath();
@@ -117,7 +117,7 @@ void GanttCurrentDtSlider::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
     if(!scene())
         return;
 
-    if(cursor().shape() == Qt::SizeHorCursor)
+    if(cursor().shape() == PLAYER_CURSOR_PRESSED)
     {
         setDt(_scene->posToDt(mapToScene(event->pos()).x()));
     }
@@ -126,17 +126,18 @@ void GanttCurrentDtSlider::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 void GanttCurrentDtSlider::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
     Q_UNUSED(event);
-    setCursor(Qt::SizeHorCursor);
+    setCursor(PLAYER_CURSOR_PRESSED);
 }
 
 void GanttCurrentDtSlider::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
-    setCursor(Qt::PointingHandCursor);
+    setCursor(PLAYER_CURSOR_OVER);
     QGraphicsItem::mouseReleaseEvent(event);
 }
 
 void GanttCurrentDtSlider::setToBegin()
 {
+    qDebug() << "setToBegin";
     setDt(m_minDt);
 }
 

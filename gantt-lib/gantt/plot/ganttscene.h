@@ -48,8 +48,6 @@ public slots:
     void onTreeInfoReset();
     void onItemAdded(GanttInfoItem *item);
     void onItemRemoved(GanttInfoItem* item);
-    void onEndInsertItems();
-    void onEndRemoveItems();
     void onExpanded(GanttInfoNode *which);
     void onCollapsed(GanttInfoNode *which);
 
@@ -102,6 +100,8 @@ public slots:
     void moveSliderToStart();
     void setCurrentItemByInfo(GanttInfoItem *info);
     void setCurrentItem(QGraphicsObject *currentItem);
+    void addInfoItem(GanttInfoItem *parent);
+    void addInfoItem(GanttInfoItem *parent, int from, int to);
 
     GanttGraphicsObject *objectForPos(const QPointF& pos);
 
@@ -114,7 +114,7 @@ private:
     void createPersistentItems();
     void addPersistentItems();
     void removePersistentItems();
-    void addInfoItem(GanttInfoItem *item);
+    void onEndInsertItems();
 
 private slots:
     void updateIntersectionR(GanttInfoItem *item);   ///< updates intersection recursively

@@ -43,6 +43,7 @@ void MainWindow::keyPressEvent(QKeyEvent *e)
 
 QList<GanttInfoItem*> generateTest()
 {
+//    static int kk = 0;
     QList<GanttInfoItem*> testList;
     for(int i = 0; i<4; ++i)
     {
@@ -94,7 +95,7 @@ QList<GanttInfoItem*> generateTest()
 
         testList.append(node);
     }
-
+//    kk+=10;
     return testList;
 }
 

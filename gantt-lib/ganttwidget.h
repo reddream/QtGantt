@@ -35,19 +35,13 @@ public:
     void setModel(IGanttModel *model);
     void setView(QTreeView *view, bool inner = false);
 
-
-
-signals:
-
 public slots:
     void dataReset();
     void showPlayer(bool show);
 
 
 private slots:
-    void onTreeFilled();
     void onGanttViewCustomContextMenuRequested(const QPoint&);
-
 
 private:
     void connectPlayer();
@@ -59,9 +53,7 @@ private:
     GanttInfoTree *_treeInfo;
     GanttScene *_scene;
 
-
     bool m_playerShown;
-
 };
 
 #endif // GANTTWIDGET_H

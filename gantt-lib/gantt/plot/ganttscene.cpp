@@ -137,6 +137,7 @@ UtcDateTime GanttScene::slidersDt() const
 
 void GanttScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
+    qDebug() << "_calcSz "<< _calcItems.size();
     QGraphicsScene::mousePressEvent(event);
     if(event->button() == Qt::LeftButton){
         if(!_playerCurrent->mapRectToScene(_playerCurrent->boundingRect())
@@ -218,6 +219,9 @@ void GanttScene::onTreeInfoReset()
 {
     clear();
     addInfoItem(_treeInfo->root());
+    updateIntersections();
+
+    onEndInsertItems();
 }
 
 void GanttScene::connectDtLine()
@@ -413,16 +417,29 @@ void GanttScene::removePersistentItems()
     removeItem(_hoverObject);
 }
 
-void GanttScene::addInfoItem(GanttInfoItem *item)
+void GanttScene::addInfoItem(GanttInfoItem *parent)
 {
-    onItemAdded(item);
-    GanttInfoNode *node = qobject_cast<GanttInfoNode*>(item);
+    qDebug() << "GanttScene::addInfoItem(GanttInfoItem *parent)";
+    onItemAdded(parent);
+    GanttInfoNode *node = qobject_cast<GanttInfoNode*>(parent);
     if(node){
         for(int i = 0; i < node->size(); ++i){
             addInfoItem(node->at(i));
         }
     }
 
+}
+
+void GanttScene::addInfoItem(GanttInfoItem *parent, int from, int to)
+{
+    GanttInfoNode *node = qobject_cast<GanttInfoNode*>(parent);
+    if(node){
+        for(int i = from; i <= to; ++i){
+            onItemAdded(node->at(i));
+        }
+    }
+
+    onEndInsertItems();
 }
 
 void GanttScene::updateIntersectionR(GanttInfoItem *item)
@@ -432,8 +449,10 @@ void GanttScene::updateIntersectionR(GanttInfoItem *item)
             updateIntersectionR(node->at(i));
     }
     else if(GanttInfoLeaf *leaf = qobject_cast<GanttInfoLeaf*>(item)){
-        if(!dynamic_cast<GanttIntervalGraphicsObject*>(itemForInfo(leaf)))
+        if(!qobject_cast<GanttIntervalGraphicsObject*>(itemForInfo(leaf))){
+            qDebug() << leaf->title();
             Q_ASSERT(false);
+        }
         ((GanttIntervalGraphicsObject*)itemForInfo(leaf))->updateIntersection();
     }
     else
@@ -441,7 +460,6 @@ void GanttScene::updateIntersectionR(GanttInfoItem *item)
 }
 
 void GanttScene::updateIntersections(){
-    qDebug() << "updateIntersections";
     updateIntersectionR(_treeInfo->root());
 }
 
@@ -572,12 +590,6 @@ void GanttScene::onEndInsertItems()
     _playerCurrent->updateRange(limits.first, limits.second - limits.first);
     _playerCurrent->setToBegin();
     updateSceneRect();
-    updateIntersections();
-}
-
-void GanttScene::onEndRemoveItems()
-{
-    updateSceneRect();
 }
 
 void GanttScene::onExpanded(GanttInfoNode *which)
@@ -645,6 +657,7 @@ UtcDateTime GanttScene::posToDt(int pos) const
 
 void GanttScene::onItemAdded(GanttInfoItem *item)
 {
+    qDebug() << "onItemAdded " << item->title();
     if(!item)
         return;
 

@@ -45,12 +45,12 @@ void GanttDtLine::paintEvent(QPaintEvent *e)
 void GanttDtLine::mouseMoveEvent(QMouseEvent *e)
 {
     DtLine::mouseMoveEvent(e);
-    if(cursor().shape() == Qt::ClosedHandCursor){
+    if(cursor().shape() == PLAYER_CURSOR_PRESSED){
         setCurrentDt(posToDt(e->pos().x()) , true);
     }
     else{
         if(_arrowPath.contains(e->pos()))
-            setCursor(Qt::PointingHandCursor);
+            setCursor(PLAYER_CURSOR_OVER);
         else
             setCursor(Qt::ArrowCursor);
     }
@@ -60,13 +60,14 @@ void GanttDtLine::mousePressEvent(QMouseEvent *e)
 {
     DtLine::mousePressEvent(e);
     if(_arrowPath.contains(e->pos()))
-        setCursor(Qt::ClosedHandCursor);
+        setCursor(PLAYER_CURSOR_PRESSED);
 }
 
 void GanttDtLine::mouseReleaseEvent(QMouseEvent *e)
 {
     DtLine::mouseReleaseEvent(e);
     setCursor(Qt::ArrowCursor);
+    mouseMoveEvent(e);
 }
 
 void GanttDtLine::setCurrentDt(const UtcDateTime &dt, bool manually)
