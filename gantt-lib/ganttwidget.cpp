@@ -85,6 +85,11 @@ void GanttWidget::setView(QTreeView *view, bool inner)
     _treeInfo->connectTreeView(view);
 }
 
+void GanttWidget::dataReset()
+{
+    _treeInfo->reset();
+}
+
 void GanttWidget::onTreeFilled()
 {
     _treeInfo->disconnect(_scene,SLOT(onItemAdded(GanttInfoItem*)));

@@ -139,9 +139,12 @@ void GanttScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
     QGraphicsScene::mousePressEvent(event);
     if(event->button() == Qt::LeftButton){
-        QGraphicsObject *object = objectForPos(event->scenePos());
-        if(object)
-            setCurrentItem(object);
+        if(!_playerCurrent->mapRectToScene(_playerCurrent->boundingRect())
+                .contains(event->scenePos())){
+            QGraphicsObject *object = objectForPos(event->scenePos());
+            if(object)
+                setCurrentItem(object);
+        }
     }
 
     mouseMoveEvent(event);

@@ -30,7 +30,6 @@ public:
 
     void installEventWatcherInterval(QObject *watcher);
     void setPlayerSpeeds(qreal minMultiply, qreal maxMultiply);///< Устанавливает минимальную и максимальную скорости воспроизведения
-    void showPlayer(bool show);
     bool player() const;
 
     void setModel(IGanttModel *model);
@@ -39,6 +38,11 @@ public:
 
 
 signals:
+
+public slots:
+    void dataReset();
+    void showPlayer(bool show);
+
 
 private slots:
     void onTreeFilled();

@@ -63,7 +63,7 @@ void GanttCurrentDtSlider::setDtLine(DtLine *dtline)
 
 QRectF GanttCurrentDtSlider::boundingRect() const
 {
-    return QRectF(0,0,5,_height);
+    return QRectF(-3,0,2*3,_height);    // 3 == width/2
 }
 
 void GanttCurrentDtSlider::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
@@ -117,7 +117,7 @@ void GanttCurrentDtSlider::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
     if(!scene())
         return;
 
-    if(cursor().shape() == Qt::ClosedHandCursor)
+    if(cursor().shape() == Qt::SizeHorCursor)
     {
         setDt(_scene->posToDt(mapToScene(event->pos()).x()));
     }
@@ -126,7 +126,7 @@ void GanttCurrentDtSlider::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 void GanttCurrentDtSlider::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
     Q_UNUSED(event);
-    setCursor(Qt::ClosedHandCursor);
+    setCursor(Qt::SizeHorCursor);
 }
 
 void GanttCurrentDtSlider::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)

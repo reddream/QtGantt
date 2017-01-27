@@ -159,6 +159,9 @@ void GanttInfoTree::onRowsInserted(const QModelIndex &/*parent*/, int /*start*/,
 {
     /// TODO optimization
     reset();
+
+
+
 }
 
 void GanttInfoTree::onColumnsInserted(const QModelIndex &/*parent*/, int /*start*/, int /*end*/)
