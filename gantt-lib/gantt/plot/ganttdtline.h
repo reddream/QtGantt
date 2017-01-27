@@ -29,6 +29,9 @@ public slots:
     void hideCurrentDt();
     void updateCurrentDtPath();
 private:
+    static QPainterPath initFunction();
+
+private:
     UtcDateTime _dt;
     QPainterPath _arrowPath;
     static QPainterPath _globalArrowPath;

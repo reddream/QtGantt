@@ -1,4 +1,5 @@
 #include "ganttinfotree.h"
+#include "gantt-lib_global_values.h"
 
 GanttInfoTree::GanttInfoTree(QObject *parent) : QObject(parent)
 {
@@ -54,6 +55,11 @@ GanttInfoNode *GanttInfoTree::root() const
 GanttInfoItem *GanttInfoTree::infoForVPos(int vpos)
 {
     return lookupForVPos(vpos,_root);
+}
+
+int GanttInfoTree::height() const
+{
+    return heightH(_root);
 }
 
 void GanttInfoTree::onCurrentItemChanged(GanttInfoItem *item)
@@ -171,7 +177,7 @@ void GanttInfoTree::onDataChanged(const QModelIndex &/*from*/, const QModelIndex
 
 void GanttInfoTree::onRowsInserted(const QModelIndex &parent, int start, int end)
 {
-    fill(infoForIndex(parent), parent, start, end);
+    fill(qobject_cast<GanttInfoNode*>(infoForIndex(parent)), parent, start, end);
 
     onAnyAddition();
 }
@@ -268,9 +274,9 @@ void GanttInfoTree::fillRecursive(GanttInfoItem *item, const QModelIndex &index)
     }
 }
 
-void GanttInfoTree::fill(GanttInfoItem *item, const QModelIndex &index, int from, int to)
+void GanttInfoTree::fill(GanttInfoNode *node, const QModelIndex &index, int from, int to)
 {
-    qDebug() << "fill " << item->title() << " from " << from << " to " << to;
+    qDebug() << "fill " << node->title() << " from " << from << " to " << to;
     if(!_model){
         qWarning("fill called reset w/o model");
         return;
@@ -278,9 +284,9 @@ void GanttInfoTree::fill(GanttInfoItem *item, const QModelIndex &index, int from
     for(int i = from; i <= to; ++i){
         QModelIndex childIndex = _model->index(i,0,index);
         GanttInfoItem *childItem = makeInfoItem(childIndex);
-        ((GanttInfoNode*)item)->append(childItem);
+        node->append(childItem);
     }
-    emit rowsInserted(item, from, to);
+    emit rowsInserted(node, from, to);
 }
 
 GanttInfoItem *GanttInfoTree::makeInfoItem(const QModelIndex &index)
@@ -366,6 +372,15 @@ void GanttInfoTree::collapseAll()
             node->setExpanded(false);
         }
     }
+}
+
+int GanttInfoTree::heightH(GanttInfoItem *item) const
+{
+    if(GanttInfoNode *node = qobject_cast<GanttInfoNode*>(item)){
+        if(!node->isEmpty())
+            return heightH(node->at(node->size() - 1));
+    }
+    return item->pos() + DEFAULT_ITEM_HEIGHT;
 }
 
 void GanttInfoTree::onAnyAddition()

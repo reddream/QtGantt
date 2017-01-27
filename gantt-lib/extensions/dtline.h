@@ -136,6 +136,13 @@ private:
     QPair<QRect,Qt::Alignment> getTextArea(const QRect &rect, int l, int r, TPrecision mode
                                            , int topOffset, int height) const;
 
+protected:
+    enum defaults {
+        topHeight = 15,
+        bottomHeight = 20,
+
+        widgetHeight = topHeight + bottomHeight,
+    };
 
 private:
     Precision _mode;

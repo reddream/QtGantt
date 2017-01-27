@@ -137,7 +137,6 @@ void GanttCurrentDtSlider::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 
 void GanttCurrentDtSlider::setToBegin()
 {
-    qDebug() << "setToBegin";
     setDt(m_minDt);
 }
 

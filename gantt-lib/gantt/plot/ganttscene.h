@@ -101,7 +101,7 @@ public slots:
     void setCurrentItemByInfo(GanttInfoItem *info);
     void setCurrentItem(QGraphicsObject *currentItem);
     void addInfoItem(GanttInfoItem *parent);
-    void addInfoItem(GanttInfoItem *parent, int from, int to);
+    void addInfoItem(GanttInfoNode *parent, int from, int to);
 
     GanttGraphicsObject *objectForPos(const QPointF& pos);
 

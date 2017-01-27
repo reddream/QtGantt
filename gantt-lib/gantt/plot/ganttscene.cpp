@@ -54,14 +54,9 @@ GanttGraphicsObject *GanttScene::itemForInfo(const GanttInfoItem *key) const
 void GanttScene::updateSceneRect()
 {
     if(!sceneHaveItems())
-    {
         setSceneRect(0,0,sceneRect().width(),0);
-    }
     else
-    {
-        QRectF elemsRect = elementsBoundingRect();
-        setSceneRect(0,0,sceneRect().width(),elemsRect.height());
-    }
+        setSceneRect(0,0,sceneRect().width(),_treeInfo->height());
 }
 
 void GanttScene::updateSceneItems()
@@ -137,7 +132,6 @@ UtcDateTime GanttScene::slidersDt() const
 
 void GanttScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
-    qDebug() << "_calcSz "<< _calcItems.size();
     QGraphicsScene::mousePressEvent(event);
     if(event->button() == Qt::LeftButton){
         if(!_playerCurrent->mapRectToScene(_playerCurrent->boundingRect())
@@ -263,6 +257,7 @@ void GanttScene::setTreeInfo(GanttInfoTree *treeInfo)
 {
     _treeInfo = treeInfo;
 }
+
 
 
 QGraphicsItem *GanttScene::currentItem() const
@@ -419,25 +414,24 @@ void GanttScene::removePersistentItems()
 
 void GanttScene::addInfoItem(GanttInfoItem *parent)
 {
+    if(!parent)
+        return;
     qDebug() << "GanttScene::addInfoItem(GanttInfoItem *parent)";
     onItemAdded(parent);
-    GanttInfoNode *node = qobject_cast<GanttInfoNode*>(parent);
-    if(node){
+    if(GanttInfoNode *node = qobject_cast<GanttInfoNode*>(parent)){
         for(int i = 0; i < node->size(); ++i){
             addInfoItem(node->at(i));
         }
     }
-
 }
 
-void GanttScene::addInfoItem(GanttInfoItem *parent, int from, int to)
+void GanttScene::addInfoItem(GanttInfoNode *parent, int from, int to)
 {
-    GanttInfoNode *node = qobject_cast<GanttInfoNode*>(parent);
-    if(node){
-        for(int i = from; i <= to; ++i){
-            onItemAdded(node->at(i));
-        }
-    }
+    if(!parent)
+        return;
+    qDebug() << "addInfoItem " << parent->title() << " from "<< from << " to " << to;
+    for(int i = from; i <= to; ++i)
+        onItemAdded(parent->at(i));
 
     onEndInsertItems();
 }
@@ -665,7 +659,7 @@ void GanttScene::onItemAdded(GanttInfoItem *item)
     connect(item,SIGNAL(expanded()),this,SLOT(updateSceneRect()));
     connect(item,SIGNAL(collapsed()),this,SLOT(updateSceneRect()));
 
-    GanttInfoLeaf *leaf = dynamic_cast<GanttInfoLeaf*>(item);
+    GanttInfoLeaf *leaf = qobject_cast<GanttInfoLeaf*>(item);
     GanttGraphicsObject *p_item = NULL;
     if(leaf)
     {
@@ -679,17 +673,23 @@ void GanttScene::onItemAdded(GanttInfoItem *item)
     }
     else
     {
-        GanttInfoNode *node = dynamic_cast<GanttInfoNode*>(item);
+        GanttInfoNode *node = qobject_cast<GanttInfoNode*>(item);
         if(node)
         {
             if(node->hasStart())
             {
                 GanttCalcGraphicsObject *p;
+                qDebug() << node->title() << " has start";
                 p_item = p = new GanttCalcGraphicsObject(node);
 
                 _calcItems.append(p);
                 _itemForInfo.insert(node,p);
             }
+            else
+            {
+                qDebug() << node->title() << " has no start";
+            }
+
         }
     }
     if(p_item){

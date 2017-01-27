@@ -4,19 +4,19 @@
 #include <QPainter>
 #include <QMouseEvent>
 
-QPainterPath initFunction(){
-    static const int topPos = TOP_HEADER_HEIGHT + BOTTOM_HEADER_HEIGHT * 1. / 3;
+QPainterPath GanttDtLine::initFunction(){
+    static const int topPos = DtLine::topHeight + DtLine::bottomHeight * 1. / 3;
 
     QPainterPath res;
     res.moveTo(0, topPos);
-    res.lineTo(4, HEADER_HEIGHT);
-    res.lineTo(-4,HEADER_HEIGHT);
+    res.lineTo(4, DtLine::widgetHeight);
+    res.lineTo(-4,DtLine::widgetHeight);
     res.lineTo(0, topPos);
 
     return res;
 }
 
-QPainterPath GanttDtLine::_globalArrowPath = initFunction();
+QPainterPath GanttDtLine::_globalArrowPath = GanttDtLine::initFunction();
 
 void GanttDtLine::init()
 {

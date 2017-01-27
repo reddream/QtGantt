@@ -22,12 +22,13 @@ public:
     GanttInfoItem *infoForIndex(const QModelIndex &index, GanttInfoItem *item = NULL) const;
     GanttInfoNode *root() const;
     GanttInfoItem *infoForVPos(int vpos);
+    int height() const;
 
 
 signals:
     void treeReset();
     void limitsChanged(const UtcDateTime &min, const TimeSpan &ts);
-    void rowsInserted(GanttInfoItem *parent, int from, int to);
+    void rowsInserted(GanttInfoNode *parent, int from, int to);
     void endRemoveItems();
     void itemAdded(GanttInfoItem *item);
     void itemAboutToBeDeleted(GanttInfoItem *item);
@@ -63,10 +64,11 @@ private slots:
     void collapseAll();
 
 private:
+    int heightH(GanttInfoItem *item) const;
     void onAnyAddition();
     GanttInfoItem *lookupForVPos(int vpos, GanttInfoNode *node);
     void fillRecursive(GanttInfoItem *item,const QModelIndex &index);
-    void fill(GanttInfoItem *item, const QModelIndex &index, int from, int to);
+    void fill(GanttInfoNode *node, const QModelIndex &index, int from, int to);
     GanttInfoItem *makeInfoItem(const QModelIndex &index);
     void disconnectLastModel();
     void connectNewModel();

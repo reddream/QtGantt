@@ -145,6 +145,7 @@ void GanttIntervalGraphicsObject::updateIntersection()
 
 void GanttIntervalGraphicsObject::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
+    qDebug() << "GanttIntervalGraphicsObject";
     updateIntersection();
     QGraphicsItem::mousePressEvent(event);
 }

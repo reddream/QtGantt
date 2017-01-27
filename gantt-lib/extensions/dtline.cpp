@@ -5,10 +5,7 @@
 
 const TimeSpan DtLine::_minTimeSpan(30 * _MICROSECONDS_IN_SECOND);
 
-enum defaults {
-    itemHeight = 20,
-    heightConstraint = 2 * itemHeight,
-};
+
 
 DtLine::Precision DtLine::greaterPrecision(DtLine::Precision mode)
 {
@@ -121,8 +118,8 @@ void DtLine::resizeEvent(QResizeEvent *event)
 
 void DtLine::init()
 {
-    setMaximumHeight(heightConstraint);
-    setMinimumHeight(heightConstraint);
+    setMaximumHeight(widgetHeight);
+    setMinimumHeight(widgetHeight);
 
     connect(this,SIGNAL(minChanged()),this,SIGNAL(rangeChanged()));
     connect(this,SIGNAL(timeSpanChanged()),this,SIGNAL(rangeChanged()));
@@ -141,16 +138,15 @@ void DtLine::drawBackground(QPainter *painter)
     // Header background
     QLinearGradient linearGradient(
                 QPointF(rect().left(),rect().top()),
-                QPointF(rect().left(),rect().top() + heightConstraint));
+                QPointF(rect().left(),rect().top() + widgetHeight));
     linearGradient.setColorAt(0, SLIDER_COLOR);
     linearGradient.setColorAt(0.4, Qt::white);
     linearGradient.setColorAt(0.6, Qt::white);
     linearGradient.setColorAt(1, SLIDER_COLOR);
     painter->fillRect(rect(), linearGradient);
     // Center horizontal line
-    painter->drawLine(QPointF(0,heightConstraint/2),
-                     QPointF(rect().right(),heightConstraint/2) );
-    // Little and big hatches(with text)
+    painter->drawLine(QPointF(0,topHeight),
+                     QPointF(rect().right(),topHeight) );
 }
 
 void DtLine::drawBottom(QPainter *painter)
@@ -160,8 +156,6 @@ void DtLine::drawBottom(QPainter *painter)
         UtcDateTime dt;
         UtcDateTime nextDt = displayedDtFewer(_min, _mode);
         int l,r;
-
-
         do{
             dt = nextDt;
             nextDt = displayedDtNextHatch(dt, _mode);
@@ -169,18 +163,18 @@ void DtLine::drawBottom(QPainter *painter)
             r = dtToPos(nextDt);
             if(isDrawn(dt,_mode)){
                 if(extMode(_mode)){
-                    painter->drawLine(QPointF(l,itemHeight),
-                                      QPointF(l,itemHeight*2)); // very big hatch
+                    painter->drawLine(QPointF(l,topHeight),
+                                      QPointF(l,widgetHeight)); // very big hatch
                 }
                 else
-                    painter->drawLine(QPointF(l,itemHeight),
-                                      QPointF(l,itemHeight*(3.0/2))); // big hatch
+                    painter->drawLine(QPointF(l,topHeight),
+                                      QPointF(l,topHeight + bottomHeight*(1. /2))); // big hatch
 
                 drawBottomItemText(painter, dt, _mode);
             }
             else{
-                painter->drawLine(QPointF(l,itemHeight),
-                                  QPointF(l,itemHeight*(5.0/4))); // little hatch
+                painter->drawLine(QPointF(l,topHeight),
+                                  QPointF(l,topHeight + bottomHeight*(1. /4))); // little hatch
             }
         } while(r <= rect().right());
     }
@@ -198,8 +192,8 @@ void DtLine::drawBottomItemText(QPainter *painter, const UtcDateTime &dt, DtLine
         drawBottomItemTextExt(painter,text,curPos,nextPos,mode);
     }
     else {
-        painter->drawText(QRectF(-MIN_WIDTH_FOR_TIME_VISUALIZING/2 + curPos, itemHeight*(3.0/2),
-                                 MIN_WIDTH_FOR_TIME_VISUALIZING,itemHeight/2)
+        painter->drawText(QRectF(-MIN_WIDTH_FOR_TIME_VISUALIZING/2 + curPos, topHeight + bottomHeight*(1. /2),
+                                 MIN_WIDTH_FOR_TIME_VISUALIZING,bottomHeight/2)
                           , text, QTextOption(Qt::AlignCenter));
     }
     painter->restore();
@@ -208,7 +202,7 @@ void DtLine::drawBottomItemText(QPainter *painter, const UtcDateTime &dt, DtLine
 void DtLine::drawBottomItemTextExt(QPainter *painter, const QString &text, int curPos, int nextPos, DtLine::Precision mode)
 {
     QPair<QRect,Qt::Alignment> textArea = getTextArea(rect(),curPos,nextPos,mode
-                                                      , itemHeight * 5. / 4, itemHeight * 3. / 4);
+                                                      , topHeight + bottomHeight * 1. / 4, bottomHeight * 3. / 4);
 
     painter->drawText(textArea.first
                       , text
@@ -241,9 +235,9 @@ void DtLine::drawTop(QPainter *painter)
 
 void DtLine::drawTopItem(QPainter *painter, const UtcDateTime &dt, TopPrecision mode, int l, int r)
 {
-    painter->drawLine(QPointF(l,0),QPointF(l,itemHeight));
+    painter->drawLine(QPointF(l,0),QPointF(l,topHeight));
 
-    QPair<QRect,Qt::Alignment> textArea = getTextArea(rect(),l,r,mode, 0, itemHeight);
+    QPair<QRect,Qt::Alignment> textArea = getTextArea(rect(),l,r,mode, 0, topHeight);
 
     drawTopItemText(painter, dt.toString(formatForMode(mode))
                     , textArea.first, textArea.second);
