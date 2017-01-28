@@ -119,14 +119,12 @@ void GanttIntervalGraphicsObject::setBoundingRectSize(const QSizeF &boundingRect
 
 void GanttIntervalGraphicsObject::updateItemGeometry()
 {
-    if( !innerInfo())
-        return;
+    privateUpdateGeometry(false);
+}
 
-    qreal startPos = _dtline->dtToPos(innerInfo()->start()),
-          itemWidth = _dtline->dtToPos(innerInfo()->finish()) - startPos;
-
-    setBoundingRectSize(QSizeF(itemWidth, DEFAULT_ITEM_WIDTH));
-    setPos(startPos, innerInfo()->calcPos());
+void GanttIntervalGraphicsObject::updateItemGeometryAndIntersection()
+{
+    privateUpdateGeometry(true);
 }
 
 void GanttIntervalGraphicsObject::updateIntersection()
@@ -145,8 +143,8 @@ void GanttIntervalGraphicsObject::updateIntersection()
 
 void GanttIntervalGraphicsObject::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
-    qDebug() << "GanttIntervalGraphicsObject";
-    updateIntersection();
+//    qDebug() << "GanttIntervalGraphicsObject";
+//    updateIntersection();
     QGraphicsItem::mousePressEvent(event);
 }
 
@@ -163,6 +161,28 @@ void GanttIntervalGraphicsObject::hoverLeaveEvent(QGraphicsSceneHoverEvent *even
     emit graphicsItemHoverLeave();
 
     QGraphicsItem::hoverLeaveEvent(event);
+}
+
+void GanttIntervalGraphicsObject::privateUpdateGeometry(bool intersection)
+{
+    if(!innerInfo())
+        return;
+
+    qreal startPos = _dtline->dtToPos(innerInfo()->start()),
+          itemWidth = _dtline->dtToPos(innerInfo()->finish()) - startPos;
+
+    if(intersection){   // UPDATE Intersection
+        if(!_intersection.isEmpty()){
+            qreal lastLeft = _intersection.left(),
+                    lastWidth = _intersection.width(),
+                    coef = itemWidth / _boundingRectSize.width();
+            _intersection.setLeft( lastLeft * coef );
+            _intersection.setWidth( lastWidth * coef );
+        }
+    }
+    // UPDATE geometry
+    setBoundingRectSize(QSizeF(itemWidth, DEFAULT_ITEM_WIDTH));
+    setPos(startPos, innerInfo()->calcPos());
 }
 
 

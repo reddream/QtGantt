@@ -90,6 +90,7 @@ public slots:
     void onViewResized(const QSize& newSize);
     void updateSceneRect();
     void updateSceneItems();
+    void updateSceneItemsWithIntersection();
     void updateIntersections();         ///< updates all intersections
 
     void makeStep(int step);
@@ -111,10 +112,11 @@ private:
     void connectDtLine();
 
     void updateSlider();
-    void updateItems();
+    void updateItems(bool intersection);
     void createPersistentItems();
     void addPersistentItems();
     void removePersistentItems();
+    void privateUpdateSceneItems(bool intersection);
 
 private slots:
     void updateIntersectionR(GanttInfoItem *item);   ///< updates intersection recursively

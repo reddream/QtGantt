@@ -61,12 +61,12 @@ void GanttScene::updateSceneRect()
 
 void GanttScene::updateSceneItems()
 {
-    static int kk = 0;
-    qDebug() << "updateSceneItems " << kk++;
-    updateSlider();
-    _dtline->updateCurrentDtPath();
-    updateItems();
-    update();
+    privateUpdateSceneItems(false);
+}
+
+void GanttScene::updateSceneItemsWithIntersection()
+{
+    privateUpdateSceneItems(true);
 }
 
 void GanttScene::makeStep(int step)
@@ -221,10 +221,10 @@ void GanttScene::onTreeInfoReset()
 
 void GanttScene::connectDtLine()
 {
-    connect(_dtline,SIGNAL(timeSpanChanged()),this,SLOT(updateIntersections()));
+//    connect(_dtline,SIGNAL(timeSpanChanged()),this,SLOT(updateIntersections()), Qt::QueuedConnection);
 
-    connect(_dtline,SIGNAL(minChanged()),this,SLOT(updateSceneItems()));
-    connect(_dtline,SIGNAL(timeSpanChanged()),this,SLOT(updateSceneItems()));
+    connect(_dtline,SIGNAL(minChanged()),this,SLOT(updateSceneItems()), Qt::QueuedConnection);
+    connect(_dtline,SIGNAL(timeSpanChanged()),this,SLOT(updateSceneItemsWithIntersection()), Qt::QueuedConnection);
 
 }
 
@@ -311,9 +311,9 @@ bool GanttScene::sceneHaveItems() const
 void GanttScene::onViewResized(const QSize &newSize)
 {
     HFitScene::onViewResized(newSize);
-    updateSceneItems();
+
+    updateSceneItemsWithIntersection();
     updateSliderHeight();
-    updateIntersections();
 }
 
 void GanttScene::setCurrentItem(QGraphicsObject *currentItem)
@@ -325,9 +325,7 @@ void GanttScene::setCurrentItem(QGraphicsObject *currentItem)
     GanttInfoItem *info = NULL;
     _currentItem = currentItem;
     if(lastItem)
-    {
         lastItem->update();
-    }
 
     if(_currentItem)
     {
@@ -341,7 +339,7 @@ void GanttScene::setCurrentItem(QGraphicsObject *currentItem)
         QRectF itemRect = _currentItem->mapToScene(_currentItem->boundingRect()).boundingRect();
         if(_view && !isVisible(_currentItem))
         {
-            _view->ensureVisible(itemRect,0,0);
+            _view->ensureVisible(itemRect, 0, _view->height()/2);
         }
         _currentItem->update();
     }
@@ -380,10 +378,15 @@ void GanttScene::updateSlider()
     _playerCurrent->updateScenePos();
 }
 
-void GanttScene::updateItems()
+void GanttScene::updateItems(bool intersection)
 {
-    foreach(GanttIntervalGraphicsObject *o, _items)
-        o->updateItemGeometry();
+    if(intersection)
+        foreach(GanttIntervalGraphicsObject *o, _items)
+            o->updateItemGeometryAndIntersection();
+    else
+        foreach(GanttIntervalGraphicsObject *o, _items)
+            o->updateItemGeometry();
+
 
     foreach(GanttCalcGraphicsObject *o, _calcItems)
         o->updateItemGeometry();
@@ -415,6 +418,16 @@ void GanttScene::removePersistentItems()
     removeItem(_hoverObject);
 }
 
+void GanttScene::privateUpdateSceneItems(bool intersection)
+{
+    static int kk = 0;
+    qDebug() << "updateSceneItems " << kk++;
+    updateSlider();
+    _dtline->updateCurrentDtPath();
+    updateItems(intersection);
+    update();
+}
+
 void GanttScene::addInfoItem(GanttInfoItem *parent)
 {
     if(!parent)
@@ -437,6 +450,7 @@ void GanttScene::addInfoItem(GanttInfoNode *parent, int from, int to)
         onItemAdded(parent->at(i));
 
     updateSceneRect();
+    updateIntersectionR(parent);
 }
 
 void GanttScene::onLimitsChanged(const UtcDateTime &first, const TimeSpan &ts)
@@ -664,11 +678,11 @@ void GanttScene::onItemAdded(GanttInfoItem *item)
     connect(item,SIGNAL(collapsed()),this,SLOT(updateSceneRect()));
 
     GanttInfoLeaf *leaf = qobject_cast<GanttInfoLeaf*>(item);
-    GanttGraphicsObject *p_item = NULL;
+    GanttGraphicsObject *p_object = NULL;
     if(leaf)
     {
         GanttIntervalGraphicsObject *p;
-        p_item = p = new GanttIntervalGraphicsObject(leaf);
+        p_object = p = new GanttIntervalGraphicsObject(leaf);
 
         _items.append(p);
         _itemForInfo.insert(leaf,p);
@@ -684,7 +698,7 @@ void GanttScene::onItemAdded(GanttInfoItem *item)
             {
                 GanttCalcGraphicsObject *p;
                 qDebug() << node->title() << " has start";
-                p_item = p = new GanttCalcGraphicsObject(node);
+                p_object = p = new GanttCalcGraphicsObject(node);
 
                 _calcItems.append(p);
                 _itemForInfo.insert(node,p);
@@ -696,15 +710,15 @@ void GanttScene::onItemAdded(GanttInfoItem *item)
 
         }
     }
-    if(p_item){
-        p_item->setDtLine(_dtline);
-        p_item->setScene(this);
+    if(p_object){
+        p_object->setDtLine(_dtline);
+        p_object->setScene(this);
 
-        connect(p_item,SIGNAL(graphicsItemHoverEnter()),this,SLOT(onGraphicsItemHoverEnter()));
-        connect(p_item,SIGNAL(graphicsItemHoverLeave()),this,SLOT(onGraphicsItemHoverLeave()));
-        connect(p_item,SIGNAL(graphicsItemPressed()),this,SLOT(onGraphicsItemPress()));
+        connect(p_object,SIGNAL(graphicsItemHoverEnter()),this,SLOT(onGraphicsItemHoverEnter()));
+        connect(p_object,SIGNAL(graphicsItemHoverLeave()),this,SLOT(onGraphicsItemHoverLeave()));
+        connect(p_object,SIGNAL(graphicsItemPressed()),this,SLOT(onGraphicsItemPress()));
 
-        p_item->updateItemGeometry();
+        p_object->updateItemGeometry();
     }
 }
 

@@ -9,7 +9,7 @@ HFitScene::HFitScene(GanttGraphicsView *view, QObject *parent)
         qWarning("HFitScene initialized with NULL view");
     }
     else {
-        connect(_view,SIGNAL(viewResized(QSize)),this,SLOT(onViewResized(QSize)));
+        connect(_view,SIGNAL(viewResized(QSize)),this,SLOT(onViewResized(QSize)),Qt::QueuedConnection);
         _view->setScene(this);
     }
     init();
