@@ -128,8 +128,6 @@ void DtLine::init()
     connect(this,SIGNAL(minChangedManually()),this,SLOT(emitChangedManually()));
     connect(this,SIGNAL(timeSpanChangedManually()),this,SLOT(emitChangedManually()));
 
-    connect(this,SIGNAL(minChangedManually()),this,SIGNAL(minChanged()));
-    connect(this,SIGNAL(timeSpanChangedManually()),this,SIGNAL(timeSpanChanged()));
     connect(this,SIGNAL(rangeChangedManually(UtcDateTime,TimeSpan)),this,SIGNAL(rangeChanged()));
 }
 
@@ -961,6 +959,8 @@ void DtLine::recalc()
 
 void DtLine::setTimeSpan(const TimeSpan &timeSpan, bool manually)
 {
+    if(timeSpan == _timeSpan)
+        return; // if equal do nothing
     if(timeSpan < _minTimeSpan)
         _timeSpan = _minTimeSpan;
     else
@@ -1031,6 +1031,8 @@ UtcDateTime DtLine::max() const
 
 void DtLine::setMin(const UtcDateTime &min, bool manually)
 {
+    if(min == _min)
+        return; // if equal do nothing
     _min = min;
     if(manually)
         emit minChangedManually();

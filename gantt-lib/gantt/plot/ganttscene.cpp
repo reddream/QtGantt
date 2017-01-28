@@ -61,6 +61,8 @@ void GanttScene::updateSceneRect()
 
 void GanttScene::updateSceneItems()
 {
+    static int kk = 0;
+    qDebug() << "updateSceneItems " << kk++;
     updateSlider();
     _dtline->updateCurrentDtPath();
     updateItems();
@@ -220,7 +222,9 @@ void GanttScene::onTreeInfoReset()
 void GanttScene::connectDtLine()
 {
     connect(_dtline,SIGNAL(timeSpanChanged()),this,SLOT(updateIntersections()));
-    connect(_dtline,SIGNAL(rangeChanged()),this,SLOT(updateSceneItems()));
+
+    connect(_dtline,SIGNAL(minChanged()),this,SLOT(updateSceneItems()));
+    connect(_dtline,SIGNAL(timeSpanChanged()),this,SLOT(updateSceneItems()));
 
 }
 
@@ -459,6 +463,8 @@ void GanttScene::updateIntersectionR(GanttInfoItem *item)
 }
 
 void GanttScene::updateIntersections(){
+    static int kk = 0;
+    qDebug() << "updateIntersections " << kk++;
     updateIntersectionR(_treeInfo->root());
 }
 

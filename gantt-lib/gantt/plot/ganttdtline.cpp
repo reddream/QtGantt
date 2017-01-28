@@ -72,6 +72,9 @@ void GanttDtLine::mouseReleaseEvent(QMouseEvent *e)
 
 void GanttDtLine::setCurrentDt(const UtcDateTime &dt, bool manually)
 {
+    if(dt == _dt)
+        return; // do nothing if equal
+
     _dt = dt;
     updateCurrentDtPath();
 
