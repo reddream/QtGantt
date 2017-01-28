@@ -59,11 +59,14 @@ private slots:
     void onColumnsRemoved(const QModelIndex &parent, int start, int end);
     void onItemAboutToBeDeleted();
 
-    void updateLimits();
     void connectNewItem(GanttInfoItem *item);
+    void updateLimits();
+    void updateLimitsByItem(GanttInfoItem *item);
+    void emitLimitsChanged();
     void collapseAll();
 
 private:
+    void setLimits(const QPair<UtcDateTime, UtcDateTime> &newLimits);
     int heightH(GanttInfoItem *item) const;
     void onAnyAddition();
     GanttInfoItem *lookupForVPos(int vpos, GanttInfoNode *node);
@@ -76,6 +79,9 @@ private:
     QAbstractItemModel *_model; ///< Ссылаются на одно и то же
     IGanttModel *_iGanttModel;  ///< Ссылаются на одно и то же
     GanttInfoNode *_root;
+
+    QPair<UtcDateTime, UtcDateTime> _limits;    // caches Limits
+    bool _limitsChanged;
 
 };
 

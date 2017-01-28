@@ -102,6 +102,7 @@ public slots:
     void setCurrentItem(QGraphicsObject *currentItem);
     void addInfoItem(GanttInfoItem *parent);
     void addInfoItem(GanttInfoNode *parent, int from, int to);
+    void onLimitsChanged(const UtcDateTime &first, const TimeSpan&ts);
 
     GanttGraphicsObject *objectForPos(const QPointF& pos);
 
@@ -114,7 +115,6 @@ private:
     void createPersistentItems();
     void addPersistentItems();
     void removePersistentItems();
-    void onEndInsertItems();
 
 private slots:
     void updateIntersectionR(GanttInfoItem *item);   ///< updates intersection recursively

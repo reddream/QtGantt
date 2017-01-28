@@ -210,11 +210,7 @@ void GanttInfoTree::onItemAboutToBeDeleted()
 
 void GanttInfoTree::updateLimits()
 {
-    QPair<UtcDateTime,UtcDateTime> limits = GanttInfoItem::getLimits(_root);
-    if(!limits.first.isValid() || !limits.second.isValid())
-        qWarning("warning::limits not valid in updateLimits");
-    qDebug()  << "updated Limits " << limits/*.first << '[' << limits.second.toString() << ']'*/;
-    emit limitsChanged(limits.first,limits.second - limits.first);
+    updateLimitsByItem(_root);
 }
 
 GanttInfoItem *GanttInfoTree::lookupForVPos(int vpos, GanttInfoNode *node)
@@ -276,7 +272,7 @@ void GanttInfoTree::fillRecursive(GanttInfoItem *item, const QModelIndex &index)
 
 void GanttInfoTree::fill(GanttInfoNode *node, const QModelIndex &index, int from, int to)
 {
-    qDebug() << "fill " << node->title() << " from " << from << " to " << to;
+//    qDebug() << "fill " << node->title() << " from " << from << " to " << to;
     if(!_model){
         qWarning("fill called reset w/o model");
         return;
@@ -317,6 +313,7 @@ GanttInfoItem *GanttInfoTree::makeInfoItem(const QModelIndex &index)
 
 void GanttInfoTree::init()
 {
+    _limitsChanged = false;
     _model = NULL;
     _iGanttModel = NULL;
 
@@ -325,6 +322,7 @@ void GanttInfoTree::init()
     _root->setTitle(QString("GanttInfoTree_ROOT"));
 
     connect(this,SIGNAL(itemAdded(GanttInfoItem*)),this,SLOT(connectNewItem(GanttInfoItem*)));
+    connect(this,SIGNAL(itemAdded(GanttInfoItem*)),this,SLOT(updateLimitsByItem(GanttInfoItem*)));
 }
 
 void GanttInfoTree::disconnectLastModel()
@@ -362,6 +360,21 @@ void GanttInfoTree::connectNewItem(GanttInfoItem *item)
 
 }
 
+void GanttInfoTree::updateLimitsByItem(GanttInfoItem *item)
+{
+    QPair<UtcDateTime, UtcDateTime> tmp = GanttInfoItem::myMax(_limits, item->getLimits());
+    if(_limits != tmp)
+        setLimits(tmp);
+}
+
+void GanttInfoTree::emitLimitsChanged()
+{
+    if(_limitsChanged){
+        emit limitsChanged(_limits.first,_limits.second - _limits.first);
+        _limitsChanged = false;
+    }
+}
+
 void GanttInfoTree::collapseAll()
 {
     for(int i = 0; i<_root->size() ; ++i)
@@ -374,19 +387,25 @@ void GanttInfoTree::collapseAll()
     }
 }
 
+void GanttInfoTree::setLimits(const QPair<UtcDateTime, UtcDateTime> &newLimits)
+{
+    _limits = newLimits;
+    _limitsChanged = true;
+}
+
 int GanttInfoTree::heightH(GanttInfoItem *item) const
 {
     if(GanttInfoNode *node = qobject_cast<GanttInfoNode*>(item)){
         if(!node->isEmpty())
             return heightH(node->at(node->size() - 1));
     }
-    return item->pos() + DEFAULT_ITEM_HEIGHT;
+    return item->pos() + DEFAULT_ITEM_HEIGHT * 1.5;
 }
 
 void GanttInfoTree::onAnyAddition()
 {
     collapseAll();
-    updateLimits();
+    emitLimitsChanged();
 }
 
 QAbstractItemModel *GanttInfoTree::model() const

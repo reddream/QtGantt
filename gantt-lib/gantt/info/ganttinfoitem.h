@@ -83,7 +83,10 @@ public slots:
     void deleteInfoItem();
     void tryDelete();
 
-protected:
+public:
+    static QPair<UtcDateTime, UtcDateTime> myMax(
+            const QPair<UtcDateTime, UtcDateTime> &first,
+            const QPair<UtcDateTime, UtcDateTime> &second );
 
 private:
     void init();

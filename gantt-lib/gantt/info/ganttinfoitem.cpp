@@ -155,7 +155,9 @@ void GanttInfoItem::reduceLinkCnt()
     tryDelete();
 }
 
-QPair<UtcDateTime,UtcDateTime> myMax(const QPair<UtcDateTime,UtcDateTime>&f,const QPair<UtcDateTime,UtcDateTime>&s)
+QPair<UtcDateTime,UtcDateTime> GanttInfoItem::myMax(
+        const QPair<UtcDateTime,UtcDateTime>&f,
+        const QPair<UtcDateTime,UtcDateTime>&s )
 {
     UtcDateTime resFirst,resSecond;
 

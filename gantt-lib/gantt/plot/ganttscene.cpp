@@ -214,8 +214,7 @@ void GanttScene::onTreeInfoReset()
     clear();
     addInfoItem(_treeInfo->root());
     updateIntersections();
-
-    onEndInsertItems();
+    updateSceneRect();
 }
 
 void GanttScene::connectDtLine()
@@ -433,7 +432,13 @@ void GanttScene::addInfoItem(GanttInfoNode *parent, int from, int to)
     for(int i = from; i <= to; ++i)
         onItemAdded(parent->at(i));
 
-    onEndInsertItems();
+    updateSceneRect();
+}
+
+void GanttScene::onLimitsChanged(const UtcDateTime &first, const TimeSpan &ts)
+{
+    _playerCurrent->updateRange(first, ts);
+    _playerCurrent->setToBegin();
 }
 
 void GanttScene::updateIntersectionR(GanttInfoItem *item)
@@ -578,13 +583,6 @@ void GanttScene::onItemRemoved(GanttInfoItem *item)
     }
 }
 
-void GanttScene::onEndInsertItems()
-{
-    QPair<UtcDateTime,UtcDateTime> limits = _treeInfo->root()->getLimits();
-    _playerCurrent->updateRange(limits.first, limits.second - limits.first);
-    _playerCurrent->setToBegin();
-    updateSceneRect();
-}
 
 void GanttScene::onExpanded(GanttInfoNode *which)
 {

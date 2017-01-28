@@ -58,14 +58,14 @@ void GanttGraphicsView::mouseMoveEvent(QMouseEvent *event)
 {
     QPoint pos = event->pos();
 
-    if(rect().contains(pos) && pos.y() > rect().bottom() - m_hSliderHeight)
-    {
-        setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
-    }
-    else
-    {
-        setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    }
+//    if(rect().contains(pos) && pos.y() > rect().bottom() - m_hSliderHeight)
+//    {
+//        setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
+//    }
+//    else
+//    {
+//        setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+//    }
 
     QGraphicsView::mouseMoveEvent(event);
 }
@@ -84,6 +84,7 @@ void GanttGraphicsView::initialize()
 {
     m_hSliderHeight = 0;
 
+    setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setMinimumWidth(GANTTGRAPHICSVIEW_MIN_WIDTH);
     setFrameStyle(0);
     setAlignment(Qt::AlignLeft | Qt::AlignTop);
