@@ -327,8 +327,8 @@ void GanttScene::setCurrentItem(QGraphicsObject *currentItem)
     if(lastItem)
         lastItem->update();
 
-    if(_currentItem)
-    {
+    if(_currentItem){
+
         if(GanttIntervalGraphicsObject *graphicsObject =
                 dynamic_cast<GanttIntervalGraphicsObject*>(_currentItem.data()))
             info = graphicsObject->info();
@@ -643,6 +643,8 @@ void GanttScene::updateSliderHeight()
 
 void GanttScene::init()
 {
+    setItemIndexMethod(QGraphicsScene::NoIndex);
+
     connectDtLine();
     _currentItem = NULL;
 

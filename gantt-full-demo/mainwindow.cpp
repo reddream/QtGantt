@@ -45,7 +45,7 @@ QList<GanttInfoItem*> generateTest()
 {
     static int kk = 0;
     QList<GanttInfoItem*> testList;
-    for(int i = kk; i<kk+500; ++i)
+    for(int i = 0; i<kk+10; ++i)
     {
         GanttInfoNode *node = new GanttInfoNode;
 
