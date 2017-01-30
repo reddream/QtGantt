@@ -67,25 +67,29 @@ void GanttInfoTree::onCurrentItemChanged(GanttInfoItem *item)
 
 }
 
-GanttInfoItem *GanttInfoTree::infoForIndex(const QModelIndex &index, GanttInfoItem *item) const
+GanttInfoItem *GanttInfoTree::infoForIndex(const QModelIndex &index) const
 {
-    GanttInfoLeaf *leaf = qobject_cast<GanttInfoLeaf*>(item);
-    GanttInfoNode *node = qobject_cast<GanttInfoNode*>(item);
-    if(!item)
-        node = _root;
-    if(leaf && leaf->index() == index)
-        return leaf;
-    if(node){
-        if(node->index() == index)
-            return node;
-        else
-            for(int i = 0; i < node->size(); ++i){
-                GanttInfoItem *itemForIndexChild = infoForIndex(index, node->at(i));
-                if(itemForIndexChild)
-                    return itemForIndexChild;
-            }
-    }
-    return NULL;
+    qDebug() << "infoforindex " << index;
+    if(!index.isValid())
+        return _root;
+    return _infoForIndex.value(index, NULL);    // NULL default value
+//    GanttInfoLeaf *leaf = qobject_cast<GanttInfoLeaf*>(item);
+//    GanttInfoNode *node = qobject_cast<GanttInfoNode*>(item);
+//    if(!item)
+//        node = _root;
+//    if(leaf && leaf->index() == index)
+//        return leaf;
+//    if(node){
+//        if(node->index() == index)
+//            return node;
+//        else
+//            for(int i = 0; i < node->size(); ++i){
+//                GanttInfoItem *itemForIndexChild = infoForIndex(index, node->at(i));
+//                if(itemForIndexChild)
+//                    return itemForIndexChild;
+//            }
+//    }
+//    return NULL;
 }
 
 void GanttInfoTree::onClicked(const QModelIndex &index)
@@ -110,9 +114,7 @@ void GanttInfoTree::onCollapsed(const QModelIndex &index)
 void deleteInfoItemFunc(GanttInfoItem* item)
 {
     if(item->parent())
-    {
         item->deleteInfoItem();
-    }
 }
 
 void GanttInfoTree::clear()
@@ -120,6 +122,8 @@ void GanttInfoTree::clear()
     if(_root)
         _root->callForEachItemRecursively(&deleteInfoItemFunc);
     _root->clear();
+
+    _infoForIndex.clear();  // clears cache
 
     emit endRemoveItems();
 }
@@ -177,6 +181,7 @@ void GanttInfoTree::onDataChanged(const QModelIndex &/*from*/, const QModelIndex
 
 void GanttInfoTree::onRowsInserted(const QModelIndex &parent, int start, int end)
 {
+    qDebug() << "onRowsIns " << start << " " << end;
     fill(qobject_cast<GanttInfoNode*>(infoForIndex(parent)), parent, start, end);
 
     onAnyAddition();
@@ -203,6 +208,8 @@ void GanttInfoTree::onColumnsRemoved(const QModelIndex &/*parent*/, int /*start*
 void GanttInfoTree::onItemAboutToBeDeleted()
 {
     GanttInfoItem *item = qobject_cast<GanttInfoItem*>(QObject::sender());
+
+    _infoForIndex.remove(item->index());    // clears cache
 
     if(item)
         emit itemAboutToBeDeleted(item);
@@ -292,7 +299,7 @@ GanttInfoItem *GanttInfoTree::makeInfoItem(const QModelIndex &index)
         return NULL;
     }
     GanttInfoItem *item;
-    if(_model->hasChildren(index)){
+    if(_iGanttModel->iGanttTag(index) == IGanttModel::IGanttNode){
         item = new GanttInfoNode(_iGanttModel->iGanttTitle(index)
                                  , _iGanttModel->iGanttStart(index)
                                  , _iGanttModel->iGanttTimeSpan(index)
@@ -307,6 +314,7 @@ GanttInfoItem *GanttInfoTree::makeInfoItem(const QModelIndex &index)
                                  , _iGanttModel->iGanttColor(index) );
     }
 
+    _infoForIndex.insert(index, item);  // fills cache
     emit itemAdded(item);
     return item;
 }

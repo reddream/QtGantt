@@ -346,6 +346,7 @@ void GanttTreeModel::addItems(const QList<GanttInfoItem *> &items)
         else
             ++cnt;
     }
+    qDebug() << "test cnt " << cnt;
     int first = (m_root->isEmpty()? 0 : m_root->size());
     if(cnt > 0){
         beginInsertRows(QModelIndex(), first, first + cnt - 1);

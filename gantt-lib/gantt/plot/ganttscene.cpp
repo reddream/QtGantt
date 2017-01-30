@@ -421,11 +421,11 @@ void GanttScene::removePersistentItems()
 void GanttScene::privateUpdateSceneItems(bool intersection)
 {
     static int kk = 0;
-    qDebug() << "updateSceneItems " << kk++;
+    qDebug() << "updateSceneItems " <<intersection << ' ' << kk++;
     updateSlider();
     _dtline->updateCurrentDtPath();
     updateItems(intersection);
-    update();
+//    update();
 }
 
 void GanttScene::addInfoItem(GanttInfoItem *parent)
@@ -446,8 +446,12 @@ void GanttScene::addInfoItem(GanttInfoNode *parent, int from, int to)
     if(!parent)
         return;
     qDebug() << "addInfoItem " << parent->title() << " from "<< from << " to " << to;
-    for(int i = from; i <= to; ++i)
+    for(int i = from; i <= to; ++i){
+        qDebug() << "addInfoItme " << parent->title()
+                 <<"\t added " << parent->at(i)->title();
+
         onItemAdded(parent->at(i));
+    }
 
     updateSceneRect();
     updateIntersectionR(parent);
@@ -683,6 +687,7 @@ void GanttScene::onItemAdded(GanttInfoItem *item)
     GanttGraphicsObject *p_object = NULL;
     if(leaf)
     {
+        qDebug() << "leaf";
         GanttIntervalGraphicsObject *p;
         p_object = p = new GanttIntervalGraphicsObject(leaf);
 
@@ -693,6 +698,7 @@ void GanttScene::onItemAdded(GanttInfoItem *item)
     }
     else
     {
+        qDebug() << "node";
         GanttInfoNode *node = qobject_cast<GanttInfoNode*>(item);
         if(node)
         {

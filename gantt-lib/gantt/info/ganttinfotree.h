@@ -19,7 +19,7 @@ public:
     void setModel(IGanttModel *model);
     void connectTreeView(QTreeView *view);
     void disconnectTreeView(QTreeView *view);
-    GanttInfoItem *infoForIndex(const QModelIndex &index, GanttInfoItem *item = NULL) const;
+    GanttInfoItem *infoForIndex(const QModelIndex &index) const;
     GanttInfoNode *root() const;
     GanttInfoItem *infoForVPos(int vpos);
     int height() const;
@@ -80,7 +80,8 @@ private:
     IGanttModel *_iGanttModel;  ///< Ссылаются на одно и то же
     GanttInfoNode *_root;
 
-    QPair<UtcDateTime, UtcDateTime> _limits;    // caches Limits
+    QPair<UtcDateTime, UtcDateTime> _limits;            // caches Limits
+    QMap<QModelIndex, GanttInfoItem*> _infoForIndex;    // caches
     bool _limitsChanged;
 
 };

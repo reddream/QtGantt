@@ -56,6 +56,12 @@ public:
 
     // --- Interface implementation
 
+    virtual IGanttTag   iGanttTag(const QModelIndex &index) const {
+        if(leafForIndex(index))
+            return IGanttModel::IGanttLeaf;
+        return IGanttModel::IGanttNode;
+    }
+
     QString     iGanttTitle(const QModelIndex &index) const {
         GanttInfoItem *item =itemForIndex(index);
         if(item)

@@ -13,8 +13,14 @@ public:
     IGanttModel();
     virtual ~IGanttModel();
 
+    enum IGanttTag{
+        IGanttNode = 1,
+        IGanttLeaf = 2
+    };
+
     // --- Interface
 
+    virtual IGanttTag   iGanttTag(const QModelIndex &index) const = 0;  /// < Leaf or Node?
     virtual QString     iGanttTitle(const QModelIndex &iGanttIndex) const = 0;
     virtual UtcDateTime iGanttStart(const QModelIndex &iGanttIndex) const = 0;
     virtual TimeSpan    iGanttTimeSpan(const QModelIndex &iGanttIndex) const = 0;
