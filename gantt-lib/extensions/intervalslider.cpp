@@ -281,27 +281,10 @@ void IntervalSlider::paintEvent(QPaintEvent *event)
     Q_UNUSED(event);
     QPainter painter( this );
 
-    QRect sliderRect = rect();
-
-    drawSliderLine( &painter, sliderRect );
-
-    QRect beginHandleRect(
-                valueToPoint(m_beginValue,BeginHandle) - halfHandleSize(),
-                sliderRect.y() /*+ m_borderWidth*/ - (m_offsetV<0?m_offsetV:0),
-                handleSize(),
-                sliderRect.height() - 2*m_borderWidth + 2*(m_offsetV<0?m_offsetV:0)
-                )
-        , endHandleRect(
-                valueToPoint(m_endValue,EndHandle) - halfHandleSize(),
-                sliderRect.y()/*+m_borderWidth*/ - (m_offsetV<0?m_offsetV:0),
-                handleSize(),
-                sliderRect.height() - 2*m_borderWidth + 2*(m_offsetV<0?m_offsetV:0)
-                );
-
-
-    drawHandle( &painter, beginHandleRect,
+    drawSliderLine( &painter, rect());
+    drawHandle( &painter, getBeginHandleRect(),
                 (m_clippedHandle == BeginHandle || m_shiftModifier ) );
-    drawHandle( &painter, endHandleRect,
+    drawHandle( &painter, getEndHandleRect(),
                 (m_clippedHandle == EndHandle || m_shiftModifier ) );
 }
 
@@ -365,6 +348,7 @@ void IntervalSlider::keyPressEvent(QKeyEvent *e)
     if(e->modifiers() & Qt::ShiftModifier)
     {
         m_shiftModifier = true;
+        checkForCursor(mapFromGlobal(QCursor::pos()));
         update();
     }
 
@@ -376,6 +360,7 @@ void IntervalSlider::keyReleaseEvent(QKeyEvent *e)
     if(e->key() == Qt::Key_Shift)
     {
         m_shiftModifier = false;
+        checkForCursor(mapFromGlobal(QCursor::pos()));
         update();
     }
 
@@ -460,6 +445,34 @@ void IntervalSlider::setVisible(bool visible)
     QWidget::setVisible(visible);
 }
 
+void IntervalSlider::checkForCursor(const QPoint &pos)
+{
+    if(m_shiftModifier ||
+            getBeginHandleRect().contains(pos)||
+            getEndHandleRect().contains(pos) ){
+        setCursor(Qt::PointingHandCursor);
+    }
+    else{
+        setCursor(Qt::ArrowCursor);
+    }
+}
+
+QRect IntervalSlider::getBeginHandleRect() const
+{
+    return QRect( valueToPoint(m_beginValue,BeginHandle) - halfHandleSize(),
+                    rect().y() /*+ m_borderWidth*/ - (m_offsetV<0?m_offsetV:0),
+                    handleSize(),
+                    rect().height() - 2*m_borderWidth + 2*(m_offsetV<0?m_offsetV:0) );
+}
+
+QRect IntervalSlider::getEndHandleRect() const
+{
+    return QRect( valueToPoint(m_endValue,EndHandle) - halfHandleSize(),
+                    rect().y()/*+m_borderWidth*/ - (m_offsetV<0?m_offsetV:0),
+                    handleSize(),
+                    rect().height() - 2*m_borderWidth + 2*(m_offsetV<0?m_offsetV:0) );
+}
+
 
 bool IntervalSlider::moveHandles(long long deltaVal,bool manually)
 {
@@ -532,6 +545,9 @@ void IntervalSlider::mouseMoveEvent(QMouseEvent *e)
             deltaVal = - beginHandle() + m_minValue;
 
         moveHandles(deltaVal,true);
+    }
+    else{
+        checkForCursor(e->pos());
     }
 
     if(m_clippedHandle==BeginHandle)

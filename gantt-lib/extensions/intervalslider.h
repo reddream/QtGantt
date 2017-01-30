@@ -96,6 +96,11 @@ signals:
     void beginMoved(long long value);
     void endMoved(long long value);
 protected:
+    void checkForCursor(const QPoint &pos);
+    QRect getBeginHandleRect() const;
+    QRect getEndHandleRect() const;
+
+
     void paintEvent( QPaintEvent *event );
     virtual void drawHandle( QPainter *painter,
         const QRect& handleRect, bool is_selected = false) const;

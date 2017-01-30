@@ -11,7 +11,7 @@ class QSlider;
 class GanttPlayerSettings : public QToolBar
 {
     Q_OBJECT
-
+    void init();
 public:
     explicit GanttPlayerSettings(QWidget *parent = 0);
     ~GanttPlayerSettings();

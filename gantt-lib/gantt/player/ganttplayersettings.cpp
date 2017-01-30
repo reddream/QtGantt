@@ -14,16 +14,21 @@
 
 #include <QDebug>
 
+void GanttPlayerSettings::init()
+{
+    m_precision = 1000;
+
+    setToolButtonStyle(Qt::ToolButtonIconOnly);
+    setStyleSheet("QToolBar { border: 0px }");
+    setFloatable(false);
+    setAllowedAreas(Qt::NoToolBarArea);
+    initActions();
+}
+
 GanttPlayerSettings::GanttPlayerSettings(QWidget *parent) :
     QToolBar(parent)
 {
-    m_precision = 1000;
-    setToolButtonStyle(Qt::ToolButtonIconOnly);
-    setStyleSheet("QToolBar { border: 0px }");
-//    setMaximumHeight(16);
-//    setMinimumHeight(16);
-
-    initActions();
+    init();
 }
 
 GanttPlayerSettings::~GanttPlayerSettings()
