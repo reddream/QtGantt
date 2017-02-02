@@ -103,9 +103,7 @@
       </widget>
      </item>
      <item>
-      <widget class="GanttDtLine" name="widgetDtLine" native="true">
-       <zorder>ganttView</zorder>
-      </widget>
+      <widget class="GanttDtLine" name="widgetDtLine" native="true"/>
      </item>
      <item>
       <widget class="GanttGraphicsView" name="ganttView">
@@ -126,31 +124,31 @@
   <customwidget>
    <class>GanttPlayerControl</class>
    <extends>QWidget</extends>
-   <header>ganttplayercontrol.h</header>
+   <header>gantt/player/ganttplayercontrol.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
    <class>GanttPlayerSettings</class>
    <extends>QWidget</extends>
-   <header>ganttplayersettings.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>GanttGraphicsView</class>
-   <extends>QGraphicsView</extends>
-   <header>ganttgraphicsview.h</header>
-  </customwidget>
-  <customwidget>
-   <class>GanttIntervalSlider</class>
-   <extends>QWidget</extends>
-   <header>ganttintervalslider.h</header>
+   <header>gantt/player/ganttplayersettings.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
    <class>GanttDtLine</class>
    <extends>QWidget</extends>
-   <header>ganttdtline.h</header>
+   <header>gantt/plot/ganttdtline.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>GanttIntervalSlider</class>
+   <extends>QWidget</extends>
+   <header>gantt/ganttintervalslider.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>GanttGraphicsView</class>
+   <extends>QGraphicsView</extends>
+   <header>gantt/plot/ganttgraphicsview.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

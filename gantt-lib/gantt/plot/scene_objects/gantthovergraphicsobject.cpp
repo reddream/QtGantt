@@ -1,6 +1,6 @@
 #include "gantthovergraphicsobject.h"
-#include "gantt-lib_global_values.h"
-#include "ganttscene.h"
+#include "extensions/gantt-lib_global_values.h"
+#include "gantt/plot/ganttscene.h"
 
 #include <QGraphicsScene>
 #include <QPainter>

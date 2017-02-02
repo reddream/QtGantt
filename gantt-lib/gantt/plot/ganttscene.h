@@ -2,7 +2,7 @@
 #define GANTTSCENE_H
 
 
-#include "ganttcurrentdtslider.h"
+#include "scene_objects/ganttcurrentdtslider.h"
 #include "ganttdtline.h"
 
 #include "hfitscene.h"
@@ -19,7 +19,7 @@ class GanttInfoTree;
 
 //class QModelIndex;
 
-#include "ganttinfotree.h"
+#include "gantt/info/ganttinfotree.h"
 
 class GanttScene : public HFitScene
 {

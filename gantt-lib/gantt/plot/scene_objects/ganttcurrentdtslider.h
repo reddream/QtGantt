@@ -2,8 +2,8 @@
 #define GANTTCURRENTTIMESLIDER_H
 
 #include "utcdatetime.h"
-#include "ganttinfonode.h"
-#include "dtline.h"
+#include "gantt/info/ganttinfonode.h"
+#include "extensions/dtline.h"
 
 
 #include <QGraphicsObject>

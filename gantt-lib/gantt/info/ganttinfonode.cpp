@@ -2,7 +2,7 @@
 #include "ganttinfoitem.h"
 #include "ganttinfoleaf.h"
 
-#include "gantt-lib_global_values.h"
+#include "extensions/gantt-lib_global_values.h"
 
 GanttInfoNode::GanttInfoNode(QObject *parent)
     :GanttInfoItem(parent)

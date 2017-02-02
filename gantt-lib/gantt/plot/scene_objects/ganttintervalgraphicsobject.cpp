@@ -1,8 +1,8 @@
 #include "ganttintervalgraphicsobject.h"
-#include "ganttscene.h"
-#include "gantt-lib_global_values.h"
+#include "gantt/plot/ganttscene.h"
+#include "extensions/gantt-lib_global_values.h"
 
-#include "ganttinfonode.h"
+#include "gantt/info/ganttinfonode.h"
 
 #include <QGraphicsSceneMouseEvent>
 #include <QPainter>

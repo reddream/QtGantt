@@ -1,7 +1,7 @@
 #ifndef GANTTDTLINE_H
 #define GANTTDTLINE_H
 
-#include "dtline.h"
+#include "extensions/dtline.h"
 
 class GanttDtLine : public DtLine
 {

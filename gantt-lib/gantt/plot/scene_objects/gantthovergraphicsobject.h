@@ -1,7 +1,7 @@
 #ifndef GANTTHOVERGRAPHICSOBJECT_H
 #define GANTTHOVERGRAPHICSOBJECT_H
 
-#include "ganttinfoitem.h"
+#include "gantt/info/ganttinfoitem.h"
 #include <QGraphicsObject>
 #include <QPointer>
 

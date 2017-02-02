@@ -365,7 +365,7 @@ background-image: url(&quot;:/Buttons 16x16/rec_on_16.png&quot;);
   <customwidget>
    <class>PlayerControlButton</class>
    <extends>QPushButton</extends>
-   <header>playercontrolbutton.h</header>
+   <header>gantt/player/playercontrolbutton.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

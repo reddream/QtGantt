@@ -1,6 +1,6 @@
 #include "ganttgraphicsobject.h"
-#include "ganttscene.h"
-#include "ganttinfoitem.h"
+#include "gantt/plot/ganttscene.h"
+#include "gantt/info/ganttinfoitem.h"
 
 
 void GanttGraphicsObject::init()

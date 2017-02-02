@@ -1,5 +1,5 @@
 #include "ganttdtcrossobject.h"
-#include "ganttscene.h"
+#include "gantt/plot/ganttscene.h"
 
 #include <QPen>
 #include <QFontMetrics>

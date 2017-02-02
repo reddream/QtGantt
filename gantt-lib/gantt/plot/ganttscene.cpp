@@ -1,16 +1,16 @@
 #include "ganttscene.h"
-#include "dtline.h"
-#include "ganttinfotree.h"
+#include "extensions/dtline.h"
+#include "gantt/info/ganttinfotree.h"
 
-#include "gantt-lib_global_values.h"
+#include "extensions/gantt-lib_global_values.h"
 
-#include "ganttintervalgraphicsobject.h"
-#include "ganttcalcgraphicsobject.h"
-#include "ganttdtcrossobject.h"
-#include "gantthovergraphicsobject.h"
+#include "scene_objects/ganttintervalgraphicsobject.h"
+#include "scene_objects/ganttcalcgraphicsobject.h"
+#include "scene_objects/ganttdtcrossobject.h"
+#include "scene_objects/gantthovergraphicsobject.h"
 
-#include "ganttinfoleaf.h"
-#include "ganttinfonode.h"
+#include "gantt/info/ganttinfoleaf.h"
+#include "gantt/info/ganttinfonode.h"
 
 #include <QApplication>
 #include <QGraphicsView>

@@ -1,7 +1,7 @@
 #ifndef GANTTGRAPHICSOBJECT_H
 #define GANTTGRAPHICSOBJECT_H
 
-#include "dtline.h"
+#include "extensions/dtline.h"
 #include <QGraphicsObject>
 #include <QPointer>
 

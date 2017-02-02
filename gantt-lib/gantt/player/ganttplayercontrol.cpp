@@ -2,7 +2,8 @@
 #include "ui_ganttplayercontrol.h"
 #include "ganttplayersettings.h"
 
-#include "gantt-lib_global_values.h"
+#include "gantt/player/playercontrolbutton.h"
+#include "extensions/gantt-lib_global_values.h"
 
 #include <QTimer>
 #include <QAbstractButton>

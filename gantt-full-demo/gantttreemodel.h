@@ -2,9 +2,9 @@
 #define GANTTTREEMODEL_H
 
 #include "gantt-lib_global.h"
-#include "ganttinfoleaf.h"
-#include "ganttinfonode.h"
-#include "iganttmodel.h"
+#include "gantt/info/ganttinfoleaf.h"
+#include "gantt/info/ganttinfonode.h"
+#include "gantt/interfaces//iganttmodel.h"
 
 #include <QAbstractItemModel>
 

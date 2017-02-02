@@ -1,8 +1,8 @@
 #include "ganttgraphicsview.h"
 #include "ganttscene.h"
-#include "ganttinfonode.h"
+#include "gantt/info/ganttinfonode.h"
 
-#include "gantt-lib_global_values.h"
+#include "extensions/gantt-lib_global_values.h"
 
 #include <QResizeEvent>
 #include <QScrollBar>

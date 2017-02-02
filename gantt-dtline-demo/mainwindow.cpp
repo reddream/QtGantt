@@ -1,6 +1,6 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-#include "dtline.h"
+#include "extensions/dtline.h"
 
 #include <QVBoxLayout>
 

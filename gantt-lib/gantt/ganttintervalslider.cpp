@@ -1,8 +1,8 @@
 #include "ganttintervalslider.h"
 #include "utcdatetime.h"
 #include "timespan.h"
-#include "timespan_extension.h"
-#include "gantt-lib_global_values.h"
+#include "extensions/timespan_extension.h"
+#include "extensions/gantt-lib_global_values.h"
 
 #include <QPainter>
 #include <QLinearGradient>

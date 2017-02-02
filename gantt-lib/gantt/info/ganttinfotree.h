@@ -2,7 +2,7 @@
 #define GANTTINFOTREE_H
 
 #include "ganttinfonode.h"
-#include "iganttmodel.h"
+#include "gantt/interfaces/iganttmodel.h"
 
 #include <QObject>
 #include <QAbstractItemModel>

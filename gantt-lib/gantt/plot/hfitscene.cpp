@@ -1,5 +1,5 @@
 #include "hfitscene.h"
-#include "gantt-lib_global_values.h"
+#include "extensions/gantt-lib_global_values.h"
 
 
 HFitScene::HFitScene(GanttGraphicsView *view, QObject *parent)

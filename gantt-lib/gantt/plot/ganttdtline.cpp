@@ -1,5 +1,5 @@
 #include "ganttdtline.h"
-#include "gantt-lib_global_values.h"
+#include "extensions/gantt-lib_global_values.h"
 
 #include <QPainter>
 #include <QMouseEvent>

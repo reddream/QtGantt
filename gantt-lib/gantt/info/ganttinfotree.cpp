@@ -1,5 +1,5 @@
 #include "ganttinfotree.h"
-#include "gantt-lib_global_values.h"
+#include "extensions/gantt-lib_global_values.h"
 
 GanttInfoTree::GanttInfoTree(QObject *parent) : QObject(parent)
 {

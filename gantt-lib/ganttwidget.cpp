@@ -1,7 +1,7 @@
 #include "ganttwidget.h"
 #include "ui_ganttwidget.h"
 
-#include "ganttscene.h"
+#include "gantt/plot/ganttscene.h"
 
 #include <QScrollBar>
 #include <QAbstractItemModel>

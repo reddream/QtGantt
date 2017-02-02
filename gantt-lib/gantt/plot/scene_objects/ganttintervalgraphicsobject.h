@@ -2,7 +2,7 @@
 #define GANTTGRAPHICSITEM_H
 
 #include "ganttgraphicsobject.h"
-#include "ganttinfoleaf.h"
+#include "gantt/info/ganttinfoleaf.h"
 
 #include <QPointer>
 

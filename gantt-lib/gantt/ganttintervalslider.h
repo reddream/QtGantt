@@ -1,8 +1,8 @@
 #ifndef GANTTINTERVALSLIDER_H
 #define GANTTINTERVALSLIDER_H
 
-#include "idtinterval.h"
-#include "intervalslider.h"
+#include "extensions/idtinterval.h"
+#include "extensions/intervalslider.h"
 #include "utcdatetime.h"
 
 class GanttWidget;

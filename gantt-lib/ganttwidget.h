@@ -2,8 +2,8 @@
 #define GANTTWIDGET_H
 
 #include "gantt-lib_global.h"
-#include "iganttmodel.h"
-#include "ganttinfotree.h"
+#include "gantt/interfaces/iganttmodel.h"
+#include "gantt/info/ganttinfotree.h"
 
 #include <QModelIndex>
 

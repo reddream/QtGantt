@@ -6,7 +6,7 @@
 #include <time.h>
 #include <QKeyEvent>
 #include "utcdatetime.h"
-#include "gantt-lib_global_values.h"
+#include "extensions/gantt-lib_global_values.h"
 #include "gantttreemodel.h"
 
 
