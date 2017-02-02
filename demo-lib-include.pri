@@ -1,7 +1,5 @@
-
 message(PWD: $$PWD)
-INCLUDEPATH += "$$PWD/../gantt-lib"
-INCLUDEPATH += "$$PWD/../gantt-lib/gantt"
+INCLUDEPATH += "$$PWD/gantt-lib"
 LIBS += -L"$${DESTDIR}"
 
 CONFIG(release, debug|release) {
