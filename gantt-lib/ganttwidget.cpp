@@ -46,6 +46,11 @@ void GanttWidget::installEventWatcherInterval(QObject *watcher)
     watcher->installEventFilter(ui->widgetIntervalSlider);
 }
 
+void GanttWidget::setCurrentDt(const UtcDateTime &dt)
+{
+    _scene->setCurrentDt(dt);
+}
+
 void GanttWidget::setPlayerSpeeds(qreal minMultiply, qreal maxMultiply)
 {
     ui->playerSettings->setMultiplies(minMultiply,maxMultiply);

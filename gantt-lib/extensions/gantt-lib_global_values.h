@@ -6,6 +6,7 @@
 
 #define SLIDER_COLOR (QColor(125,179,250))
 #define HEADER_COLOR (QColor(32,97,196))
+#define PLAYER_COLOR (QColor(Qt::red).lighter(130))
 
 #define GANTTPLAYER_DEFAULT_STEP (40*_MILISECONDS_IN_SECOND)
 #define GANTTPLAYER_DEFAULT_FREQUENCY (qreal(25))

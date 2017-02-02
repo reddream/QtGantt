@@ -138,6 +138,8 @@ void GanttIntervalGraphicsObject::updateIntersection()
         res |= rect.intersect( mapRectFromItem(item,item->boundingRect()));
     }
     _intersection = res;
+    _lastBoundingRectSize = res.size();
+
     update();
 }
 
@@ -175,9 +177,11 @@ void GanttIntervalGraphicsObject::privateUpdateGeometry(bool intersection)
         if(!_intersection.isEmpty()){
             qreal lastLeft = _intersection.left(),
                     lastWidth = _intersection.width(),
-                    coef = itemWidth / _boundingRectSize.width();
+                    coef = itemWidth / _lastBoundingRectSize.width();
             _intersection.setLeft( lastLeft * coef );
             _intersection.setWidth( lastWidth * coef );
+
+            _lastBoundingRectSize = _intersection.size();
         }
     }
     // UPDATE geometry

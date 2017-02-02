@@ -79,4 +79,7 @@ FORMS += \
 
 DISTFILES += \
     ../gantt-lib-include.pri \
-    gantt_uml.qmodel
+    gantt_uml.qmodel \
+    build_config.pri
+
+include(../build_config.pri)

@@ -55,9 +55,10 @@ public slots:
 
     GanttGraphicsObject* itemForInfo(const GanttInfoItem *key) const;
 
-    void updateSliderHeight();
+    void updateSliderHeight(int height);
 
     UtcDateTime slidersDt() const;
+    void setCurrentDt(const UtcDateTime &dt);
 
     const GanttInfoLeaf *nextEvent(const UtcDateTime &curDt) const;
     const GanttInfoLeaf *prevEvent(const UtcDateTime &curDt) const;

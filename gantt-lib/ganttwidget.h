@@ -29,6 +29,7 @@ public:
 
 
     void installEventWatcherInterval(QObject *watcher);
+    void setCurrentDt(const UtcDateTime &dt);
     void setPlayerSpeeds(qreal minMultiply, qreal maxMultiply);///< Устанавливает минимальную и максимальную скорости воспроизведения
     bool player() const;
 

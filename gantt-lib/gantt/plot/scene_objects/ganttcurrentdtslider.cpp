@@ -77,9 +77,9 @@ void GanttCurrentDtSlider::paint(QPainter *painter, const QStyleOptionGraphicsIt
         return;
 
     painter->save();
-    QPen pen(QBrush(QColor(Qt::red)), 1 ,Qt::DashLine,Qt::SquareCap,Qt::MiterJoin);
+    QPen pen(QBrush(PLAYER_COLOR), 1 ,Qt::SolidLine,Qt::SquareCap,Qt::MiterJoin);
     painter->setPen(pen);
-    painter->drawLine(0,0,0, _scene->view()->rect().bottom());
+    painter->drawLine(0,0,0, _height);
     painter->restore();
 
     return;//drawing textrect

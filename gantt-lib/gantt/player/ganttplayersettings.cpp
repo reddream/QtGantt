@@ -18,10 +18,47 @@ void GanttPlayerSettings::init()
 {
     m_precision = 1000;
 
+    setCursor(Qt::PointingHandCursor);
     setToolButtonStyle(Qt::ToolButtonIconOnly);
-    setStyleSheet("QToolBar { border: 0px }");
-    setFloatable(false);
-    setAllowedAreas(Qt::NoToolBarArea);
+    setStyleSheet(
+                    "QToolBar {"
+                    "border: none;"
+//                    "background-color: qlineargradient(spread:pad, x1:1, y1:0.455686, x2:1, y2:1, stop:0 rgba(127, 127, 127, 255), stop:1 rgba(96, 96, 96, 255));"
+//                    "color:rgb(255, 255, 255);"
+                    "}"
+                    "QToolButton { "
+                    "border: none;"
+//                    "padding: 3;"
+                    "}"
+//                    "QToolButton:hover { "
+//                    "background-color: white;"
+//                    "}"
+//                    "QToolButton:checked:pressed { "
+//                    "background-color: white;"
+//                    "}"
+//                    "QToolButton:pressed { "
+//                    "background-color: red;"
+//                    "}"
+//                    "QToolButton:checked { "
+//                    "background-color: red;"
+//                    "}"
+                    "QSlider::groove:horizontal {"
+                        "border: 1px solid #999999;"
+                        "height: 8px;"
+                        "background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #B1B1B1, stop:1 #c4c4c4);"
+                        "margin: 2px 0;"
+                    "}"
+
+                    "QSlider::handle:horizontal {"
+                      "background: qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 #b4b4b4, stop:1 #8f8f8f);"
+                      "border: 1px solid #0c457e;"
+                      "width: 8px;"
+                      "margin: -2px 0;"
+                      "border-radius: 2px;"
+                      "}"
+                    );
+//    setFloatable(false);
+//    setAllowedAreas(Qt::NoToolBarArea);
     initActions();
 }
 
@@ -83,23 +120,6 @@ void GanttPlayerSettings::initActions()
     h_lay->addWidget(m_right);
 
     v_layout->addLayout(h_lay);
-
-
-    setStyleSheet(
-                "QSlider::groove:horizontal {"
-                    "border: 1px solid #999999;"
-                    "height: 8px;"
-                    "background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #B1B1B1, stop:1 #c4c4c4);"
-                    "margin: 2px 0;"
-                "}"
-
-                "QSlider::handle:horizontal {"
-                  "background: qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 #b4b4b4, stop:1 #8f8f8f);"
-                  "border: 1px solid #0c457e;"
-                  "width: 8px;"
-                  "margin: -2px 0;"
-                  "border-radius: 2px;"
-                  "}");
 
     m_slider->setOrientation(Qt::Horizontal);
     connect(m_slider,SIGNAL(valueChanged(int)),this,SLOT(onSpeedChanged(int)));

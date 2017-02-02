@@ -968,8 +968,7 @@ void DtLine::setTimeSpan(const TimeSpan &timeSpan, bool manually)
 
     if(manually)
         emit timeSpanChangedManually();
-    else
-        emit timeSpanChanged();
+    emit timeSpanChanged();
 }
 
 void DtLine::setLimits(const UtcDateTime &min, const TimeSpan &ts, bool manually)

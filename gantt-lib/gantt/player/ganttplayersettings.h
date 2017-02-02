@@ -24,12 +24,14 @@ public:
 
 signals:
     void speedChanged(qreal multiply);
+
 private slots:
     void onSpeedChanged(int m);
     void onCurTextChanged();
 
 private:
     void initActions();
+
 
 private:
     QPointer<QSlider> m_slider;

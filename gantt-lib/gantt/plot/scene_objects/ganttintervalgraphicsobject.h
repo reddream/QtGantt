@@ -38,6 +38,8 @@ private:
     bool _isSmall;
 
     QSizeF _boundingRectSize;
+
+    QSizeF _lastBoundingRectSize;
     QRectF _intersection;
 
 };

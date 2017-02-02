@@ -8,10 +8,10 @@ QPainterPath GanttDtLine::initFunction(){
     static const int topPos = DtLine::topHeight + DtLine::bottomHeight * 1. / 3;
 
     QPainterPath res;
-    res.moveTo(0, topPos);
+    res.moveTo(0, topPos - 1);
     res.lineTo(4, DtLine::widgetHeight);
     res.lineTo(-4,DtLine::widgetHeight);
-    res.lineTo(0, topPos);
+    res.lineTo(0, topPos - 1);
 
     return res;
 }
@@ -33,12 +33,13 @@ GanttDtLine::GanttDtLine(QWidget *parent)
 void GanttDtLine::paintEvent(QPaintEvent *e)
 {
     DtLine::paintEvent(e);
-    QPainter painter(this);
-    painter.setRenderHint(QPainter::Antialiasing, true);
 
     if(_drawCurrentDt){
-        painter.fillPath(_arrowPath , QBrush(Qt::red));
-        painter.drawPath(_arrowPath);
+        QPainter painter(this);
+        painter.setRenderHint(QPainter::Antialiasing);
+
+        painter.fillPath(_arrowPath , QBrush(PLAYER_COLOR));
+//        painter.drawPath(_arrowPath);
     }
 }
 

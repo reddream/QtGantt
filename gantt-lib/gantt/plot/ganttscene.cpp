@@ -57,6 +57,8 @@ void GanttScene::updateSceneRect()
         setSceneRect(0,0,sceneRect().width(),0);
     else
         setSceneRect(0,0,sceneRect().width(),_treeInfo->height());
+
+    updateSliderHeight(height());
 }
 
 void GanttScene::updateSceneItems()
@@ -129,6 +131,11 @@ void GanttScene::setCurrentItemByInfo(GanttInfoItem *info)
 UtcDateTime GanttScene::slidersDt() const
 {
     return _playerCurrent->dt();
+}
+
+void GanttScene::setCurrentDt(const UtcDateTime &dt)
+{
+    _playerCurrent->setDt(dt);
 }
 
 
@@ -274,8 +281,9 @@ bool GanttScene::isVisible(const QGraphicsItem *which) const
         return false;
 
     QRectF viewRect = _view->mapToScene(_view->viewport()->geometry()).boundingRect();
+    QRectF itemBR = which->sceneBoundingRect();
 
-    return viewRect.contains(which->sceneBoundingRect());
+    return viewRect.top() <= itemBR.top() && viewRect.bottom() >= itemBR.bottom();
 }
 
 QRectF GanttScene::elementsBoundingRect()
@@ -313,7 +321,6 @@ void GanttScene::onViewResized(const QSize &newSize)
     HFitScene::onViewResized(newSize);
 
     updateSceneItemsWithIntersection();
-    updateSliderHeight();
 }
 
 void GanttScene::setCurrentItem(QGraphicsObject *currentItem)
@@ -634,13 +641,9 @@ void GanttScene::removeItemForInfoLeaf(const GanttInfoLeaf *leaf)
 }
 
 
-void GanttScene::updateSliderHeight()
+void GanttScene::updateSliderHeight(int height)
 {
-    if(!_playerCurrent || views().isEmpty())
-        return;
-
-    _playerCurrent->setHeight(views()[0]->height());
-    update();
+    _playerCurrent->setHeight(height);
 }
 
 

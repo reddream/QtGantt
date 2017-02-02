@@ -7,9 +7,6 @@ message(VERSION2: $$VERSION)
 
 DESTDIR = $$OUT_PWD/../bin
 
-LIB_DIR = $$PWD/gantt-lib
-
-
 # подключить библиотеки и *.h файлы
 CONFIG += depend_includepath
 unix: CONFIG += debug_and_release debug_and_release_target
@@ -34,16 +31,6 @@ CONFIG(release, debug|release) {
 } else:CONFIG(debug, debug|release) {
   LIBS += -lextensionsd -lextensions-guid
 }
-message(Library directory: $$LIB_DIR)
-
-#INCLUDEPATH += $$LIB_DIR
-#INCLUDEPATH += $$LIB_DIR/extensions
-#INCLUDEPATH += $$LIB_DIR/gantt
-#INCLUDEPATH += $$LIB_DIR/gantt/interfaces
-#INCLUDEPATH += $$LIB_DIR/gantt/info
-#INCLUDEPATH += $$LIB_DIR/gantt/player
-#INCLUDEPATH += $$LIB_DIR/gantt/plot
-#INCLUDEPATH += $$LIB_DIR/gantt/plot/scene_objects
 
 
 INCLUDEPATH += $${DEP_PATH_HEADERS}/extensions
